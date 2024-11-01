@@ -1,0 +1,11 @@
+{
+  "sqltools.useNodeRuntime": true,
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "driver": "SQLite",
+      "name": "app",
+      "database": "/Users/sumetph/Library/Developer/CoreSimulator/Devices/0C4B3A39-AE5E-4D21-AB9A-99DA17DBAE8C/data/Containers/Data/Application/9B89E531-675E-4398-B092-9830F5E22822/Documents/app.db"
+    }
+  ]
+}
