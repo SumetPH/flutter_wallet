@@ -2,23 +2,23 @@ import 'package:flutter_wallet/data/db.dart';
 import 'package:flutter_wallet/utils/time_utils.dart';
 import 'package:sqflite/sqflite.dart';
 
-class TransferDb {
+class ExpenseDb {
   DBHelper dbHelper = DBHelper();
 
-  Future<int> createTransfer({
+  Future<int> createExpense({
     required double amount,
     String? note,
-    required int accountIdFrom,
-    required int accountIdTo,
+    required int accountId,
   }) async {
     Database db = await dbHelper.db;
-    final idTransaction = await db.rawInsert(
+
+    final transactionId = await db.rawInsert(
       """
         INSERT INTO transactions(
           amount, 
           note, 
-          transaction_type_id,
-          created_at,
+          transaction_type_id, 
+          created_at, 
           updated_at
         ) 
         VALUES(?, ?, ?, ?, ?)
@@ -26,31 +26,29 @@ class TransferDb {
       [
         amount,
         note,
-        3,
+        1,
         TimeUtils.nowString(),
         TimeUtils.nowString(),
       ],
     );
 
-    final idTransfer = await db.rawInsert(
+    await db.rawInsert(
       """
-        INSERT INTO transfer(
-          transactions_id,
-          account_id_from,
-          account_id_to,
-          created_at,
+        INSERT INTO expense(
+          transactions_id, 
+          account_id, 
+          created_at, 
           updated_at
         ) 
-        VALUES(?, ?, ?, ?, ?)
+        VALUES(?, ?, ?, ?)
       """,
       [
-        idTransaction,
-        accountIdFrom,
-        accountIdTo,
+        transactionId,
+        accountId,
         TimeUtils.nowString(),
         TimeUtils.nowString(),
       ],
     );
-    return idTransfer;
+    return transactionId;
   }
 }

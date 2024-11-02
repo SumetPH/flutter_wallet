@@ -1,50 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_wallet/data/db/account_db.dart';
-import 'package:flutter_wallet/data/db/transfer_db.dart';
+import 'package:flutter_wallet/data/db/income_db.dart';
 import 'package:flutter_wallet/model/account_model.dart';
 import 'package:flutter_wallet/widget/account_list.dart';
 
-enum TransferFormMode { create, edit }
+enum IncomeFormMode { create, edit }
 
-class TransferFormScreen extends StatefulWidget {
-  final TransferFormMode mode;
+class IncomeFormScreen extends StatefulWidget {
+  final IncomeFormMode mode;
 
-  const TransferFormScreen({
+  const IncomeFormScreen({
     super.key,
     required this.mode,
   });
 
   @override
-  State<TransferFormScreen> createState() => _TransferFormScreenState();
+  State<IncomeFormScreen> createState() => _ExpenseFormScreenState();
 }
 
-class _TransferFormScreenState extends State<TransferFormScreen> {
-  final _transferDB = TransferDb();
-  final _accountDB = AccountDb();
+class _ExpenseFormScreenState extends State<IncomeFormScreen> {
+  final _incomeDb = IncomeDb();
+  final _accountDb = AccountDb();
 
   // state
   List<AccountModel> _accountList = [];
 
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
-  int? _accountIdFrom;
-  int? _accountIdTo;
+  int? _accountId;
 
   // method
   Future _getAccountList() async {
-    final res = await _accountDB.getAccountList(type: '1,2');
+    final res = await _accountDb.getAccountList(type: '1,2');
     setState(() {
       _accountList = res;
     });
   }
 
-  Future _createTransfer() async {
-    await _transferDB.createTransfer(
+  Future _createExpense() async {
+    await _incomeDb.createIncome(
       amount: double.parse(_amountController.text),
       note: _noteController.text,
-      accountIdFrom: _accountIdFrom!,
-      accountIdTo: _accountIdTo!,
+      accountId: _accountId!,
     );
   }
 
@@ -84,17 +82,15 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
                 ),
                 GestureDetector(
                   onTap: () async {
-                    if (_amountController.text.isEmpty ||
-                        _accountIdTo == null ||
-                        _accountIdFrom == null) {
+                    if (_amountController.text.isEmpty || _accountId == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('กรุณากรอกข้อมูลให้ครบถ้วน'),
                         ),
                       );
                     } else {
-                      if (widget.mode == TransferFormMode.create) {
-                        await _createTransfer();
+                      if (widget.mode == IncomeFormMode.create) {
+                        await _createExpense();
                       }
                       Navigator.pop(context);
                     }
@@ -127,8 +123,9 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
                           RegExp(r'^\d+\.?\d{0,2}'),
                         ),
                       ],
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
+                        color: Colors.green[600],
                       ),
                       textAlign: TextAlign.end,
                       decoration: const InputDecoration(
@@ -170,7 +167,7 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
                 children: [
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 14.0),
-                    child: Text('บัญชีต้นทาง'),
+                    child: Text('บัญชี'),
                   ),
                   const SizedBox(width: 20.0),
                   Expanded(
@@ -195,14 +192,11 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
                                 Expanded(
                                   child: AccountList(
                                     accountList: _accountList,
-                                    disabledAccountId: _accountIdTo,
                                     onTab: (account) {
-                                      if (account.id != _accountIdTo) {
-                                        Navigator.pop(context);
-                                        setState(() {
-                                          _accountIdFrom = account.id;
-                                        });
-                                      }
+                                      Navigator.pop(context);
+                                      setState(() {
+                                        _accountId = account.id!;
+                                      });
                                     },
                                   ),
                                 ),
@@ -214,67 +208,7 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text(_getAccountName(_accountIdFrom ?? -1)),
-                          const Icon(Icons.chevron_right),
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            const Divider(),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Row(
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 14.0),
-                    child: Text('บัญชีปลายทาง'),
-                  ),
-                  const SizedBox(width: 20.0),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () async {
-                        showModalBottomSheet(
-                          context: context,
-                          builder: (context) {
-                            return Column(
-                              children: [
-                                const Padding(
-                                  padding: EdgeInsets.all(16.0),
-                                  child: Center(
-                                    child: Text(
-                                      'เลือกบัญชี',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: AccountList(
-                                    accountList: _accountList,
-                                    disabledAccountId: _accountIdFrom,
-                                    onTab: (account) {
-                                      if (account.id != _accountIdFrom) {
-                                        Navigator.pop(context);
-                                        setState(() {
-                                          _accountIdTo = account.id;
-                                        });
-                                      }
-                                    },
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(_getAccountName(_accountIdTo ?? -1)),
+                          Text(_getAccountName(_accountId ?? -1)),
                           const Icon(Icons.chevron_right),
                         ],
                       ),

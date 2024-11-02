@@ -21,7 +21,7 @@ class AccountFormScreen extends StatefulWidget {
 }
 
 class _AccountFormScreenState extends State<AccountFormScreen> {
-  final accountDb = AccountDB();
+  final accountDb = AccountDb();
 
   // state
   List<AccountTypeModel> accountTypeList = AccountType.list;
@@ -142,9 +142,13 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                   Expanded(
                     child: TextField(
                       controller: amountController,
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                        signed: true,
+                      ),
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(
-                          RegExp(r'^\d+\.?\d{0,2}'),
+                          RegExp(r'^-?\d*\.?\d{0,2}'),
                         ),
                       ],
                       textAlign: TextAlign.end,

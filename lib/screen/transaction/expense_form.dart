@@ -1,60 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_wallet/data/db/account_db.dart';
-import 'package:flutter_wallet/data/db/transactions_db.dart';
+import 'package:flutter_wallet/data/db/expense_db.dart';
 import 'package:flutter_wallet/model/account_model.dart';
-import 'package:flutter_wallet/model/transactions_type_model.dart';
-import 'package:flutter_wallet/type/transactions_type.dart';
-import 'package:flutter_wallet/widget/AccountSelectModal.dart';
+import 'package:flutter_wallet/widget/account_list.dart';
 
-enum TransactionFormMode { create, edit }
+enum ExpenseFormMode { create, edit }
 
-class TransactionFormScreen extends StatefulWidget {
-  final TransactionFormMode mode;
+class ExpenseFormScreen extends StatefulWidget {
+  final ExpenseFormMode mode;
 
-  const TransactionFormScreen({
+  const ExpenseFormScreen({
     super.key,
     required this.mode,
   });
 
   @override
-  State<TransactionFormScreen> createState() => _TransactionFormScreenState();
+  State<ExpenseFormScreen> createState() => _ExpenseFormScreenState();
 }
 
-class _TransactionFormScreenState extends State<TransactionFormScreen> {
-  final _transactionsDb = TransactionsDB();
-  final _accountDb = AccountDB();
+class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
+  final _expenseDb = ExpenseDb();
+  final _accountDb = AccountDb();
 
   // state
   List<AccountModel> _accountList = [];
-  final List<TransactionsTypeModel> _transactionsTypeList = [
-    TransactionsTypeModel(id: 1, name: 'รายจ่าย'),
-    TransactionsTypeModel(id: 2, name: 'รายรับ'),
-  ];
 
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
-  int _transactionType = 1;
-  int _accountId = -1;
+  int? _accountId;
 
   // method
   Future _getAccountList() async {
-    final res = await _accountDb.getAccountList(type: '1,2');
+    final res = await _accountDb.getAccountList(type: '1,2,3');
     setState(() {
       _accountList = res;
-
-      if (_accountList.isNotEmpty) {
-        _accountId = _accountList.first.id!;
-      }
     });
   }
 
-  Future _createTransaction() async {
-    await _transactionsDb.createTransaction(
+  Future _createExpense() async {
+    await _expenseDb.createExpense(
       amount: double.parse(_amountController.text),
       note: _noteController.text,
-      transactionTypeId: _transactionType,
-      accountId: _accountId,
+      accountId: _accountId!,
     );
   }
 
@@ -94,15 +82,15 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
                 ),
                 GestureDetector(
                   onTap: () async {
-                    if (_amountController.text.isEmpty || _accountId == -1) {
+                    if (_amountController.text.isEmpty || _accountId == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('กรุณากรอกข้อมูลให้ครบถ้วน'),
                         ),
                       );
                     } else {
-                      if (widget.mode == TransactionFormMode.create) {
-                        await _createTransaction();
+                      if (widget.mode == ExpenseFormMode.create) {
+                        await _createExpense();
                       }
                       Navigator.pop(context);
                     }
@@ -126,6 +114,10 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
                   Expanded(
                     child: TextField(
                       controller: _amountController,
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                        signed: true,
+                      ),
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(
                           RegExp(r'^\d+\.?\d{0,2}'),
@@ -133,9 +125,7 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
                       ],
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: _transactionType == 1
-                            ? Colors.red[600]
-                            : Colors.green[600],
+                        color: Colors.red[600],
                       ),
                       textAlign: TextAlign.end,
                       decoration: const InputDecoration(
@@ -177,7 +167,7 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
                 children: [
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 14.0),
-                    child: Text('ประเภท'),
+                    child: Text('บัญชี'),
                   ),
                   const SizedBox(width: 20.0),
                   Expanded(
@@ -185,87 +175,40 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
                       onTap: () async {
                         showModalBottomSheet(
                           context: context,
-                          builder: (context) => Column(
-                            children: [
-                              const Padding(
-                                padding: EdgeInsets.all(16.0),
-                                child: Center(
-                                  child: Text(
-                                    'เลือกประเภท',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
+                          builder: (context) {
+                            return Column(
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsets.all(16.0),
+                                  child: Center(
+                                    child: Text(
+                                      'เลือกบัญชี',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              Expanded(
-                                child: ListView.separated(
-                                  separatorBuilder: (context, index) {
-                                    return const Divider(height: 1.0);
-                                  },
-                                  itemCount: _transactionsTypeList.length,
-                                  itemBuilder: (context, index) {
-                                    return ListTile(
-                                      title: Text(
-                                        _transactionsTypeList[index].name,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                        setState(() {
-                                          _transactionType =
-                                              _transactionsTypeList[index].id;
-                                        });
-                                      },
-                                    );
-                                  },
+                                Expanded(
+                                  child: AccountList(
+                                    accountList: _accountList,
+                                    onTab: (account) {
+                                      Navigator.pop(context);
+                                      setState(() {
+                                        _accountId = account.id!;
+                                      });
+                                    },
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(TransactionsType.getName(_transactionType)),
-                          const Icon(Icons.chevron_right),
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            const Divider(),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Row(
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 14.0),
-                    child: Text('บัญชี'),
-                  ),
-                  const SizedBox(width: 20.0),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () async {
-                        accountSelectModal(
-                          context: context,
-                          accountList: _accountList,
-                          onSelected: (value) {
-                            setState(() {
-                              _accountId = value;
-                            });
+                              ],
+                            );
                           },
                         );
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text(_getAccountName(_accountId)),
+                          Text(_getAccountName(_accountId ?? -1)),
                           const Icon(Icons.chevron_right),
                         ],
                       ),
