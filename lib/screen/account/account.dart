@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_wallet/screen/transaction/transfer_form.dart';
 import 'package:flutter_wallet/type/account_type.dart';
-import 'package:flutter_wallet/db/account_db.dart';
+import 'package:flutter_wallet/data/db/account_db.dart';
 import 'package:flutter_wallet/model/account_model.dart';
 import 'package:flutter_wallet/screen/account/account_form.dart';
 import 'package:flutter_wallet/screen/transaction/transaction_form.dart';
@@ -14,18 +15,18 @@ class AccountScreen extends StatefulWidget {
 }
 
 class _AccountScreenState extends State<AccountScreen> {
-  final accountDB = AccountDb();
+  final accountDB = AccountDB();
   List<AccountModel> accounts = [];
 
   _getAccountList() async {
-    final list = await accountDB.getAccount();
+    final list = await accountDB.getAccountList();
     setState(() {
       accounts = list;
     });
   }
 
   _removeAccount(int id) async {
-    await accountDB.removeAccount(id: id);
+    await accountDB.deleteAccount(id: id);
     _getAccountList();
   }
 
@@ -105,6 +106,29 @@ class _AccountScreenState extends State<AccountScreen> {
                                 ),
                               ),
                             ),
+                          ),
+                          const Divider(height: 1.0),
+                          ListTile(
+                            onTap: () async {
+                              Navigator.pop(context);
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) {
+                                  return const TransferFormScreen(
+                                    mode: TransferFormMode.create,
+                                  );
+                                }),
+                              );
+                              _getAccountList();
+                            },
+                            title: const Center(
+                              child: Text(
+                                "โอน",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
                           )
                         ],
                       ),
@@ -125,8 +149,8 @@ class _AccountScreenState extends State<AccountScreen> {
                   groupHeaderBuilder: (value) {
                     final sum = accounts
                         .where((a) => a.type == value.type)
-                        .map((a) => a.balance)
-                        .reduce((a, b) => a! + b!);
+                        .map((a) => double.parse(a.balance!))
+                        .reduce((a, b) => a + b);
                     return Container(
                       color: Colors.grey[200],
                       child: Padding(
@@ -143,10 +167,10 @@ class _AccountScreenState extends State<AccountScreen> {
                                   const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             Text(
-                              '${sum!.toStringAsFixed(2)} บาท',
+                              '${sum.toStringAsFixed(2)} บาท',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: [1, 2].contains(value.type)
+                                color: sum >= 0
                                     ? Colors.green[600]
                                     : Colors.red[600],
                               ),
@@ -238,11 +262,11 @@ class _AccountScreenState extends State<AccountScreen> {
                                     ),
                                   ),
                                   Text(
-                                    '${element.balance!.toStringAsFixed(2)} บาท',
+                                    '${element.balance!} บาท',
                                     style: TextStyle(
                                       fontSize: 18.0,
                                       fontWeight: FontWeight.bold,
-                                      color: [1, 2].contains(element.type)
+                                      color: double.parse(element.balance!) >= 0
                                           ? Colors.green[600]
                                           : Colors.red[600],
                                     ),

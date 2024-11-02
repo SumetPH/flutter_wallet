@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_wallet/type/account_type.dart';
-import 'package:flutter_wallet/db/account_db.dart';
+import 'package:flutter_wallet/data/db/account_db.dart';
 import 'package:flutter_wallet/model/account_type_model.dart';
 
 enum AccountFormMode { create, edit }
@@ -21,7 +21,7 @@ class AccountFormScreen extends StatefulWidget {
 }
 
 class _AccountFormScreenState extends State<AccountFormScreen> {
-  final accountDb = AccountDb();
+  final accountDb = AccountDB();
 
   // state
   List<AccountTypeModel> accountTypeList = AccountType.list;
@@ -40,7 +40,7 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
   }
 
   Future _addAccount() async {
-    await accountDb.addAccount(
+    await accountDb.createAccount(
       name: nameController.text,
       amount: double.parse(amountController.text),
       type: accountType,
@@ -174,21 +174,42 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                           context: context,
                           builder: (context) => Column(
                             children: [
-                              const SizedBox(
-                                width: double.infinity,
-                                height: 24.0,
+                              const Padding(
+                                padding: EdgeInsets.all(16.0),
+                                child: Center(
+                                  child: Text(
+                                    'เลือกชนิดบัญชี',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
                               ),
-                              ...accountTypeList.map(
-                                (acc) => ListTile(
-                                  title: Text(acc.name),
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                    setState(() {
-                                      accountType = acc.id;
-                                    });
+                              Expanded(
+                                child: ListView.separated(
+                                  separatorBuilder: (context, index) {
+                                    return const Divider(height: 1);
+                                  },
+                                  itemCount: accountTypeList.length,
+                                  itemBuilder: (context, index) {
+                                    return ListTile(
+                                      title: Text(
+                                        accountTypeList[index].name,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                        setState(() {
+                                          accountType =
+                                              accountTypeList[index].id;
+                                        });
+                                      },
+                                    );
                                   },
                                 ),
-                              )
+                              ),
                             ],
                           ),
                         );

@@ -3,7 +3,7 @@ class AccountModel {
   String? name;
   double? amount;
   int? type;
-  double? balance;
+  String? balance;
 
   AccountModel({
     this.id,

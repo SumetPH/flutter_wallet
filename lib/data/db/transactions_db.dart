@@ -1,7 +1,7 @@
-import 'package:flutter_wallet/db/db.dart';
+import 'package:flutter_wallet/data/db.dart';
 import 'package:sqflite/sqflite.dart';
 
-class TransactionsDb {
+class TransactionsDB {
   DBHelper dbHelper = DBHelper();
 
   Future<int> createTransaction({

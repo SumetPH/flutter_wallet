@@ -13,7 +13,7 @@ class DBHelper {
   initDatabase() async {
     String dbPath = await getDatabasesPath();
     String path = join(dbPath, 'app.db');
-    print('sqlite path: $path');
+    print(path);
 
     return await openDatabase(
       path,
@@ -74,7 +74,29 @@ class DBHelper {
           """,
         );
       },
-      onOpen: (db) async {},
+      onOpen: (db) async {
+        await db.execute(
+          """
+            CREATE TABLE IF NOT EXISTS transfer(
+              id INTEGER PRIMARY KEY AUTOINCREMENT,  
+              transactions_id INTEGER,
+              account_id_from INTEGER,
+              account_id_to INTEGER
+            )
+          """,
+        );
+
+        await db.execute(
+          """
+            CREATE TABLE IF NOT EXISTS debt(
+              id INTEGER PRIMARY KEY AUTOINCREMENT,  
+              transactions_id INTEGER,
+              account_id_from INTEGER,
+              account_id_to INTEGER
+            )
+          """,
+        );
+      },
     );
   }
 }

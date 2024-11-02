@@ -17,7 +17,7 @@ class AccountType {
     try {
       return list.firstWhere((item) => item.id == id).name;
     } catch (e) {
-      return 'บัญชี';
+      return '';
     }
   }
 }
