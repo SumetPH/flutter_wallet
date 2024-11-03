@@ -1,10 +1,10 @@
 class TransactionsTypeModel {
   int id;
-  String name;
+  String? name;
 
   TransactionsTypeModel({
     required this.id,
-    required this.name,
+    this.name,
   });
 
   factory TransactionsTypeModel.fromMap(Map<String, dynamic> map) {

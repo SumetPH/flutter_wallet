@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_wallet/model/account_model.dart';
-import 'package:flutter_wallet/type/account_type.dart';
 import 'package:flutter_wallet/utils/number_utils.dart';
 import 'package:grouped_list/grouped_list.dart';
 
@@ -10,26 +9,27 @@ class AccountList extends StatelessWidget {
   final Function(AccountModel account)? onLongPress;
   final int? disabledAccountId;
 
-  const AccountList(
-      {super.key,
-      required this.accountList,
-      this.onTab,
-      this.onLongPress,
-      this.disabledAccountId});
+  const AccountList({
+    super.key,
+    required this.accountList,
+    this.onTab,
+    this.onLongPress,
+    this.disabledAccountId,
+  });
 
   @override
   Widget build(BuildContext context) {
     return GroupedListView(
       elements: accountList,
-      groupBy: (account) => account.type,
+      groupBy: (account) => account.accountTypeId,
       separator: const Divider(
         height: 1,
       ),
       useStickyGroupSeparators: true,
       groupHeaderBuilder: (value) {
         final sum = accountList
-            .where((a) => a.type == value.type)
-            .map((a) => a.balance!)
+            .where((a) => a.accountTypeId == value.accountTypeId)
+            .map((a) => double.parse(a.balance!))
             .reduce((a, b) => a + b);
         return Container(
           color: Colors.grey[200],
@@ -42,7 +42,7 @@ class AccountList extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  AccountType.getName(value.type!),
+                  value.accountTypeName!,
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Text(
@@ -93,11 +93,11 @@ class AccountList extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          '${NumberUtils.formatNumber(element.balance!)} บาท',
+                          '${NumberUtils.formatNumber(double.parse(element.balance!))} บาท',
                           style: TextStyle(
                             fontSize: 18.0,
                             fontWeight: FontWeight.bold,
-                            color: element.balance! >= 0
+                            color: double.parse(element.balance!) >= 0
                                 ? Colors.green[600]
                                 : Colors.red[600],
                           ),

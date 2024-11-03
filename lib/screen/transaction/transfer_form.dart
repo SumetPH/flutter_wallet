@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_wallet/data/db/account_db.dart';
-import 'package:flutter_wallet/data/db/transfer_db.dart';
+import 'package:flutter_wallet/data/service/account_service.dart';
+import 'package:flutter_wallet/data/service/transfer_service.dart';
 import 'package:flutter_wallet/model/account_model.dart';
 import 'package:flutter_wallet/widget/account_list.dart';
 
@@ -20,8 +20,8 @@ class TransferFormScreen extends StatefulWidget {
 }
 
 class _TransferFormScreenState extends State<TransferFormScreen> {
-  final _transferDB = TransferDb();
-  final _accountDB = AccountDb();
+  final _transferService = TransferDb();
+  // final _accountService = AccountService();
 
   // state
   List<AccountModel> _accountList = [];
@@ -33,14 +33,14 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
 
   // method
   Future _getAccountList() async {
-    final res = await _accountDB.getAccountList(type: '1,2');
-    setState(() {
-      _accountList = res;
-    });
+    // final res = await _accountService.getAccountList(type: '1,2');
+    // setState(() {
+    //   _accountList = res;
+    // });
   }
 
   Future _createTransfer() async {
-    await _transferDB.createTransfer(
+    await _transferService.createTransfer(
       amount: double.parse(_amountController.text),
       note: _noteController.text,
       accountIdFrom: _accountIdFrom!,

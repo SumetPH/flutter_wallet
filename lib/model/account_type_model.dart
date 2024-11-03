@@ -1,23 +1,24 @@
 class AccountTypeModel {
-  int id;
-  String name;
+  int? id;
+  String? name;
+  String? createdAt;
+  String? updatedAt;
 
-  AccountTypeModel({
-    required this.id,
-    required this.name,
-  });
+  AccountTypeModel({this.id, this.name, this.createdAt, this.updatedAt});
 
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'name': name,
-    };
+  AccountTypeModel.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
   }
 
-  factory AccountTypeModel.fromMap(Map<String, dynamic> map) {
-    return AccountTypeModel(
-      id: map['id'],
-      name: map['name'],
-    );
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['name'] = name;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    return data;
   }
 }

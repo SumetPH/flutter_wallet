@@ -1,35 +1,37 @@
 class AccountModel {
   int? id;
   String? name;
-  double? amount;
-  int? type;
-  double? balance;
+  String? amount;
+  int? accountTypeId;
+  String? accountTypeName;
+  String? balance;
 
   AccountModel({
     this.id,
     this.name,
     this.amount,
-    this.type,
+    this.accountTypeId,
+    this.accountTypeName,
     this.balance,
   });
 
-  factory AccountModel.fromMap(Map<String, dynamic> map) {
-    return AccountModel(
-      id: map['id'],
-      name: map['name'],
-      amount: map['amount'],
-      type: map['type'],
-      balance: map['balance'],
-    );
+  AccountModel.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    amount = json['amount'];
+    accountTypeId = json['account_type_id'];
+    accountTypeName = json['account_type_name'];
+    balance = json['balance'];
   }
 
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'name': name,
-      'amount': amount,
-      'type': type,
-      'balance': balance,
-    };
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['name'] = name;
+    data['amount'] = amount;
+    data['account_type_id'] = accountTypeId;
+    data['account_type_name'] = accountTypeName;
+    data['balance'] = balance;
+    return data;
   }
 }

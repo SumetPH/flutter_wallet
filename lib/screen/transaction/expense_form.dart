@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_wallet/data/db/account_db.dart';
-import 'package:flutter_wallet/data/db/expense_db.dart';
+import 'package:flutter_wallet/data/service/account_service.dart';
+import 'package:flutter_wallet/data/service/category_service.dart';
+import 'package:flutter_wallet/data/service/expense_service.dart';
 import 'package:flutter_wallet/model/account_model.dart';
+import 'package:flutter_wallet/model/category_model.dart';
 import 'package:flutter_wallet/widget/account_list.dart';
 
 enum ExpenseFormMode { create, edit }
@@ -20,40 +22,61 @@ class ExpenseFormScreen extends StatefulWidget {
 }
 
 class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
-  final _expenseDb = ExpenseDb();
-  final _accountDb = AccountDb();
+  final _expenseService = ExpenseService();
+  // final _accountService = AccountService();
+  final _categoryService = CategoryService();
 
   // state
   List<AccountModel> _accountList = [];
-
+  List<CategoryModel> _categoryList = [];
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
   int? _accountId;
+  int? _categoryId;
 
   // method
   Future _getAccountList() async {
-    final res = await _accountDb.getAccountList(type: '1,2,3');
+    // final res = await _accountService.getAccountList(type: '1,2,3');
+    // setState(() {
+    //   _accountList = res;
+    // });
+  }
+
+  Future _getCategoryList() async {
+    final res = await _categoryService.getCategoryList(categoryTypeId: 1);
     setState(() {
-      _accountList = res;
+      _categoryList = res;
     });
   }
 
   Future _createExpense() async {
-    await _expenseDb.createExpense(
+    await _expenseService.createExpense(
       amount: double.parse(_amountController.text),
       note: _noteController.text,
       accountId: _accountId!,
+      categoryId: _categoryId!,
     );
   }
 
-  String _getAccountName(int id) {
+  String _getAccountName() {
     try {
       return _accountList
-          .firstWhere((element) => element.id == id)
+          .firstWhere((element) => element.id == _accountId)
           .name
           .toString();
     } catch (e) {
-      return 'ระบุ';
+      return 'เลือก';
+    }
+  }
+
+  String _getCategoryName() {
+    try {
+      return _categoryList
+          .firstWhere((element) => element.id == _categoryId)
+          .name
+          .toString();
+    } catch (e) {
+      return 'เลือก';
     }
   }
 
@@ -62,6 +85,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
     super.initState();
 
     _getAccountList();
+    _getCategoryList();
   }
 
   @override
@@ -82,7 +106,9 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
                 ),
                 GestureDetector(
                   onTap: () async {
-                    if (_amountController.text.isEmpty || _accountId == null) {
+                    if (_amountController.text.isEmpty ||
+                        _accountId == null ||
+                        _categoryId == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('กรุณากรอกข้อมูลให้ครบถ้วน'),
@@ -195,7 +221,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
                                     onTab: (account) {
                                       Navigator.pop(context);
                                       setState(() {
-                                        _accountId = account.id!;
+                                        _accountId = account.id;
                                       });
                                     },
                                   ),
@@ -208,7 +234,73 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text(_getAccountName(_accountId ?? -1)),
+                          Text(_getAccountName()),
+                          const Icon(Icons.chevron_right),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            const Divider(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Row(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 14.0),
+                    child: Text('หมวดหมู่'),
+                  ),
+                  const SizedBox(width: 20.0),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () async {
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (context) {
+                            return Column(
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsets.all(16.0),
+                                  child: Center(
+                                    child: Text(
+                                      'เลือกหมวดหมู่',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: ListView.separated(
+                                      itemBuilder: (itemContext, index) {
+                                        return ListTile(
+                                          title:
+                                              Text(_categoryList[index].name!),
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                            setState(() {
+                                              _categoryId =
+                                                  _categoryList[index].id;
+                                            });
+                                          },
+                                        );
+                                      },
+                                      separatorBuilder: (context, index) {
+                                        return const Divider(height: 1.0);
+                                      },
+                                      itemCount: _categoryList.length),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(_getCategoryName()),
                           const Icon(Icons.chevron_right),
                         ],
                       ),
