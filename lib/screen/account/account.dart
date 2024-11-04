@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_wallet/screen/transaction/expense_form.dart';
 import 'package:flutter_wallet/screen/transaction/income_form.dart';
-import 'package:flutter_wallet/screen/transaction/list.dart';
+import 'package:flutter_wallet/screen/transaction/transaction_list.dart';
 import 'package:flutter_wallet/screen/transaction/transfer_form.dart';
 import 'package:flutter_wallet/service/account_service.dart';
 import 'package:flutter_wallet/model/account_model.dart';
@@ -180,14 +180,15 @@ class _AccountScreenState extends State<AccountScreen> {
                 return snapshot.data!.isEmpty
                     ? const Center(child: Text("ไม่พบบัญชี"))
                     : AccountList(
-                        accountList: snapshot.data!,
+                        accountList: snapshot.data ?? [],
                         onTab: (account) {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) {
                                 return TransactionListScreen(
-                                    accountId: account.id);
+                                  accountId: account.id,
+                                );
                               },
                             ),
                           );

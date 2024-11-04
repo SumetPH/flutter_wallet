@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_wallet/data/service/account_service.dart';
-import 'package:flutter_wallet/data/service/category_service.dart';
-import 'package:flutter_wallet/data/service/expense_service.dart';
+import 'package:flutter_wallet/service/category_service.dart';
 import 'package:flutter_wallet/model/account_model.dart';
 import 'package:flutter_wallet/model/category_model.dart';
+import 'package:flutter_wallet/service/account_service.dart';
+import 'package:flutter_wallet/service/expense_service.dart';
 import 'package:flutter_wallet/widget/account_list.dart';
 
 enum ExpenseFormMode { create, edit }
@@ -23,7 +23,7 @@ class ExpenseFormScreen extends StatefulWidget {
 
 class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
   final _expenseService = ExpenseService();
-  // final _accountService = AccountService();
+  final _accountService = AccountService();
   final _categoryService = CategoryService();
 
   // state
@@ -36,10 +36,10 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
 
   // method
   Future _getAccountList() async {
-    // final res = await _accountService.getAccountList(type: '1,2,3');
-    // setState(() {
-    //   _accountList = res;
-    // });
+    final res = await _accountService.getAccountList(type: [1, 2, 3]);
+    setState(() {
+      _accountList = res;
+    });
   }
 
   Future _getCategoryList() async {
@@ -52,9 +52,9 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
   Future _createExpense() async {
     await _expenseService.createExpense(
       amount: double.parse(_amountController.text),
-      note: _noteController.text,
       accountId: _accountId!,
       categoryId: _categoryId!,
+      note: _noteController.text,
     );
   }
 

@@ -1,27 +1,32 @@
 class CategoryModel {
-  int id;
+  int? id;
   String? name;
   int? categoryTypeId;
+  String? createdAt;
+  String? updatedAt;
 
-  CategoryModel({
-    required this.id,
-    this.name,
-    this.categoryTypeId,
-  });
+  CategoryModel(
+      {this.id,
+      this.name,
+      this.categoryTypeId,
+      this.createdAt,
+      this.updatedAt});
 
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'name': name,
-      'category_type_id': categoryTypeId,
-    };
+  CategoryModel.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    categoryTypeId = json['category_type_id'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
   }
 
-  factory CategoryModel.fromMap(Map<String, dynamic> map) {
-    return CategoryModel(
-      id: map['id'],
-      name: map['name'],
-      categoryTypeId: map['category_type_id'],
-    );
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['name'] = name;
+    data['category_type_id'] = categoryTypeId;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    return data;
   }
 }

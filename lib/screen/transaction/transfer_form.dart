@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_wallet/data/service/account_service.dart';
-import 'package:flutter_wallet/data/service/transfer_service.dart';
+import 'package:flutter_wallet/service/account_service.dart';
+import 'package:flutter_wallet/service/transfer_service.dart';
 import 'package:flutter_wallet/model/account_model.dart';
 import 'package:flutter_wallet/widget/account_list.dart';
 
@@ -20,8 +20,8 @@ class TransferFormScreen extends StatefulWidget {
 }
 
 class _TransferFormScreenState extends State<TransferFormScreen> {
-  final _transferService = TransferDb();
-  // final _accountService = AccountService();
+  final _transferService = TransferService();
+  final _accountService = AccountService();
 
   // state
   List<AccountModel> _accountList = [];
@@ -33,10 +33,10 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
 
   // method
   Future _getAccountList() async {
-    // final res = await _accountService.getAccountList(type: '1,2');
-    // setState(() {
-    //   _accountList = res;
-    // });
+    final res = await _accountService.getAccountList(type: [1, 2]);
+    setState(() {
+      _accountList = res;
+    });
   }
 
   Future _createTransfer() async {
@@ -48,14 +48,14 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
     );
   }
 
-  String _getAccountName(int id) {
+  String _getAccountName(int? id) {
     try {
       return _accountList
           .firstWhere((element) => element.id == id)
           .name
           .toString();
     } catch (e) {
-      return 'ระบุ';
+      return 'เลือก';
     }
   }
 
@@ -214,7 +214,7 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text(_getAccountName(_accountIdFrom ?? -1)),
+                          Text(_getAccountName(_accountIdFrom)),
                           const Icon(Icons.chevron_right),
                         ],
                       ),
@@ -274,7 +274,7 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text(_getAccountName(_accountIdTo ?? -1)),
+                          Text(_getAccountName(_accountIdTo)),
                           const Icon(Icons.chevron_right),
                         ],
                       ),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_wallet/data/service/account_service.dart';
-import 'package:flutter_wallet/data/service/category_service.dart';
-import 'package:flutter_wallet/data/service/income_service.dart';
+import 'package:flutter_wallet/service/account_service.dart';
+import 'package:flutter_wallet/service/category_service.dart';
+import 'package:flutter_wallet/service/income_service.dart';
 import 'package:flutter_wallet/model/account_model.dart';
 import 'package:flutter_wallet/model/category_model.dart';
 import 'package:flutter_wallet/widget/account_list.dart';
@@ -23,7 +23,7 @@ class IncomeFormScreen extends StatefulWidget {
 
 class _ExpenseFormScreenState extends State<IncomeFormScreen> {
   final _incomeService = IncomeService();
-  // final _accountService = AccountService();
+  final _accountService = AccountService();
   final _categoryService = CategoryService();
 
   // state
@@ -36,10 +36,10 @@ class _ExpenseFormScreenState extends State<IncomeFormScreen> {
 
   // method
   Future _getAccountList() async {
-    // final res = await _accountService.getAccountList(type: '1,2');
-    // setState(() {
-    //   _accountList = res;
-    // });
+    final res = await _accountService.getAccountList(type: [1, 2]);
+    setState(() {
+      _accountList = res;
+    });
   }
 
   Future _getCategoryList() async {
@@ -49,12 +49,12 @@ class _ExpenseFormScreenState extends State<IncomeFormScreen> {
     });
   }
 
-  Future _createExpense() async {
+  Future _createIncome() async {
     await _incomeService.createIncome(
       amount: double.parse(_amountController.text),
-      note: _noteController.text,
       accountId: _accountId!,
       categoryId: _categoryId!,
+      note: _noteController.text,
     );
   }
 
@@ -114,7 +114,7 @@ class _ExpenseFormScreenState extends State<IncomeFormScreen> {
                       );
                     } else {
                       if (widget.mode == IncomeFormMode.create) {
-                        await _createExpense();
+                        await _createIncome();
                       }
                       Navigator.pop(context);
                     }

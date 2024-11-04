@@ -20,9 +20,9 @@ class AccountService {
       );
 
       if (res.statusCode == 200) {
-        List<dynamic> list = jsonDecode(utf8.decode(res.bodyBytes));
-        final accountList = list.map((e) => AccountModel.fromJson(e)).toList();
-        return accountList;
+        List<dynamic> decode = jsonDecode(utf8.decode(res.bodyBytes));
+        final list = decode.map((e) => AccountModel.fromJson(e)).toList();
+        return list;
       } else {
         throw Exception(res.body);
       }

@@ -7,14 +7,12 @@ class TransactionList extends StatelessWidget {
   final List<TransactionModel> transactionList;
   final Function(TransactionModel transaction)? onTab;
   final Function(TransactionModel transaction)? onLongPress;
-  // final int? disabledAccountId;
 
   const TransactionList({
     super.key,
     required this.transactionList,
     this.onTab,
     this.onLongPress,
-    // this.disabledAccountId,
   });
 
   Color? _ColorAmount(int transactionTypeId) {
@@ -100,7 +98,7 @@ class TransactionList extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              element.transactionTypeName,
+                              element.transactionTypeName ?? '',
                               style: const TextStyle(
                                 fontSize: 16.0,
                                 fontWeight: FontWeight.bold,
@@ -119,7 +117,7 @@ class TransactionList extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              element.transactionTypeName,
+                              element.transactionTypeName ?? "",
                               style: const TextStyle(
                                 fontSize: 16.0,
                                 fontWeight: FontWeight.bold,
@@ -145,11 +143,11 @@ class TransactionList extends StatelessWidget {
                           ],
                         ),
                       Text(
-                        '${NumberUtils.formatNumber(double.parse(element.amount))} บาท',
+                        '${NumberUtils.formatNumber(double.parse(element.amount ?? '0'))} บาท',
                         style: TextStyle(
                           fontSize: 18.0,
                           fontWeight: FontWeight.bold,
-                          color: _ColorAmount(element.transactionTypeId),
+                          color: _ColorAmount(element.transactionTypeId!),
                         ),
                       ),
                     ],
