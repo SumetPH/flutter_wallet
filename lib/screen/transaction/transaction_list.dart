@@ -18,22 +18,6 @@ class TransactionListScreen extends StatefulWidget {
 
 class TransactionListScreenState extends State<TransactionListScreen> {
   final _transactionService = TransactionService();
-  // List<TransactionModel> _transactionList = [];
-
-  // method
-  // _getTransactionList() async {
-  //   final res = await _transactionService.getTransactionList(
-  //     accountId: widget.accountId,
-  //   );
-  //   setState(() {
-  //     _transactionList = res;
-  //   });
-  // }
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -47,11 +31,17 @@ class TransactionListScreenState extends State<TransactionListScreen> {
                 GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTap: () {
-                    Navigator.pop(context);
+                    if (widget.accountId != null) {
+                      Navigator.pop(context);
+                    } else {
+                      Scaffold.of(context).openDrawer();
+                    }
                   },
-                  child: const Padding(
-                    padding: EdgeInsets.all(12.0),
-                    child: Icon(Icons.chevron_left),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: widget.accountId != null
+                        ? const Icon(Icons.chevron_left)
+                        : const Icon(Icons.menu),
                   ),
                 ),
               ],

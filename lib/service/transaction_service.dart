@@ -11,7 +11,6 @@ class TransactionService {
     int? accountId,
   }) async {
     try {
-      print(accountId);
       final res = await http.get(
         Uri.parse(
             '$apiUrl/transaction/transaction-list?accountId=${accountId ?? ''}'),
@@ -27,6 +26,40 @@ class TransactionService {
     } catch (e) {
       print(e);
       throw Exception(e);
+    }
+  }
+
+  Future<bool> creteTransaction({
+    required double amount,
+    required int accountId,
+    required int categoryId,
+    required int transactionTypeId,
+    required String date,
+    required String time,
+    String? note,
+  }) async {
+    try {
+      final res = await http.post(
+        Uri.parse('$apiUrl/transaction/transaction-create'),
+        body: jsonEncode({
+          'amount': amount,
+          'accountId': accountId,
+          'categoryId': categoryId,
+          'transactionTypeId': transactionTypeId,
+          'date': date,
+          'time': time,
+          'note': note,
+        }),
+      );
+
+      if (res.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception(res.body);
+      }
+    } catch (e) {
+      print(e);
+      return false;
     }
   }
 }

@@ -15,13 +15,25 @@ class TransactionList extends StatelessWidget {
     this.onLongPress,
   });
 
-  Color? _ColorAmount(int transactionTypeId) {
+  Color? _colorAmount(int transactionTypeId) {
     if (transactionTypeId == 1) {
-      return Colors.green[600];
-    } else if (transactionTypeId == 2) {
       return Colors.red[600];
+    } else if (transactionTypeId == 2) {
+      return Colors.green[600];
     } else {
       return Colors.black;
+    }
+  }
+
+  Icon _getIcon({int? transactionTypeId}) {
+    if (transactionTypeId == 1) {
+      return const Icon(Icons.remove);
+    } else if (transactionTypeId == 2) {
+      return const Icon(Icons.add);
+    } else if (transactionTypeId == 3) {
+      return const Icon(Icons.sync);
+    } else {
+      return const Icon(Icons.money);
     }
   }
 
@@ -36,10 +48,6 @@ class TransactionList extends StatelessWidget {
       ),
       useStickyGroupSeparators: true,
       groupHeaderBuilder: (value) {
-        // final sum = accountList
-        //     .where((a) => a.accountTypeId == value.accountTypeId)
-        //     .map((a) => a.balance!)
-        //     .reduce((a, b) => a + b);
         return Container(
           color: Colors.grey[200],
           child: Padding(
@@ -54,15 +62,6 @@ class TransactionList extends StatelessWidget {
                   value.date!,
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
-                // Text(
-                //   '${NumberUtils.formatNumber(double.parse(sum))} บาท',
-                //   style: TextStyle(
-                //     fontWeight: FontWeight.bold,
-                //     color: double.parse(sum) >= 0
-                //         ? Colors.green[600]
-                //         : Colors.red[600],
-                //   ),
-                // ),
               ],
             ),
           ),
@@ -85,8 +84,8 @@ class TransactionList extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const CircleAvatar(
-                child: Icon(Icons.wallet),
+              CircleAvatar(
+                child: _getIcon(transactionTypeId: element.transactionTypeId),
               ),
               Expanded(
                 child: Padding(
@@ -94,8 +93,10 @@ class TransactionList extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // transaction
                       if ([1, 2].contains(element.transactionTypeId))
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
                               element.transactionTypeName ?? '',
@@ -105,14 +106,35 @@ class TransactionList extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(width: 8.0),
+                            if (element.transactionTypeId == 1)
+                              Text(
+                                element.accountExpenseName ?? "",
+                                style: const TextStyle(
+                                  fontSize: 16.0,
+                                ),
+                              ),
+                            if (element.transactionTypeId == 2)
+                              Text(
+                                element.accountIncomeName ?? "",
+                                style: const TextStyle(
+                                  fontSize: 16.0,
+                                ),
+                              ),
+                            const SizedBox(width: 8.0),
                             Text(
                               element.categoryName ?? "",
                               style: const TextStyle(
                                 fontSize: 16.0,
                               ),
                             ),
+                            const SizedBox(width: 8.0),
+                            Text(
+                              element.time ?? "",
+                              style: TextStyle(color: Colors.grey[700]),
+                            ),
                           ],
                         ),
+                      // transfer
                       if ([3].contains(element.transactionTypeId))
                         Row(
                           children: [
@@ -140,6 +162,11 @@ class TransactionList extends StatelessWidget {
                                 fontSize: 16.0,
                               ),
                             ),
+                            const SizedBox(width: 8.0),
+                            Text(
+                              element.time ?? "",
+                              style: TextStyle(color: Colors.grey[700]),
+                            ),
                           ],
                         ),
                       Text(
@@ -147,7 +174,7 @@ class TransactionList extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 18.0,
                           fontWeight: FontWeight.bold,
-                          color: _ColorAmount(element.transactionTypeId!),
+                          color: _colorAmount(element.transactionTypeId!),
                         ),
                       ),
                     ],

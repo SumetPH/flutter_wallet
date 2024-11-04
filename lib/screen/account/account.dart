@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_wallet/screen/transaction/expense_form.dart';
-import 'package:flutter_wallet/screen/transaction/income_form.dart';
+import 'package:flutter_wallet/screen/transaction/transaction_form.dart';
 import 'package:flutter_wallet/screen/transaction/transaction_list.dart';
 import 'package:flutter_wallet/screen/transaction/transfer_form.dart';
 import 'package:flutter_wallet/service/account_service.dart';
@@ -89,8 +88,8 @@ class _AccountScreenState extends State<AccountScreen> {
                           await Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) {
-                              return const ExpenseFormScreen(
-                                mode: ExpenseFormMode.create,
+                              return const TransactionFormScreen(
+                                mode: TransactionFormMode.create,
                               );
                             }),
                           );
@@ -99,31 +98,7 @@ class _AccountScreenState extends State<AccountScreen> {
                         },
                         title: const Center(
                           child: Text(
-                            "รายจ่าย",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const Divider(height: 1.0),
-                      ListTile(
-                        onTap: () async {
-                          Navigator.pop(context);
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) {
-                              return const IncomeFormScreen(
-                                mode: IncomeFormMode.create,
-                              );
-                            }),
-                          );
-                          // refresh list
-                          setState(() {});
-                        },
-                        title: const Center(
-                          child: Text(
-                            "รายรับ",
+                            "เพิ่มรายการ",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                             ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_wallet/screen/account/account.dart';
 import 'package:flutter_wallet/screen/budget/budget.dart';
+import 'package:flutter_wallet/screen/transaction/transaction_list.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -11,6 +12,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _screenList = [
+    const TransactionListScreen(),
     const AccountScreen(),
     const BudgetScreen()
   ];
@@ -31,10 +33,16 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             ListTile(
               onTap: () => changeScreen(0),
-              title: const Text("บัญชี"),
+              title: const Text("รายการ"),
             ),
+            const Divider(height: 1.0),
             ListTile(
               onTap: () => changeScreen(1),
+              title: const Text("บัญชี"),
+            ),
+            const Divider(height: 1.0),
+            ListTile(
+              onTap: () => changeScreen(2),
               title: const Text("งบประมาณ"),
             ),
           ],
