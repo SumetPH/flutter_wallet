@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_wallet/screen/transaction/transaction_form.dart';
 import 'package:flutter_wallet/screen/transaction/transaction_list.dart';
-import 'package:flutter_wallet/screen/transaction/transfer_form.dart';
 import 'package:flutter_wallet/service/account_service.dart';
 import 'package:flutter_wallet/model/account_model.dart';
 import 'package:flutter_wallet/screen/account/account_form.dart';
@@ -81,54 +79,6 @@ class _AccountScreenState extends State<AccountScreen> {
                           ),
                         ),
                       ),
-                      const Divider(height: 1.0),
-                      ListTile(
-                        onTap: () async {
-                          Navigator.pop(context);
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) {
-                              return const TransactionFormScreen(
-                                mode: TransactionFormMode.create,
-                              );
-                            }),
-                          );
-                          // refresh list
-                          setState(() {});
-                        },
-                        title: const Center(
-                          child: Text(
-                            "เพิ่มรายการ",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const Divider(height: 1.0),
-                      ListTile(
-                        onTap: () async {
-                          Navigator.pop(context);
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) {
-                              return const TransferFormScreen(
-                                mode: TransferFormMode.create,
-                              );
-                            }),
-                          );
-                          // refresh list
-                          setState(() {});
-                        },
-                        title: const Center(
-                          child: Text(
-                            "โอน",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      )
                     ],
                   ),
                 );
@@ -156,8 +106,8 @@ class _AccountScreenState extends State<AccountScreen> {
                     ? const Center(child: Text("ไม่พบบัญชี"))
                     : AccountList(
                         accountList: snapshot.data ?? [],
-                        onTab: (account) {
-                          Navigator.push(
+                        onTab: (account) async {
+                          await Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) {
@@ -167,6 +117,8 @@ class _AccountScreenState extends State<AccountScreen> {
                               },
                             ),
                           );
+                          // refresh list
+                          setState(() {});
                         },
                         onLongPress: (account) {
                           showModalBottomSheet(

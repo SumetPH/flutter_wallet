@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_wallet/service/account_service.dart';
 import 'package:flutter_wallet/service/account_type_service.dart';
 import 'package:flutter_wallet/model/account_type_model.dart';
+import 'package:flutter_wallet/utils/currency_input_formatter.dart';
 
 enum AccountFormMode { create, edit }
 
@@ -216,15 +216,7 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                         Expanded(
                           child: TextField(
                             controller: _amountController,
-                            keyboardType: const TextInputType.numberWithOptions(
-                              decimal: true,
-                              signed: true,
-                            ),
-                            inputFormatters: [
-                              FilteringTextInputFormatter.allow(
-                                RegExp(r'^-?\d*\.?\d{0,2}'),
-                              ),
-                            ],
+                            inputFormatters: [CurrencyInputFormatter()],
                             textAlign: TextAlign.end,
                             decoration: const InputDecoration(
                               border: InputBorder.none,

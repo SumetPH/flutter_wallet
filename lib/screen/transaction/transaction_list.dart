@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_wallet/screen/transaction/transaction_form.dart';
+import 'package:flutter_wallet/screen/transaction/transfer_form.dart';
 import 'package:flutter_wallet/service/transaction_service.dart';
 import 'package:flutter_wallet/widget/transaction_list.dart';
 
@@ -42,6 +44,80 @@ class TransactionListScreenState extends State<TransactionListScreen> {
                     child: widget.accountId != null
                         ? const Icon(Icons.chevron_left)
                         : const Icon(Icons.menu),
+                  ),
+                ),
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () {
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (context) => Column(
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Center(
+                              child: Text(
+                                'เมนู',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                          ListTile(
+                            onTap: () async {
+                              Navigator.pop(context);
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) {
+                                  return const TransactionFormScreen(
+                                    mode: TransactionFormMode.create,
+                                  );
+                                }),
+                              );
+                              // refresh list
+                              setState(() {});
+                            },
+                            title: const Center(
+                              child: Text(
+                                "เพิ่มรายการ",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const Divider(height: 1.0),
+                          ListTile(
+                            onTap: () async {
+                              Navigator.pop(context);
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) {
+                                  return const TransferFormScreen(
+                                    mode: TransferFormMode.create,
+                                  );
+                                }),
+                              );
+                              // refresh list
+                              setState(() {});
+                            },
+                            title: const Center(
+                              child: Text(
+                                "โอน",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    );
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.all(12.0),
+                    child: Icon(Icons.more_vert),
                   ),
                 ),
               ],
