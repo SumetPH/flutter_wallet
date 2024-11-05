@@ -10,6 +10,8 @@ class TransferService {
     required double amount,
     required int accountIdFrom,
     required int accountIdTo,
+    required String date,
+    required String time,
     String? note,
   }) async {
     try {
@@ -20,6 +22,8 @@ class TransferService {
           'note': note,
           'accountIdFrom': accountIdFrom,
           'accountIdTo': accountIdTo,
+          'date': date,
+          'time': time,
         }),
       );
 

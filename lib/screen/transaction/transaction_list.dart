@@ -21,6 +21,27 @@ class TransactionListScreen extends StatefulWidget {
 class TransactionListScreenState extends State<TransactionListScreen> {
   final _transactionService = TransactionService();
 
+  Future _deleteTransaction({
+    required int transactionId,
+    required BuildContext context,
+  }) async {
+    try {
+      final res = await _transactionService.deleteTransaction(
+        transactionId: transactionId,
+      );
+      if (res) {
+        Navigator.pop(context);
+        setState(() {});
+      } else {
+        throw Exception('ไม่สามารถลบข้อมูลได้');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('ไม่สามารถลบข้อมูลได้'),
+      ));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -141,6 +162,77 @@ class TransactionListScreenState extends State<TransactionListScreen> {
                     } else {
                       return TransactionList(
                         transactionList: snapshot.data ?? [],
+                        onLongPress: (transaction) {
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (context) {
+                              return Column(
+                                children: [
+                                  const Padding(
+                                    padding: EdgeInsets.all(16.0),
+                                    child: Center(
+                                      child: Text(
+                                        'เมนู',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  ListTile(
+                                    onTap: () async {
+                                      Navigator.pop(context);
+                                      if ([1, 2].contains(
+                                        transaction.transactionTypeId,
+                                      )) {
+                                        await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(builder: (context) {
+                                            return TransactionFormScreen(
+                                              mode: TransactionFormMode.edit,
+                                              transactionId: transaction.id,
+                                            );
+                                          }),
+                                        );
+                                      }
+                                      // refresh list
+                                      setState(() {});
+                                    },
+                                    title: const Center(
+                                      child: Text(
+                                        "แก้ไข",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const Divider(height: 1.0),
+                                  ListTile(
+                                    onTap: () async {
+                                      if ([1, 2].contains(
+                                        transaction.transactionTypeId,
+                                      )) {
+                                        await _deleteTransaction(
+                                          transactionId: transaction.id!,
+                                          context: context,
+                                        );
+                                      }
+                                    },
+                                    title: const Center(
+                                      child: Text(
+                                        "ลบ",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
                       );
                     }
                   } else {

@@ -5,12 +5,13 @@ class CategoryModel {
   String? createdAt;
   String? updatedAt;
 
-  CategoryModel(
-      {this.id,
-      this.name,
-      this.categoryTypeId,
-      this.createdAt,
-      this.updatedAt});
+  CategoryModel({
+    this.id,
+    this.name,
+    this.categoryTypeId,
+    this.createdAt,
+    this.updatedAt,
+  });
 
   CategoryModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];

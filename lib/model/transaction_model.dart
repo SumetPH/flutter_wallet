@@ -16,23 +16,24 @@ class TransactionModel {
   String? date;
   String? time;
 
-  TransactionModel(
-      {this.id,
-      this.amount,
-      this.transactionTypeId,
-      this.transactionTypeName,
-      this.categoryId,
-      this.categoryName,
-      this.accountExpenseId,
-      this.accountExpenseName,
-      this.accountIncomeId,
-      this.accountIncomeName,
-      this.accountTransferFromId,
-      this.accountTransferFromName,
-      this.accountTransferToId,
-      this.accountTransferToName,
-      this.date,
-      this.time});
+  TransactionModel({
+    this.id,
+    this.amount,
+    this.transactionTypeId,
+    this.transactionTypeName,
+    this.categoryId,
+    this.categoryName,
+    this.accountExpenseId,
+    this.accountExpenseName,
+    this.accountIncomeId,
+    this.accountIncomeName,
+    this.accountTransferFromId,
+    this.accountTransferFromName,
+    this.accountTransferToId,
+    this.accountTransferToName,
+    this.date,
+    this.time,
+  });
 
   TransactionModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];

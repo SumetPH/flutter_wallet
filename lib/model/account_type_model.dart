@@ -4,7 +4,12 @@ class AccountTypeModel {
   String? createdAt;
   String? updatedAt;
 
-  AccountTypeModel({this.id, this.name, this.createdAt, this.updatedAt});
+  AccountTypeModel({
+    this.id,
+    this.name,
+    this.createdAt,
+    this.updatedAt,
+  });
 
   AccountTypeModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
