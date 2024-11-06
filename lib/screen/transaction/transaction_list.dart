@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_wallet/screen/transaction/transaction_form.dart';
 import 'package:flutter_wallet/screen/transaction/transfer_form.dart';
 import 'package:flutter_wallet/service/transaction_service.dart';
+import 'package:flutter_wallet/service/transfer_service.dart';
 import 'package:flutter_wallet/widget/transaction_list.dart';
 
 class TransactionListScreen extends StatefulWidget {
@@ -20,6 +21,7 @@ class TransactionListScreen extends StatefulWidget {
 
 class TransactionListScreenState extends State<TransactionListScreen> {
   final _transactionService = TransactionService();
+  final _transferService = TransferService();
 
   Future _deleteTransaction({
     required int transactionId,
@@ -27,6 +29,27 @@ class TransactionListScreenState extends State<TransactionListScreen> {
   }) async {
     try {
       final res = await _transactionService.deleteTransaction(
+        transactionId: transactionId,
+      );
+      if (res) {
+        Navigator.pop(context);
+        setState(() {});
+      } else {
+        throw Exception('ไม่สามารถลบข้อมูลได้');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('ไม่สามารถลบข้อมูลได้'),
+      ));
+    }
+  }
+
+  Future _deleteTransfer({
+    required int transactionId,
+    required BuildContext context,
+  }) async {
+    try {
+      final res = await _transferService.deleteTransfer(
         transactionId: transactionId,
       );
       if (res) {
@@ -182,6 +205,7 @@ class TransactionListScreenState extends State<TransactionListScreen> {
                                   ListTile(
                                     onTap: () async {
                                       Navigator.pop(context);
+                                      // edit transaction
                                       if ([1, 2].contains(
                                         transaction.transactionTypeId,
                                       )) {
@@ -190,6 +214,19 @@ class TransactionListScreenState extends State<TransactionListScreen> {
                                           MaterialPageRoute(builder: (context) {
                                             return TransactionFormScreen(
                                               mode: TransactionFormMode.edit,
+                                              transactionId: transaction.id,
+                                            );
+                                          }),
+                                        );
+                                      }
+                                      if ([3].contains(
+                                        transaction.transactionTypeId,
+                                      )) {
+                                        await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(builder: (context) {
+                                            return TransferFormScreen(
+                                              mode: TransferFormMode.edit,
                                               transactionId: transaction.id,
                                             );
                                           }),
@@ -210,10 +247,20 @@ class TransactionListScreenState extends State<TransactionListScreen> {
                                   const Divider(height: 1.0),
                                   ListTile(
                                     onTap: () async {
+                                      // delete transaction
                                       if ([1, 2].contains(
                                         transaction.transactionTypeId,
                                       )) {
                                         await _deleteTransaction(
+                                          transactionId: transaction.id!,
+                                          context: context,
+                                        );
+                                      }
+                                      // delete transfer
+                                      if ([3].contains(
+                                        transaction.transactionTypeId,
+                                      )) {
+                                        await _deleteTransfer(
                                           transactionId: transaction.id!,
                                           context: context,
                                         );

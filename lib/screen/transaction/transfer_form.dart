@@ -10,10 +10,12 @@ enum TransferFormMode { create, edit }
 
 class TransferFormScreen extends StatefulWidget {
   final TransferFormMode mode;
+  final int? transactionId;
 
   const TransferFormScreen({
     super.key,
     required this.mode,
+    this.transactionId,
   });
 
   @override
@@ -43,20 +45,63 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
     });
   }
 
-  Future _createTransfer({required BuildContext context}) async {
+  Future _getTransferDetail({required int transactionId}) async {
     try {
       setState(() {
         _isLoading = true;
       });
 
-      final res = await _transferService.createTransfer(
-        amount: double.parse(_amountController.text),
-        note: _noteController.text,
-        accountIdFrom: _accountIdFrom!,
-        accountIdTo: _accountIdTo!,
-        date: TimeUtils.dateString(dateTime: _date),
-        time: TimeUtils.timeOfDayToString(time: _time),
-      );
+      final res = await _transferService.getTransferDetail(
+          transactionId: transactionId);
+
+      setState(() {
+        _isLoading = false;
+        _amountController.text = res.amount.toString();
+        _accountIdFrom = res.accountIdFrom;
+        _accountIdTo = res.accountIdTo;
+        _noteController.text = res.note ?? '';
+        _date = DateTime.parse(res.date!);
+        _time = TimeUtils.timeOfDayFromString(time: res.time!);
+      });
+
+      await _getAccountList();
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+
+      Navigator.pop(context);
+    }
+  }
+
+  Future _createOrUpdateTransfer({required BuildContext context}) async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+
+      bool res = false;
+
+      if (widget.mode == TransferFormMode.create) {
+        res = await _transferService.createTransfer(
+          amount: double.parse(_amountController.text),
+          note: _noteController.text,
+          accountIdFrom: _accountIdFrom!,
+          accountIdTo: _accountIdTo!,
+          date: TimeUtils.dateString(dateTime: _date),
+          time: TimeUtils.timeOfDayToString(time: _time),
+        );
+      } else {
+        res = await _transferService.updateTransfer(
+          transactionId: widget.transactionId!,
+          amount: double.parse(_amountController.text),
+          note: _noteController.text,
+          accountIdFrom: _accountIdFrom!,
+          accountIdTo: _accountIdTo!,
+          date: TimeUtils.dateString(dateTime: _date),
+          time: TimeUtils.timeOfDayToString(time: _time),
+        );
+      }
 
       if (res) {
         setState(() {
@@ -90,7 +135,12 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
   @override
   void initState() {
     super.initState();
-    _getAccountList();
+
+    if (widget.mode == TransferFormMode.edit) {
+      _getTransferDetail(transactionId: widget.transactionId!);
+    } else {
+      _getAccountList();
+    }
   }
 
   @override
@@ -123,9 +173,7 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
                                 ),
                               );
                             } else {
-                              if (widget.mode == TransferFormMode.create) {
-                                await _createTransfer(context: context);
-                              }
+                              await _createOrUpdateTransfer(context: context);
                             }
                           },
                           child: const Padding(
