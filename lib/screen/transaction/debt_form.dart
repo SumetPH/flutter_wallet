@@ -1,29 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_wallet/service/account_service.dart';
-import 'package:flutter_wallet/service/transfer_service.dart';
+import 'package:flutter_wallet/service/debt_service.dart';
 import 'package:flutter_wallet/model/account_model.dart';
 import 'package:flutter_wallet/utils/time_utils.dart';
 import 'package:flutter_wallet/widget/account_list.dart';
 
-enum TransferFormMode { create, edit }
+enum DebtFormMode { create, edit }
 
-class TransferFormScreen extends StatefulWidget {
-  final TransferFormMode mode;
+class DebtFormScreen extends StatefulWidget {
+  final DebtFormMode mode;
   final int? transactionId;
 
-  const TransferFormScreen({
+  const DebtFormScreen({
     super.key,
     required this.mode,
     this.transactionId,
   });
 
   @override
-  State<TransferFormScreen> createState() => _TransferFormScreenState();
+  State<DebtFormScreen> createState() => DebtFormScreenState();
 }
 
-class _TransferFormScreenState extends State<TransferFormScreen> {
-  final _transferService = TransferService();
+class DebtFormScreenState extends State<DebtFormScreen> {
+  final _debtService = DebtService();
   final _accountService = AccountService();
 
   // state
@@ -39,20 +39,21 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
 
   // method
   Future _getAccountList() async {
-    final res = await _accountService.getAccountList(type: [1, 2]);
+    final res = await _accountService.getAccountList();
     setState(() {
       _accountList = res;
     });
   }
 
-  Future _getTransferDetail({required int transactionId}) async {
+  Future _getDebtDetail({required int transactionId}) async {
     try {
       setState(() {
         _isLoading = true;
       });
 
-      final res = await _transferService.getTransferDetail(
-          transactionId: transactionId);
+      final res = await _debtService.getDebtDetail(
+        transactionId: transactionId,
+      );
 
       setState(() {
         _isLoading = false;
@@ -74,7 +75,7 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
     }
   }
 
-  Future _createOrUpdateTransfer({required BuildContext context}) async {
+  Future _createOrUpdateDebt({required BuildContext context}) async {
     try {
       setState(() {
         _isLoading = true;
@@ -82,8 +83,8 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
 
       bool res = false;
 
-      if (widget.mode == TransferFormMode.create) {
-        res = await _transferService.createTransfer(
+      if (widget.mode == DebtFormMode.create) {
+        res = await _debtService.createDebt(
           amount: double.parse(_amountController.text),
           note: _noteController.text,
           accountIdFrom: _accountIdFrom!,
@@ -92,7 +93,7 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
           time: TimeUtils.timeOfDayToString(time: _time),
         );
       } else {
-        res = await _transferService.updateTransfer(
+        res = await _debtService.updateDebt(
           transactionId: widget.transactionId!,
           amount: double.parse(_amountController.text),
           note: _noteController.text,
@@ -136,8 +137,8 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
   void initState() {
     super.initState();
 
-    if (widget.mode == TransferFormMode.edit) {
-      _getTransferDetail(transactionId: widget.transactionId!);
+    if (widget.mode == DebtFormMode.edit) {
+      _getDebtDetail(transactionId: widget.transactionId!);
     } else {
       _getAccountList();
     }
@@ -173,7 +174,7 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
                                 ),
                               );
                             } else {
-                              await _createOrUpdateTransfer(context: context);
+                              await _createOrUpdateDebt(context: context);
                             }
                           },
                           child: const Padding(
@@ -220,7 +221,7 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
                         children: [
                           const Padding(
                             padding: EdgeInsets.symmetric(vertical: 14.0),
-                            child: Text('บัญชีต้นทาง'),
+                            child: Text('บัญชี'),
                           ),
                           const SizedBox(width: 20.0),
                           Expanded(
@@ -244,7 +245,10 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
                                         ),
                                         Expanded(
                                           child: AccountList(
-                                            accountList: _accountList,
+                                            accountList: _accountList
+                                                .where((el) => [1, 2, 3]
+                                                    .contains(el.accountTypeId))
+                                                .toList(),
                                             disabledAccountId: _accountIdTo,
                                             onTab: (account) {
                                               if (account.id != _accountIdTo) {
@@ -280,7 +284,7 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
                         children: [
                           const Padding(
                             padding: EdgeInsets.symmetric(vertical: 14.0),
-                            child: Text('บัญชีปลายทาง'),
+                            child: Text('บัญชีหนี้สิน'),
                           ),
                           const SizedBox(width: 20.0),
                           Expanded(
@@ -304,7 +308,10 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
                                         ),
                                         Expanded(
                                           child: AccountList(
-                                            accountList: _accountList,
+                                            accountList: _accountList
+                                                .where((el) => [3, 4]
+                                                    .contains(el.accountTypeId))
+                                                .toList(),
                                             disabledAccountId: _accountIdFrom,
                                             onTab: (account) {
                                               if (account.id !=

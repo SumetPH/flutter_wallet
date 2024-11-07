@@ -32,6 +32,8 @@ class TransactionList extends StatelessWidget {
       return const Icon(Icons.add);
     } else if (transactionTypeId == 3) {
       return const Icon(Icons.sync);
+    } else if (transactionTypeId == 4) {
+      return const Icon(Icons.credit_score);
     } else {
       return const Icon(Icons.money);
     }
@@ -108,14 +110,14 @@ class TransactionList extends StatelessWidget {
                             const SizedBox(width: 8.0),
                             if (element.transactionTypeId == 1)
                               Text(
-                                element.accountExpenseName ?? "",
+                                element.expenseAccountName ?? "",
                                 style: const TextStyle(
                                   fontSize: 16.0,
                                 ),
                               ),
                             if (element.transactionTypeId == 2)
                               Text(
-                                element.accountIncomeName ?? "",
+                                element.incomeAccountName ?? "",
                                 style: const TextStyle(
                                   fontSize: 16.0,
                                 ),
@@ -147,7 +149,7 @@ class TransactionList extends StatelessWidget {
                             ),
                             const SizedBox(width: 8.0),
                             Text(
-                              element.accountTransferFromName ?? "",
+                              element.transferAccountNameFrom ?? "",
                               style: const TextStyle(
                                 fontSize: 16.0,
                               ),
@@ -157,7 +159,42 @@ class TransactionList extends StatelessWidget {
                               child: Icon(Icons.arrow_right_alt),
                             ),
                             Text(
-                              element.accountTransferToName ?? "",
+                              element.transferAccountNameTo ?? "",
+                              style: const TextStyle(
+                                fontSize: 16.0,
+                              ),
+                            ),
+                            const SizedBox(width: 8.0),
+                            Text(
+                              element.time ?? "",
+                              style: TextStyle(color: Colors.grey[700]),
+                            ),
+                          ],
+                        ),
+                      // debt
+                      if ([4].contains(element.transactionTypeId))
+                        Row(
+                          children: [
+                            Text(
+                              element.transactionTypeName ?? "",
+                              style: const TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(width: 8.0),
+                            Text(
+                              element.debtAccountNameFrom ?? "",
+                              style: const TextStyle(
+                                fontSize: 16.0,
+                              ),
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 4.0),
+                              child: Icon(Icons.arrow_right_alt),
+                            ),
+                            Text(
+                              element.debtAccountNameTo ?? "",
                               style: const TextStyle(
                                 fontSize: 16.0,
                               ),

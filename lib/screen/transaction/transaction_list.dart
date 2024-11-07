@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_wallet/screen/transaction/debt_form.dart';
 import 'package:flutter_wallet/screen/transaction/transaction_form.dart';
 import 'package:flutter_wallet/screen/transaction/transfer_form.dart';
+import 'package:flutter_wallet/service/debt_service.dart';
 import 'package:flutter_wallet/service/transaction_service.dart';
 import 'package:flutter_wallet/service/transfer_service.dart';
 import 'package:flutter_wallet/widget/transaction_list.dart';
@@ -22,6 +24,7 @@ class TransactionListScreen extends StatefulWidget {
 class TransactionListScreenState extends State<TransactionListScreen> {
   final _transactionService = TransactionService();
   final _transferService = TransferService();
+  final _debtService = DebtService();
 
   Future _deleteTransaction({
     required int transactionId,
@@ -50,6 +53,27 @@ class TransactionListScreenState extends State<TransactionListScreen> {
   }) async {
     try {
       final res = await _transferService.deleteTransfer(
+        transactionId: transactionId,
+      );
+      if (res) {
+        Navigator.pop(context);
+        setState(() {});
+      } else {
+        throw Exception('ไม่สามารถลบข้อมูลได้');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('ไม่สามารถลบข้อมูลได้'),
+      ));
+    }
+  }
+
+  Future _deleteDebt({
+    required int transactionId,
+    required BuildContext context,
+  }) async {
+    try {
+      final res = await _debtService.deleteDebt(
         transactionId: transactionId,
       );
       if (res) {
@@ -154,6 +178,30 @@ class TransactionListScreenState extends State<TransactionListScreen> {
                                 ),
                               ),
                             ),
+                          ),
+                          const Divider(height: 1.0),
+                          ListTile(
+                            onTap: () async {
+                              Navigator.pop(context);
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) {
+                                  return const DebtFormScreen(
+                                    mode: DebtFormMode.create,
+                                  );
+                                }),
+                              );
+                              // refresh list
+                              setState(() {});
+                            },
+                            title: const Center(
+                              child: Text(
+                                "ชำระหนี้",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
                           )
                         ],
                       ),
@@ -219,6 +267,7 @@ class TransactionListScreenState extends State<TransactionListScreen> {
                                           }),
                                         );
                                       }
+                                      // edit transfer
                                       if ([3].contains(
                                         transaction.transactionTypeId,
                                       )) {
@@ -227,6 +276,20 @@ class TransactionListScreenState extends State<TransactionListScreen> {
                                           MaterialPageRoute(builder: (context) {
                                             return TransferFormScreen(
                                               mode: TransferFormMode.edit,
+                                              transactionId: transaction.id,
+                                            );
+                                          }),
+                                        );
+                                      }
+                                      // edit debt
+                                      if ([4].contains(
+                                        transaction.transactionTypeId,
+                                      )) {
+                                        await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(builder: (context) {
+                                            return DebtFormScreen(
+                                              mode: DebtFormMode.edit,
                                               transactionId: transaction.id,
                                             );
                                           }),
@@ -261,6 +324,15 @@ class TransactionListScreenState extends State<TransactionListScreen> {
                                         transaction.transactionTypeId,
                                       )) {
                                         await _deleteTransfer(
+                                          transactionId: transaction.id!,
+                                          context: context,
+                                        );
+                                      }
+                                      // delete debt
+                                      if ([4].contains(
+                                        transaction.transactionTypeId,
+                                      )) {
+                                        await _deleteDebt(
                                           transactionId: transaction.id!,
                                           context: context,
                                         );

@@ -93,7 +93,7 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                       GestureDetector(
                         onTap: () => Navigator.pop(context),
                         child: const Padding(
-                          padding: EdgeInsets.all(8.0),
+                          padding: EdgeInsets.all(12.0),
                           child: Icon(Icons.chevron_left),
                         ),
                       ),
@@ -175,7 +175,7 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                           }
                         },
                         child: const Padding(
-                          padding: EdgeInsets.all(8.0),
+                          padding: EdgeInsets.all(12.0),
                           child: Icon(Icons.check),
                         ),
                       ),

@@ -198,7 +198,7 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                         GestureDetector(
                           onTap: () => Navigator.pop(context),
                           child: const Padding(
-                            padding: EdgeInsets.all(8.0),
+                            padding: EdgeInsets.all(12.0),
                             child: Icon(Icons.chevron_left),
                           ),
                         ),
@@ -218,7 +218,7 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                             }
                           },
                           child: const Padding(
-                            padding: EdgeInsets.all(8.0),
+                            padding: EdgeInsets.all(12.0),
                             child: Icon(Icons.check),
                           ),
                         ),
