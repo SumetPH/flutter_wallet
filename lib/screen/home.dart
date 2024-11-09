@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_wallet/screen/account/account.dart';
-import 'package:flutter_wallet/screen/budget/budget.dart';
+import 'package:flutter_wallet/screen/account/account_list.dart';
+import 'package:flutter_wallet/screen/budget/budget_list.dart';
+import 'package:flutter_wallet/screen/category/category_list.dart';
 import 'package:flutter_wallet/screen/transaction/transaction_list.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -11,10 +12,23 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final List<Widget> _screenList = [
-    const TransactionListScreen(),
-    const AccountScreen(),
-    const BudgetScreen()
+  final List<Map<String, dynamic>> _screenList = [
+    {
+      "title": "บัญชี",
+      'widget': const AccountListScreen(),
+    },
+    {
+      "title": "รายการ",
+      'widget': const TransactionListScreen(),
+    },
+    {
+      "title": "หมวดหมู่",
+      'widget': const CategoryListScreen(),
+    },
+    {
+      "title": "งบประมาณ",
+      'widget': const BudgetListScreen(),
+    },
   ];
   int _screenIndex = 0;
 
@@ -29,27 +43,21 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: Drawer(
-        child: ListView(
-          children: [
-            ListTile(
-              onTap: () => changeScreen(0),
-              title: const Text("รายการ"),
-            ),
-            const Divider(height: 1.0),
-            ListTile(
-              onTap: () => changeScreen(1),
-              title: const Text("บัญชี"),
-            ),
-            const Divider(height: 1.0),
-            ListTile(
-              onTap: () => changeScreen(2),
-              title: const Text("งบประมาณ"),
-            ),
-          ],
+        child: ListView.separated(
+          itemCount: _screenList.length,
+          itemBuilder: (context, index) {
+            return ListTile(
+              onTap: () => changeScreen(index),
+              title: Text(_screenList[index]['title']),
+            );
+          },
+          separatorBuilder: (context, index) {
+            return const Divider(height: 1.0);
+          },
         ),
       ),
       body: SafeArea(
-        child: _screenList[_screenIndex],
+        child: _screenList[_screenIndex]['widget'],
       ),
     );
   }

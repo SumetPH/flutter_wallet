@@ -72,7 +72,7 @@ class TransferService {
     String? note,
   }) async {
     try {
-      final res = await http.patch(
+      final res = await http.put(
         Uri.parse('$apiUrl/transfer/transfer-update'),
         body: jsonEncode({
           'transactionId': transactionId,

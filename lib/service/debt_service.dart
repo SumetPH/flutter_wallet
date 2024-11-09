@@ -71,7 +71,7 @@ class DebtService {
     String? note,
   }) async {
     try {
-      final res = await http.patch(
+      final res = await http.put(
         Uri.parse('$apiUrl/debt/debt-update'),
         body: jsonEncode({
           'transactionId': transactionId,

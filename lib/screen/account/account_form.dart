@@ -181,6 +181,7 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                       ),
                     ],
                   ),
+                  const Divider(),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     child: Row(

@@ -10,11 +10,13 @@ class TransactionService {
 
   Future<List<TransactionModel>> getTransactionList({
     int? accountId,
+    List<int?>? categoryId,
   }) async {
     try {
       final res = await http.get(
         Uri.parse(
-            '$apiUrl/transaction/transaction-list?accountId=${accountId ?? ''}'),
+          '$apiUrl/transaction/transaction-list?accountId=${accountId ?? ''}&categoryId=${categoryId != null ? categoryId.join(',') : ''}',
+        ),
       );
 
       if (res.statusCode == 200) {
@@ -97,7 +99,7 @@ class TransactionService {
     String? note,
   }) async {
     try {
-      final res = await http.patch(
+      final res = await http.put(
         Uri.parse('$apiUrl/transaction/transaction-update'),
         body: jsonEncode({
           'transactionId': transactionId,

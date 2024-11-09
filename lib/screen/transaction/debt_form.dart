@@ -184,6 +184,7 @@ class DebtFormScreenState extends State<DebtFormScreen> {
                         ),
                       ],
                     ),
+                    const Divider(),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24.0),
                       child: Row(

@@ -5,20 +5,41 @@ import 'package:flutter_wallet/model/account_model.dart';
 import 'package:flutter_wallet/screen/account/account_form.dart';
 import 'package:flutter_wallet/widget/account_list.dart';
 
-class AccountScreen extends StatefulWidget {
-  const AccountScreen({super.key});
+class AccountListScreen extends StatefulWidget {
+  const AccountListScreen({super.key});
 
   @override
-  State<AccountScreen> createState() => _AccountScreenState();
+  State<AccountListScreen> createState() => _AccountListScreenState();
 }
 
-class _AccountScreenState extends State<AccountScreen> {
+class _AccountListScreenState extends State<AccountListScreen> {
   final _accountService = AccountService();
+
+  Future _deleteAccount(
+      {required int accountId, required BuildContext context}) async {
+    try {
+      final res = await _accountService.deleteAccount(
+        accountId: accountId,
+      );
+
+      if (res) {
+        Navigator.pop(context);
+        // refresh list
+        setState(() {});
+      } else {
+        throw Exception('ไม่สามารถลบข้อมูลได้');
+      }
+    } catch (e) {
+      print(e);
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('ไม่สามารถลบข้อมูลได้'),
+      ));
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    // _getAccountList();
   }
 
   @override
@@ -113,6 +134,7 @@ class _AccountScreenState extends State<AccountScreen> {
                               builder: (context) {
                                 return TransactionListScreen(
                                   accountId: account.id,
+                                  showBackButton: true,
                                 );
                               },
                             ),
@@ -126,9 +148,16 @@ class _AccountScreenState extends State<AccountScreen> {
                             builder: (context) {
                               return Column(
                                 children: [
-                                  const SizedBox(
-                                    width: double.infinity,
-                                    height: 24,
+                                  const Padding(
+                                    padding: EdgeInsets.all(16.0),
+                                    child: Center(
+                                      child: Text(
+                                        'เมนู',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                   ListTile(
                                     title: const Text(
@@ -176,17 +205,10 @@ class _AccountScreenState extends State<AccountScreen> {
                                               TextButton(
                                                 child: const Text('ตกลง'),
                                                 onPressed: () async {
-                                                  try {
-                                                    await _accountService
-                                                        .deleteAccount(
-                                                      accountId: account.id!,
-                                                    );
-                                                    Navigator.pop(context);
-                                                    // refresh list
-                                                    setState(() {});
-                                                  } catch (e) {
-                                                    print(e);
-                                                  }
+                                                  await _deleteAccount(
+                                                    accountId: account.id!,
+                                                    context: context,
+                                                  );
                                                 },
                                               ),
                                               TextButton(

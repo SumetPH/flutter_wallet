@@ -10,11 +10,15 @@ import 'package:flutter_wallet/widget/transaction_list.dart';
 class TransactionListScreen extends StatefulWidget {
   // property
   final int? accountId;
+  final List<int>? categoryId;
+  final bool? showBackButton;
 
   // constructor
   const TransactionListScreen({
     super.key,
     this.accountId,
+    this.categoryId,
+    this.showBackButton,
   });
 
   @override
@@ -101,17 +105,17 @@ class TransactionListScreenState extends State<TransactionListScreen> {
                 GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTap: () {
-                    if (widget.accountId != null) {
-                      Navigator.pop(context);
-                    } else {
+                    if (widget.showBackButton == null) {
                       Scaffold.of(context).openDrawer();
+                    } else {
+                      Navigator.pop(context);
                     }
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(12.0),
-                    child: widget.accountId != null
-                        ? const Icon(Icons.chevron_left)
-                        : const Icon(Icons.menu),
+                    child: widget.showBackButton == null
+                        ? const Icon(Icons.menu)
+                        : const Icon(Icons.chevron_left),
                   ),
                 ),
                 GestureDetector(
@@ -217,8 +221,7 @@ class TransactionListScreenState extends State<TransactionListScreen> {
             Expanded(
               child: FutureBuilder(
                 future: _transactionService.getTransactionList(
-                  accountId: widget.accountId,
-                ),
+                    accountId: widget.accountId, categoryId: widget.categoryId),
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
                     return Center(
@@ -310,33 +313,62 @@ class TransactionListScreenState extends State<TransactionListScreen> {
                                   const Divider(height: 1.0),
                                   ListTile(
                                     onTap: () async {
-                                      // delete transaction
-                                      if ([1, 2].contains(
-                                        transaction.transactionTypeId,
-                                      )) {
-                                        await _deleteTransaction(
-                                          transactionId: transaction.id!,
-                                          context: context,
-                                        );
-                                      }
-                                      // delete transfer
-                                      if ([3].contains(
-                                        transaction.transactionTypeId,
-                                      )) {
-                                        await _deleteTransfer(
-                                          transactionId: transaction.id!,
-                                          context: context,
-                                        );
-                                      }
-                                      // delete debt
-                                      if ([4].contains(
-                                        transaction.transactionTypeId,
-                                      )) {
-                                        await _deleteDebt(
-                                          transactionId: transaction.id!,
-                                          context: context,
-                                        );
-                                      }
+                                      await showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            title: const Text('ลบรายการ'),
+                                            content: const Text(
+                                              'ต้องการลบรายการนี้',
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                child: const Text('ตกลง'),
+                                                onPressed: () async {
+                                                  // delete transaction
+                                                  if ([1, 2].contains(
+                                                    transaction
+                                                        .transactionTypeId,
+                                                  )) {
+                                                    await _deleteTransaction(
+                                                      transactionId:
+                                                          transaction.id!,
+                                                      context: context,
+                                                    );
+                                                  }
+                                                  // delete transfer
+                                                  if ([3].contains(
+                                                    transaction
+                                                        .transactionTypeId,
+                                                  )) {
+                                                    await _deleteTransfer(
+                                                      transactionId:
+                                                          transaction.id!,
+                                                      context: context,
+                                                    );
+                                                  }
+                                                  // delete debt
+                                                  if ([4].contains(
+                                                    transaction
+                                                        .transactionTypeId,
+                                                  )) {
+                                                    await _deleteDebt(
+                                                      transactionId:
+                                                          transaction.id!,
+                                                      context: context,
+                                                    );
+                                                  }
+                                                },
+                                              ),
+                                              TextButton(
+                                                child: const Text('ยกเลิก'),
+                                                onPressed: () =>
+                                                    Navigator.pop(context),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
                                     },
                                     title: const Center(
                                       child: Text(
