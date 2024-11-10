@@ -60,8 +60,6 @@ class BudgetFormScreenState extends State<BudgetFormScreen> {
             ? res.category!.map((el) => el.categoryId!).toList()
             : [];
       });
-
-      await _getCategoryList();
     } catch (e) {
       setState(() {
         _isLoading = false;
@@ -123,10 +121,13 @@ class BudgetFormScreenState extends State<BudgetFormScreen> {
   @override
   void initState() {
     super.initState();
-    if (widget.mode == BudgetFormMode.edit) {
-      _getBudgetDetail(budgetId: widget.budgetId!);
-    } else {
+
+    if (mounted) {
       _getCategoryList();
+
+      if (widget.mode == BudgetFormMode.edit) {
+        _getBudgetDetail(budgetId: widget.budgetId!);
+      }
     }
   }
 

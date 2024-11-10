@@ -82,9 +82,6 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
         _date = DateTime.parse(res.date!);
         _time = TimeUtils.timeOfDayFromString(time: res.time!);
       });
-
-      await _getAccountList();
-      await _getCategoryList();
     } catch (e) {
       setState(() {
         _isLoading = false;
@@ -175,11 +172,12 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
   @override
   void initState() {
     super.initState();
-    if (widget.mode == TransactionFormMode.edit) {
-      _getTransactionDetail(transactionId: widget.transactionId!);
-    } else {
+    if (mounted) {
       _getAccountList();
       _getCategoryList();
+      if (widget.mode == TransactionFormMode.edit) {
+        _getTransactionDetail(transactionId: widget.transactionId!);
+      }
     }
   }
 
@@ -359,6 +357,7 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                               onTap: () async {
                                 showModalBottomSheet(
                                   context: context,
+                                  isScrollControlled: true,
                                   builder: (context) {
                                     return Column(
                                       children: [
@@ -392,7 +391,12 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  Text(_getAccountName()),
+                                  Expanded(
+                                      child: Text(
+                                    _getAccountName(),
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.end,
+                                  )),
                                   const Icon(Icons.chevron_right),
                                 ],
                               ),
@@ -416,6 +420,7 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                               onTap: () async {
                                 showModalBottomSheet(
                                   context: context,
+                                  isScrollControlled: true,
                                   builder: (context) {
                                     return Column(
                                       children: [
@@ -459,7 +464,13 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  Text(_getCategoryName()),
+                                  Expanded(
+                                    child: Text(
+                                      _getCategoryName(),
+                                      overflow: TextOverflow.ellipsis,
+                                      textAlign: TextAlign.end,
+                                    ),
+                                  ),
                                   const Icon(Icons.chevron_right),
                                 ],
                               ),

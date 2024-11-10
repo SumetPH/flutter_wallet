@@ -276,6 +276,7 @@ class _BudgetListScreenState extends State<BudgetListScreen> {
                                             style: const TextStyle(
                                               fontSize: 16.0,
                                               fontWeight: FontWeight.bold,
+                                              overflow: TextOverflow.ellipsis,
                                             ),
                                           ),
                                           Text(

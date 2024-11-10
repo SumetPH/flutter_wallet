@@ -72,10 +72,12 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
   void initState() {
     super.initState();
 
-    _getAccountTypeList();
+    if (mounted) {
+      _getAccountTypeList();
 
-    if (widget.mode == AccountFormMode.edit) {
-      _getAccountDetail();
+      if (widget.mode == AccountFormMode.edit) {
+        _getAccountDetail();
+      }
     }
   }
 

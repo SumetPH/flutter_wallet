@@ -35,19 +35,25 @@ class DebtService {
     required int accountIdTo,
     required String date,
     required String time,
+    int? categoryId,
     String? note,
   }) async {
     try {
+      final body = {
+        'amount': amount,
+        'note': note,
+        'accountIdFrom': accountIdFrom,
+        'accountIdTo': accountIdTo,
+        'date': date,
+        'time': time,
+      };
+      if (categoryId != null) {
+        body['categoryId'] = categoryId;
+      }
+
       final res = await http.post(
         Uri.parse('$apiUrl/debt/debt-create'),
-        body: jsonEncode({
-          'amount': amount,
-          'note': note,
-          'accountIdFrom': accountIdFrom,
-          'accountIdTo': accountIdTo,
-          'date': date,
-          'time': time,
-        }),
+        body: jsonEncode(body),
       );
 
       if (res.statusCode == 200) {
@@ -68,20 +74,25 @@ class DebtService {
     required String time,
     required int accountIdFrom,
     required int accountIdTo,
+    int? categoryId,
     String? note,
   }) async {
     try {
+      final body = {
+        'transactionId': transactionId,
+        'amount': amount,
+        'accountIdFrom': accountIdFrom,
+        'accountIdTo': accountIdTo,
+        'date': date,
+        'time': time,
+        'note': note,
+      };
+      if (categoryId != null) {
+        body['categoryId'] = categoryId;
+      }
       final res = await http.put(
         Uri.parse('$apiUrl/debt/debt-update'),
-        body: jsonEncode({
-          'transactionId': transactionId,
-          'amount': amount,
-          'accountIdFrom': accountIdFrom,
-          'accountIdTo': accountIdTo,
-          'date': date,
-          'time': time,
-          'note': note,
-        }),
+        body: jsonEncode(body),
       );
 
       if (res.statusCode == 200) {

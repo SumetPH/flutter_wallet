@@ -63,8 +63,6 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
         _date = DateTime.parse(res.date!);
         _time = TimeUtils.timeOfDayFromString(time: res.time!);
       });
-
-      await _getAccountList();
     } catch (e) {
       setState(() {
         _isLoading = false;
@@ -136,10 +134,11 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
   void initState() {
     super.initState();
 
-    if (widget.mode == TransferFormMode.edit) {
-      _getTransferDetail(transactionId: widget.transactionId!);
-    } else {
+    if (mounted) {
       _getAccountList();
+      if (widget.mode == TransferFormMode.edit) {
+        _getTransferDetail(transactionId: widget.transactionId!);
+      }
     }
   }
 
@@ -229,6 +228,7 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
                               onTap: () async {
                                 showModalBottomSheet(
                                   context: context,
+                                  isScrollControlled: true,
                                   builder: (context) {
                                     return Column(
                                       children: [
@@ -265,7 +265,13 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  Text(_getAccountName(_accountIdFrom)),
+                                  Expanded(
+                                    child: Text(
+                                      _getAccountName(_accountIdFrom),
+                                      overflow: TextOverflow.ellipsis,
+                                      textAlign: TextAlign.end,
+                                    ),
+                                  ),
                                   const Icon(Icons.chevron_right),
                                 ],
                               ),
@@ -289,6 +295,7 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
                               onTap: () async {
                                 showModalBottomSheet(
                                   context: context,
+                                  isScrollControlled: true,
                                   builder: (context) {
                                     return Column(
                                       children: [
@@ -326,7 +333,13 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  Text(_getAccountName(_accountIdTo)),
+                                  Expanded(
+                                    child: Text(
+                                      _getAccountName(_accountIdTo),
+                                      overflow: TextOverflow.ellipsis,
+                                      textAlign: TextAlign.end,
+                                    ),
+                                  ),
                                   const Icon(Icons.chevron_right),
                                 ],
                               ),

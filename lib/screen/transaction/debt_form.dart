@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_wallet/model/category_model.dart';
 import 'package:flutter_wallet/service/account_service.dart';
+import 'package:flutter_wallet/service/category_service.dart';
 import 'package:flutter_wallet/service/debt_service.dart';
 import 'package:flutter_wallet/model/account_model.dart';
 import 'package:flutter_wallet/utils/time_utils.dart';
@@ -25,14 +27,17 @@ class DebtFormScreen extends StatefulWidget {
 class DebtFormScreenState extends State<DebtFormScreen> {
   final _debtService = DebtService();
   final _accountService = AccountService();
+  final _categoryService = CategoryService();
 
   // state
   List<AccountModel> _accountList = [];
+  List<CategoryModel> _categoryList = [];
 
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
   int? _accountIdFrom;
   int? _accountIdTo;
+  int? _categoryId;
   DateTime _date = DateTime.now();
   TimeOfDay _time = TimeOfDay.now();
   bool _isLoading = false;
@@ -42,6 +47,15 @@ class DebtFormScreenState extends State<DebtFormScreen> {
     final res = await _accountService.getAccountList();
     setState(() {
       _accountList = res;
+    });
+  }
+
+  Future _getCategoryList() async {
+    final res = await _categoryService.getCategoryList(
+      categoryTypeId: 1,
+    );
+    setState(() {
+      _categoryList = res;
     });
   }
 
@@ -63,9 +77,8 @@ class DebtFormScreenState extends State<DebtFormScreen> {
         _noteController.text = res.note ?? '';
         _date = DateTime.parse(res.date!);
         _time = TimeUtils.timeOfDayFromString(time: res.time!);
+        _categoryId = res.categoryId;
       });
-
-      await _getAccountList();
     } catch (e) {
       setState(() {
         _isLoading = false;
@@ -91,6 +104,7 @@ class DebtFormScreenState extends State<DebtFormScreen> {
           accountIdTo: _accountIdTo!,
           date: TimeUtils.dateString(dateTime: _date),
           time: TimeUtils.timeOfDayToString(time: _time),
+          categoryId: _categoryId,
         );
       } else {
         res = await _debtService.updateDebt(
@@ -101,6 +115,7 @@ class DebtFormScreenState extends State<DebtFormScreen> {
           accountIdTo: _accountIdTo!,
           date: TimeUtils.dateString(dateTime: _date),
           time: TimeUtils.timeOfDayToString(time: _time),
+          categoryId: _categoryId,
         );
       }
 
@@ -133,14 +148,26 @@ class DebtFormScreenState extends State<DebtFormScreen> {
     }
   }
 
+  String _getCategoryName() {
+    try {
+      return _categoryList
+          .firstWhere((element) => element.id == _categoryId)
+          .name
+          .toString();
+    } catch (e) {
+      return 'เลือก';
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-
-    if (widget.mode == DebtFormMode.edit) {
-      _getDebtDetail(transactionId: widget.transactionId!);
-    } else {
+    if (mounted) {
       _getAccountList();
+      _getCategoryList();
+      if (widget.mode == DebtFormMode.edit) {
+        _getDebtDetail(transactionId: widget.transactionId!);
+      }
     }
   }
 
@@ -230,6 +257,7 @@ class DebtFormScreenState extends State<DebtFormScreen> {
                               onTap: () async {
                                 showModalBottomSheet(
                                   context: context,
+                                  isScrollControlled: true,
                                   builder: (context) {
                                     return Column(
                                       children: [
@@ -269,7 +297,13 @@ class DebtFormScreenState extends State<DebtFormScreen> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  Text(_getAccountName(_accountIdFrom)),
+                                  Expanded(
+                                    child: Text(
+                                      _getAccountName(_accountIdFrom),
+                                      overflow: TextOverflow.ellipsis,
+                                      textAlign: TextAlign.end,
+                                    ),
+                                  ),
                                   const Icon(Icons.chevron_right),
                                 ],
                               ),
@@ -293,6 +327,7 @@ class DebtFormScreenState extends State<DebtFormScreen> {
                               onTap: () async {
                                 showModalBottomSheet(
                                   context: context,
+                                  isScrollControlled: true,
                                   builder: (context) {
                                     return Column(
                                       children: [
@@ -333,7 +368,87 @@ class DebtFormScreenState extends State<DebtFormScreen> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  Text(_getAccountName(_accountIdTo)),
+                                  Expanded(
+                                    child: Text(
+                                      _getAccountName(_accountIdTo),
+                                      overflow: TextOverflow.ellipsis,
+                                      textAlign: TextAlign.end,
+                                    ),
+                                  ),
+                                  const Icon(Icons.chevron_right),
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    const Divider(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                      child: Row(
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 14.0),
+                            child: Text('หมวดหมู่'),
+                          ),
+                          const SizedBox(width: 20.0),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () async {
+                                showModalBottomSheet(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  builder: (context) {
+                                    return Column(
+                                      children: [
+                                        const Padding(
+                                          padding: EdgeInsets.all(16.0),
+                                          child: Center(
+                                            child: Text(
+                                              'เลือกหมวดหมู่',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: ListView.separated(
+                                            itemBuilder: (itemContext, index) {
+                                              return ListTile(
+                                                title: Text(
+                                                    _categoryList[index].name!),
+                                                onTap: () {
+                                                  Navigator.pop(context);
+                                                  setState(() {
+                                                    _categoryId =
+                                                        _categoryList[index].id;
+                                                  });
+                                                },
+                                              );
+                                            },
+                                            separatorBuilder: (context, index) {
+                                              return const Divider(height: 1.0);
+                                            },
+                                            itemCount: _categoryList.length,
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      _getCategoryName(),
+                                      overflow: TextOverflow.ellipsis,
+                                      textAlign: TextAlign.end,
+                                    ),
+                                  ),
                                   const Icon(Icons.chevron_right),
                                 ],
                               ),

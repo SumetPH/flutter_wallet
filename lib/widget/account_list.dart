@@ -90,6 +90,7 @@ class AccountList extends StatelessWidget {
                           style: const TextStyle(
                             fontSize: 16.0,
                             fontWeight: FontWeight.bold,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         Text(
