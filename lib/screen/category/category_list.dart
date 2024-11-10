@@ -168,189 +168,197 @@ class _CategoryListScreenState extends State<CategoryListScreen>
           child: TabBarView(
             controller: _tabController,
             children: _tabsData.map((el) {
-              return FutureBuilder(
-                future: _categoryService.getCategoryList(
-                  categoryTypeId: el['categoryTypeId'],
-                ),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Text(snapshot.error.toString()),
-                      ),
-                    );
-                  } else if (snapshot.hasData) {
-                    return ListView.separated(
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onTap: () async {
-                            await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  return TransactionListScreen(
-                                    categoryId: [snapshot.data![index].id!],
-                                    showBackButton: true,
-                                  );
-                                },
-                              ),
-                            );
-                            // refresh list
-                            setState(() {});
-                          },
-                          onLongPress: () {
-                            showModalBottomSheet(
-                              context: context,
-                              builder: (context) => Column(
+              return RefreshIndicator(
+                onRefresh: () {
+                  setState(() {});
+                  return Future.value();
+                },
+                child: FutureBuilder(
+                  future: _categoryService.getCategoryList(
+                    categoryTypeId: el['categoryTypeId'],
+                  ),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Text(snapshot.error.toString()),
+                        ),
+                      );
+                    } else if (snapshot.hasData) {
+                      return ListView.separated(
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    return TransactionListScreen(
+                                      categoryId: [snapshot.data![index].id!],
+                                      showBackButton: true,
+                                    );
+                                  },
+                                ),
+                              );
+                              // refresh list
+                              setState(() {});
+                            },
+                            onLongPress: () {
+                              showModalBottomSheet(
+                                context: context,
+                                builder: (context) => Column(
+                                  children: [
+                                    const Padding(
+                                      padding: EdgeInsets.all(16.0),
+                                      child: Center(
+                                        child: Text(
+                                          'เมนู',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    ListTile(
+                                      onTap: () async {
+                                        Navigator.pop(context);
+                                        await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(builder: (context) {
+                                            return CategoryFormScreen(
+                                              mode: CategoryFormMode.edit,
+                                              categoryId:
+                                                  snapshot.data![index].id,
+                                            );
+                                          }),
+                                        );
+                                        // refresh list
+                                        setState(() {});
+                                      },
+                                      title: const Center(
+                                        child: Text(
+                                          "แก้ไขหมวดหมู่",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const Divider(height: 1.0),
+                                    ListTile(
+                                      onTap: () async {
+                                        await showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text('ลบบัญชี'),
+                                              content: Text(
+                                                'คุณต้องการลบหมวดหมู่ ${snapshot.data![index].name}',
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  child: const Text('ตกลง'),
+                                                  onPressed: () async {
+                                                    await _deleteCategory(
+                                                      categoryId: snapshot
+                                                          .data![index].id!,
+                                                      context: context,
+                                                    );
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                                TextButton(
+                                                  child: const Text('ยกเลิก'),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                      title: const Center(
+                                        child: Text(
+                                          "ลบหมวดหมู่",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Padding(
-                                    padding: EdgeInsets.all(16.0),
-                                    child: Center(
-                                      child: Text(
-                                        'เมนู',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
+                                  CircleAvatar(
+                                    backgroundColor:
+                                        snapshot.data![index].categoryTypeId ==
+                                                1
+                                            ? Colors.red[600]
+                                            : Colors.green[600],
+                                    child: Icon(
+                                      snapshot.data![index].categoryTypeId == 1
+                                          ? Icons.arrow_downward
+                                          : Icons.arrow_upward,
+                                      color: Colors.white,
                                     ),
                                   ),
-                                  ListTile(
-                                    onTap: () async {
-                                      Navigator.pop(context);
-                                      await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) {
-                                          return CategoryFormScreen(
-                                            mode: CategoryFormMode.edit,
-                                            categoryId:
-                                                snapshot.data![index].id,
-                                          );
-                                        }),
-                                      );
-                                      // refresh list
-                                      setState(() {});
-                                    },
-                                    title: const Center(
-                                      child: Text(
-                                        "แก้ไขหมวดหมู่",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const Divider(height: 1.0),
-                                  ListTile(
-                                    onTap: () async {
-                                      await showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            title: const Text('ลบบัญชี'),
-                                            content: Text(
-                                              'คุณต้องการลบหมวดหมู่ ${snapshot.data![index].name}',
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 12.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            snapshot.data![index].name!,
+                                            style: const TextStyle(
+                                              fontSize: 16.0,
+                                              fontWeight: FontWeight.bold,
                                             ),
-                                            actions: [
-                                              TextButton(
-                                                child: const Text('ตกลง'),
-                                                onPressed: () async {
-                                                  await _deleteCategory(
-                                                    categoryId: snapshot
-                                                        .data![index].id!,
-                                                    context: context,
-                                                  );
-                                                  Navigator.of(context).pop();
-                                                },
-                                              ),
-                                              TextButton(
-                                                child: const Text('ยกเลิก'),
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      );
-                                    },
-                                    title: const Center(
-                                      child: Text(
-                                        "ลบหมวดหมู่",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                          ),
+                                          Text(
+                                            '${NumberUtils.formatNumber(double.parse(snapshot.data![index].amount!))} บาท',
+                                            style: TextStyle(
+                                              fontSize: 18.0,
+                                              fontWeight: FontWeight.bold,
+                                              color: snapshot.data![index]
+                                                          .categoryTypeId ==
+                                                      1
+                                                  ? Colors.red[600]
+                                                  : Colors.green[600],
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ),
+                                  const Icon(Icons.chevron_right),
                                 ],
                               ),
-                            );
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                CircleAvatar(
-                                  backgroundColor:
-                                      snapshot.data![index].categoryTypeId == 1
-                                          ? Colors.red[600]
-                                          : Colors.green[600],
-                                  child: Icon(
-                                    snapshot.data![index].categoryTypeId == 1
-                                        ? Icons.arrow_downward
-                                        : Icons.arrow_upward,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 12.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          snapshot.data![index].name!,
-                                          style: const TextStyle(
-                                            fontSize: 16.0,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Text(
-                                          '${NumberUtils.formatNumber(double.parse(snapshot.data![index].amount!))} บาท',
-                                          style: TextStyle(
-                                            fontSize: 18.0,
-                                            fontWeight: FontWeight.bold,
-                                            color: snapshot.data![index]
-                                                        .categoryTypeId ==
-                                                    1
-                                                ? Colors.red[600]
-                                                : Colors.green[600],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                const Icon(Icons.chevron_right),
-                              ],
                             ),
-                          ),
-                        );
-                      },
-                      separatorBuilder: (context, index) {
-                        return const Divider(height: 1.0);
-                      },
-                    );
-                  } else {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                },
+                          );
+                        },
+                        separatorBuilder: (context, index) {
+                          return const Divider(height: 1.0);
+                        },
+                      );
+                    } else {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                  },
+                ),
               );
             }).toList(),
           ),

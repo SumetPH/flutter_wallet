@@ -6,7 +6,7 @@ import 'package:flutter_wallet/model/category_model.dart';
 import 'package:flutter_wallet/service/account_service.dart';
 import 'package:flutter_wallet/service/transaction_service.dart';
 import 'package:flutter_wallet/utils/time_utils.dart';
-import 'package:flutter_wallet/widget/account_list.dart';
+import 'package:flutter_wallet/widget/account_list_widget.dart';
 
 enum TransactionFormMode { create, edit }
 
@@ -40,7 +40,9 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
   final TextEditingController _noteController = TextEditingController();
   int _transactionTypeId = 1;
   int? _accountId;
+  String _accountName = 'เลือก';
   int? _categoryId;
+  String _categoryName = 'เลือก';
   DateTime _date = DateTime.now();
   TimeOfDay _time = TimeOfDay.now();
   bool _isLoading = false;
@@ -76,7 +78,9 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
         _isLoading = false;
         _amountController.text = res.amount.toString();
         _accountId = res.accountId;
+        _accountName = res.accountName ?? '';
         _categoryId = res.categoryId;
+        _categoryName = res.categoryName ?? '';
         _noteController.text = res.note ?? '';
         _transactionTypeId = res.transactionTypeId!;
         _date = DateTime.parse(res.date!);
@@ -141,28 +145,6 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
     try {
       return _transactionTypeList
           .firstWhere((element) => element['id'] == _transactionTypeId)['name']
-          .toString();
-    } catch (e) {
-      return 'เลือก';
-    }
-  }
-
-  String _getAccountName() {
-    try {
-      return _accountList
-          .firstWhere((element) => element.id == _accountId)
-          .name
-          .toString();
-    } catch (e) {
-      return 'เลือก';
-    }
-  }
-
-  String _getCategoryName() {
-    try {
-      return _categoryList
-          .firstWhere((element) => element.id == _categoryId)
-          .name
           .toString();
     } catch (e) {
       return 'เลือก';
@@ -373,12 +355,13 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                                           ),
                                         ),
                                         Expanded(
-                                          child: AccountList(
+                                          child: AccountListWidget(
                                             accountList: _accountList,
                                             onTab: (account) {
                                               Navigator.pop(context);
                                               setState(() {
                                                 _accountId = account.id;
+                                                _accountName = account.name!;
                                               });
                                             },
                                           ),
@@ -392,11 +375,12 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   Expanded(
-                                      child: Text(
-                                    _getAccountName(),
-                                    overflow: TextOverflow.ellipsis,
-                                    textAlign: TextAlign.end,
-                                  )),
+                                    child: Text(
+                                      _accountName,
+                                      overflow: TextOverflow.ellipsis,
+                                      textAlign: TextAlign.end,
+                                    ),
+                                  ),
                                   const Icon(Icons.chevron_right),
                                 ],
                               ),
@@ -446,6 +430,9 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                                                   setState(() {
                                                     _categoryId =
                                                         _categoryList[index].id;
+                                                    _categoryName =
+                                                        _categoryList[index]
+                                                            .name!;
                                                   });
                                                 },
                                               );
@@ -466,7 +453,7 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      _getCategoryName(),
+                                      _categoryName,
                                       overflow: TextOverflow.ellipsis,
                                       textAlign: TextAlign.end,
                                     ),

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_wallet/model/account_model.dart';
 import 'package:flutter_wallet/service/account_service.dart';
 
 class AccountReorder extends StatefulWidget {
@@ -14,12 +15,13 @@ class _AccountReorderState extends State<AccountReorder> {
   final _accountService = AccountService();
 
   // state
-  final List<Map<String, dynamic>> _accountTypeList = [
-    {'id': 1, 'name': 'เงินสด', 'list': []},
-    {'id': 2, 'name': 'ธนาคาร', 'list': []},
-    {'id': 3, 'name': 'บัตรเครดิต', 'list': []},
-    {'id': 4, 'name': 'หนี้สิน', 'list': []},
-  ];
+  // final List<Map<String, dynamic>> _accountTypeList = [
+  //   {'id': 1, 'name': 'เงินสด', 'list': []},
+  //   {'id': 2, 'name': 'ธนาคาร', 'list': []},
+  //   {'id': 3, 'name': 'บัตรเครดิต', 'list': []},
+  //   {'id': 4, 'name': 'หนี้สิน', 'list': []},
+  // ];
+  List<AccountModel> _accountList = [];
   bool _isLoading = true;
 
   // method
@@ -27,18 +29,29 @@ class _AccountReorderState extends State<AccountReorder> {
     try {
       final res = await _accountService.getAccountList();
       setState(() {
-        for (final accountType in _accountTypeList) {
-          final list = res
-              .where((account) => account.accountTypeId == accountType['id'])
-              .toList();
-          accountType['list'] = list;
-        }
+        _accountList = res;
         _isLoading = false;
       });
     } catch (e) {
       print(e);
     }
   }
+  // Future _getAccountList() async {
+  //   try {
+  //     final res = await _accountService.getAccountList();
+  //     setState(() {
+  //       for (final accountType in _accountTypeList) {
+  //         final list = res
+  //             .where((account) => account.accountTypeId == accountType['id'])
+  //             .toList();
+  //         accountType['list'] = list;
+  //       }
+  //       _isLoading = false;
+  //     });
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
 
   Future _updateOrder({required BuildContext context}) async {
     try {
@@ -48,10 +61,10 @@ class _AccountReorderState extends State<AccountReorder> {
 
       List<Map<String, dynamic>> list = [];
       int count = 0;
-      for (var accountType in _accountTypeList) {
-        for (var accountList in accountType['list']) {
+      for (var accountType in _accountList) {
+        for (var account in accountType.accountList!) {
           list.add({
-            'accountId': accountList.id,
+            'accountId': account.id,
             'order': count,
           });
           count++;
@@ -121,10 +134,10 @@ class _AccountReorderState extends State<AccountReorder> {
                   ),
                   Expanded(
                     child: ListView.builder(
-                      itemCount: _accountTypeList.length,
+                      itemCount: _accountList.length,
                       itemBuilder: (context, index) {
-                        final accountType = _accountTypeList[index];
-                        final list = accountType['list'];
+                        final accountType = _accountList[index];
+                        final accountList = accountType.accountList!;
                         return Column(
                           children: [
                             Container(
@@ -139,7 +152,7 @@ class _AccountReorderState extends State<AccountReorder> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      accountType['name'],
+                                      accountType.name!,
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -151,19 +164,20 @@ class _AccountReorderState extends State<AccountReorder> {
                             ReorderableListView.builder(
                               shrinkWrap: true,
                               primary: false,
-                              itemCount: list.length,
+                              itemCount: accountList.length,
                               onReorder: (oldIndex, newIndex) {
                                 setState(() {
                                   if (oldIndex < newIndex) {
                                     newIndex -= 1;
                                   }
-                                  final item = list.removeAt(oldIndex);
-                                  list.insert(newIndex, item);
+                                  final item = accountList.removeAt(oldIndex);
+                                  accountList.insert(newIndex, item);
                                 });
                               },
                               itemBuilder: (context, index) {
+                                final account = accountList[index];
                                 return Column(
-                                  key: Key(list[index].id.toString()),
+                                  key: Key(account.id.toString()),
                                   children: [
                                     ListTile(
                                       onTap: () {},
@@ -172,7 +186,7 @@ class _AccountReorderState extends State<AccountReorder> {
                                             MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
-                                              '${index + 1}. ${list[index].name!}'),
+                                              '${index + 1}. ${account.name!}'),
                                           if (!kIsWeb)
                                             const Icon(Icons.drag_indicator),
                                         ],

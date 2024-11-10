@@ -219,178 +219,188 @@ class TransactionListScreenState extends State<TransactionListScreen> {
               ],
             ),
             Expanded(
-              child: FutureBuilder(
-                future: _transactionService.getTransactionList(
-                    accountId: widget.accountId, categoryId: widget.categoryId),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Text(snapshot.error.toString()),
-                      ),
-                    );
-                  } else if (snapshot.hasData) {
-                    if (snapshot.data!.isEmpty) {
-                      return const Center(child: Text("ไม่พบข้อมูล"));
-                    } else {
-                      return TransactionList(
-                        transactionList: snapshot.data ?? [],
-                        onLongPress: (transaction) {
-                          showModalBottomSheet(
-                            context: context,
-                            builder: (context) {
-                              return Column(
-                                children: [
-                                  const Padding(
-                                    padding: EdgeInsets.all(16.0),
-                                    child: Center(
-                                      child: Text(
-                                        'เมนู',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  ListTile(
-                                    onTap: () async {
-                                      Navigator.pop(context);
-                                      // edit transaction
-                                      if ([1, 2].contains(
-                                        transaction.transactionTypeId,
-                                      )) {
-                                        await Navigator.push(
-                                          context,
-                                          MaterialPageRoute(builder: (context) {
-                                            return TransactionFormScreen(
-                                              mode: TransactionFormMode.edit,
-                                              transactionId: transaction.id,
-                                            );
-                                          }),
-                                        );
-                                      }
-                                      // edit transfer
-                                      if ([3].contains(
-                                        transaction.transactionTypeId,
-                                      )) {
-                                        await Navigator.push(
-                                          context,
-                                          MaterialPageRoute(builder: (context) {
-                                            return TransferFormScreen(
-                                              mode: TransferFormMode.edit,
-                                              transactionId: transaction.id,
-                                            );
-                                          }),
-                                        );
-                                      }
-                                      // edit debt
-                                      if ([4].contains(
-                                        transaction.transactionTypeId,
-                                      )) {
-                                        await Navigator.push(
-                                          context,
-                                          MaterialPageRoute(builder: (context) {
-                                            return DebtFormScreen(
-                                              mode: DebtFormMode.edit,
-                                              transactionId: transaction.id,
-                                            );
-                                          }),
-                                        );
-                                      }
-                                      // refresh list
-                                      setState(() {});
-                                    },
-                                    title: const Center(
-                                      child: Text(
-                                        "แก้ไข",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const Divider(height: 1.0),
-                                  ListTile(
-                                    onTap: () async {
-                                      await showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return AlertDialog(
-                                            title: const Text('ลบรายการ'),
-                                            content: const Text(
-                                              'ต้องการลบรายการนี้',
-                                            ),
-                                            actions: [
-                                              TextButton(
-                                                child: const Text('ตกลง'),
-                                                onPressed: () async {
-                                                  // delete transaction
-                                                  if ([1, 2].contains(
-                                                    transaction
-                                                        .transactionTypeId,
-                                                  )) {
-                                                    await _deleteTransaction(
-                                                      transactionId:
-                                                          transaction.id!,
-                                                      context: context,
-                                                    );
-                                                  }
-                                                  // delete transfer
-                                                  if ([3].contains(
-                                                    transaction
-                                                        .transactionTypeId,
-                                                  )) {
-                                                    await _deleteTransfer(
-                                                      transactionId:
-                                                          transaction.id!,
-                                                      context: context,
-                                                    );
-                                                  }
-                                                  // delete debt
-                                                  if ([4].contains(
-                                                    transaction
-                                                        .transactionTypeId,
-                                                  )) {
-                                                    await _deleteDebt(
-                                                      transactionId:
-                                                          transaction.id!,
-                                                      context: context,
-                                                    );
-                                                  }
-                                                  Navigator.pop(context);
-                                                },
-                                              ),
-                                              TextButton(
-                                                child: const Text('ยกเลิก'),
-                                                onPressed: () =>
-                                                    Navigator.pop(context),
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      );
-                                    },
-                                    title: const Center(
-                                      child: Text(
-                                        "ลบ",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                      );
-                    }
-                  } else {
-                    return const Center(child: CircularProgressIndicator());
-                  }
+              child: RefreshIndicator(
+                onRefresh: () {
+                  setState(() {});
+                  return Future.value();
                 },
+                child: FutureBuilder(
+                  future: _transactionService.getTransactionList(
+                      accountId: widget.accountId,
+                      categoryId: widget.categoryId),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Text(snapshot.error.toString()),
+                        ),
+                      );
+                    } else if (snapshot.hasData) {
+                      if (snapshot.data!.isEmpty) {
+                        return const Center(child: Text("ไม่พบข้อมูล"));
+                      } else {
+                        return TransactionList(
+                          transactionListGroup: snapshot.data ?? [],
+                          onLongPress: (transaction) {
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (context) {
+                                return Column(
+                                  children: [
+                                    const Padding(
+                                      padding: EdgeInsets.all(16.0),
+                                      child: Center(
+                                        child: Text(
+                                          'เมนู',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    ListTile(
+                                      onTap: () async {
+                                        Navigator.pop(context);
+                                        // edit transaction
+                                        if ([1, 2].contains(
+                                          transaction.transactionTypeId,
+                                        )) {
+                                          await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) {
+                                              return TransactionFormScreen(
+                                                mode: TransactionFormMode.edit,
+                                                transactionId: transaction.id,
+                                              );
+                                            }),
+                                          );
+                                        }
+                                        // edit transfer
+                                        if ([3].contains(
+                                          transaction.transactionTypeId,
+                                        )) {
+                                          await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) {
+                                              return TransferFormScreen(
+                                                mode: TransferFormMode.edit,
+                                                transactionId: transaction.id,
+                                              );
+                                            }),
+                                          );
+                                        }
+                                        // edit debt
+                                        if ([4].contains(
+                                          transaction.transactionTypeId,
+                                        )) {
+                                          await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) {
+                                              return DebtFormScreen(
+                                                mode: DebtFormMode.edit,
+                                                transactionId: transaction.id,
+                                              );
+                                            }),
+                                          );
+                                        }
+                                        // refresh list
+                                        setState(() {});
+                                      },
+                                      title: const Center(
+                                        child: Text(
+                                          "แก้ไข",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const Divider(height: 1.0),
+                                    ListTile(
+                                      onTap: () async {
+                                        await showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              title: const Text('ลบรายการ'),
+                                              content: const Text(
+                                                'ต้องการลบรายการนี้',
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  child: const Text('ตกลง'),
+                                                  onPressed: () async {
+                                                    // delete transaction
+                                                    if ([1, 2].contains(
+                                                      transaction
+                                                          .transactionTypeId,
+                                                    )) {
+                                                      await _deleteTransaction(
+                                                        transactionId:
+                                                            transaction.id!,
+                                                        context: context,
+                                                      );
+                                                    }
+                                                    // delete transfer
+                                                    if ([3].contains(
+                                                      transaction
+                                                          .transactionTypeId,
+                                                    )) {
+                                                      await _deleteTransfer(
+                                                        transactionId:
+                                                            transaction.id!,
+                                                        context: context,
+                                                      );
+                                                    }
+                                                    // delete debt
+                                                    if ([4].contains(
+                                                      transaction
+                                                          .transactionTypeId,
+                                                    )) {
+                                                      await _deleteDebt(
+                                                        transactionId:
+                                                            transaction.id!,
+                                                        context: context,
+                                                      );
+                                                    }
+                                                    Navigator.pop(context);
+                                                  },
+                                                ),
+                                                TextButton(
+                                                  child: const Text('ยกเลิก'),
+                                                  onPressed: () =>
+                                                      Navigator.pop(context),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                      title: const Center(
+                                        child: Text(
+                                          "ลบ",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                        );
+                      }
+                    } else {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                  },
+                ),
               ),
             )
           ],

@@ -1,4 +1,31 @@
 class TransactionModel {
+  String? day;
+  List<TransactionListItem>? transactionList;
+
+  TransactionModel({this.day, this.transactionList});
+
+  TransactionModel.fromJson(Map<String, dynamic> json) {
+    day = json['day'];
+    if (json['transaction_list'] != null) {
+      transactionList = <TransactionListItem>[];
+      json['transaction_list'].forEach((v) {
+        transactionList!.add(TransactionListItem.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['day'] = day;
+    if (transactionList != null) {
+      data['transaction_list'] =
+          transactionList!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class TransactionListItem {
   int? id;
   String? amount;
   int? transactionTypeId;
@@ -20,7 +47,7 @@ class TransactionModel {
   String? date;
   String? time;
 
-  TransactionModel({
+  TransactionListItem({
     this.id,
     this.amount,
     this.transactionTypeId,
@@ -43,7 +70,7 @@ class TransactionModel {
     this.time,
   });
 
-  TransactionModel.fromJson(Map<String, dynamic> json) {
+  TransactionListItem.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     amount = json['amount'];
     transactionTypeId = json['transaction_type_id'];

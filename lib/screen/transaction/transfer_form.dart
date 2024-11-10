@@ -4,7 +4,7 @@ import 'package:flutter_wallet/service/account_service.dart';
 import 'package:flutter_wallet/service/transfer_service.dart';
 import 'package:flutter_wallet/model/account_model.dart';
 import 'package:flutter_wallet/utils/time_utils.dart';
-import 'package:flutter_wallet/widget/account_list.dart';
+import 'package:flutter_wallet/widget/account_list_widget.dart';
 
 enum TransferFormMode { create, edit }
 
@@ -32,7 +32,9 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
   int? _accountIdFrom;
+  String _accountNameFrom = 'เลือก';
   int? _accountIdTo;
+  String _accountNameTo = 'เลือก';
   DateTime _date = DateTime.now();
   TimeOfDay _time = TimeOfDay.now();
   bool _isLoading = false;
@@ -58,7 +60,9 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
         _isLoading = false;
         _amountController.text = res.amount.toString();
         _accountIdFrom = res.accountIdFrom;
+        _accountNameFrom = res.accountNameFrom ?? '';
         _accountIdTo = res.accountIdTo;
+        _accountNameTo = res.accountNameTo ?? '';
         _noteController.text = res.note ?? '';
         _date = DateTime.parse(res.date!);
         _time = TimeUtils.timeOfDayFromString(time: res.time!);
@@ -116,17 +120,6 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('ทํารายการไม่สําเร็จ'),
       ));
-    }
-  }
-
-  String _getAccountName(int? id) {
-    try {
-      return _accountList
-          .firstWhere((element) => element.id == id)
-          .name
-          .toString();
-    } catch (e) {
-      return 'เลือก';
     }
   }
 
@@ -244,7 +237,7 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
                                           ),
                                         ),
                                         Expanded(
-                                          child: AccountList(
+                                          child: AccountListWidget(
                                             accountList: _accountList,
                                             disabledAccountId: _accountIdTo,
                                             onTab: (account) {
@@ -252,6 +245,8 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
                                                 Navigator.pop(context);
                                                 setState(() {
                                                   _accountIdFrom = account.id;
+                                                  _accountNameFrom =
+                                                      account.name!;
                                                 });
                                               }
                                             },
@@ -267,7 +262,7 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      _getAccountName(_accountIdFrom),
+                                      _accountNameFrom,
                                       overflow: TextOverflow.ellipsis,
                                       textAlign: TextAlign.end,
                                     ),
@@ -311,7 +306,7 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
                                           ),
                                         ),
                                         Expanded(
-                                          child: AccountList(
+                                          child: AccountListWidget(
                                             accountList: _accountList,
                                             disabledAccountId: _accountIdFrom,
                                             onTab: (account) {
@@ -320,6 +315,8 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
                                                 Navigator.pop(context);
                                                 setState(() {
                                                   _accountIdTo = account.id;
+                                                  _accountNameTo =
+                                                      account.name!;
                                                 });
                                               }
                                             },
@@ -335,7 +332,7 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      _getAccountName(_accountIdTo),
+                                      _accountNameTo,
                                       overflow: TextOverflow.ellipsis,
                                       textAlign: TextAlign.end,
                                     ),

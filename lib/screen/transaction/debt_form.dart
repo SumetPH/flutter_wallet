@@ -6,7 +6,7 @@ import 'package:flutter_wallet/service/category_service.dart';
 import 'package:flutter_wallet/service/debt_service.dart';
 import 'package:flutter_wallet/model/account_model.dart';
 import 'package:flutter_wallet/utils/time_utils.dart';
-import 'package:flutter_wallet/widget/account_list.dart';
+import 'package:flutter_wallet/widget/account_list_widget.dart';
 
 enum DebtFormMode { create, edit }
 
@@ -36,8 +36,11 @@ class DebtFormScreenState extends State<DebtFormScreen> {
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
   int? _accountIdFrom;
+  String _accountNameFrom = 'เลือก';
   int? _accountIdTo;
+  String _accountNameTo = 'เลือก';
   int? _categoryId;
+  String? _categoryName = 'เลือก';
   DateTime _date = DateTime.now();
   TimeOfDay _time = TimeOfDay.now();
   bool _isLoading = false;
@@ -73,11 +76,14 @@ class DebtFormScreenState extends State<DebtFormScreen> {
         _isLoading = false;
         _amountController.text = res.amount.toString();
         _accountIdFrom = res.accountIdFrom;
+        _accountNameFrom = res.accountNameFrom ?? '';
         _accountIdTo = res.accountIdTo;
+        _accountNameTo = res.accountNameTo ?? '';
         _noteController.text = res.note ?? '';
         _date = DateTime.parse(res.date!);
         _time = TimeUtils.timeOfDayFromString(time: res.time!);
         _categoryId = res.categoryId;
+        _categoryName = res.categoryName;
       });
     } catch (e) {
       setState(() {
@@ -134,28 +140,6 @@ class DebtFormScreenState extends State<DebtFormScreen> {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('ทํารายการไม่สําเร็จ'),
       ));
-    }
-  }
-
-  String _getAccountName(int? id) {
-    try {
-      return _accountList
-          .firstWhere((element) => element.id == id)
-          .name
-          .toString();
-    } catch (e) {
-      return 'เลือก';
-    }
-  }
-
-  String _getCategoryName() {
-    try {
-      return _categoryList
-          .firstWhere((element) => element.id == _categoryId)
-          .name
-          .toString();
-    } catch (e) {
-      return 'เลือก';
     }
   }
 
@@ -273,10 +257,10 @@ class DebtFormScreenState extends State<DebtFormScreen> {
                                           ),
                                         ),
                                         Expanded(
-                                          child: AccountList(
+                                          child: AccountListWidget(
                                             accountList: _accountList
-                                                .where((el) => [1, 2, 3]
-                                                    .contains(el.accountTypeId))
+                                                .where((el) =>
+                                                    [1, 2, 3].contains(el.id))
                                                 .toList(),
                                             disabledAccountId: _accountIdTo,
                                             onTab: (account) {
@@ -284,6 +268,8 @@ class DebtFormScreenState extends State<DebtFormScreen> {
                                                 Navigator.pop(context);
                                                 setState(() {
                                                   _accountIdFrom = account.id;
+                                                  _accountNameFrom =
+                                                      account.name!;
                                                 });
                                               }
                                             },
@@ -299,7 +285,7 @@ class DebtFormScreenState extends State<DebtFormScreen> {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      _getAccountName(_accountIdFrom),
+                                      _accountNameFrom,
                                       overflow: TextOverflow.ellipsis,
                                       textAlign: TextAlign.end,
                                     ),
@@ -343,10 +329,10 @@ class DebtFormScreenState extends State<DebtFormScreen> {
                                           ),
                                         ),
                                         Expanded(
-                                          child: AccountList(
+                                          child: AccountListWidget(
                                             accountList: _accountList
-                                                .where((el) => [3, 4]
-                                                    .contains(el.accountTypeId))
+                                                .where((el) =>
+                                                    [3, 4].contains(el.id))
                                                 .toList(),
                                             disabledAccountId: _accountIdFrom,
                                             onTab: (account) {
@@ -355,6 +341,8 @@ class DebtFormScreenState extends State<DebtFormScreen> {
                                                 Navigator.pop(context);
                                                 setState(() {
                                                   _accountIdTo = account.id;
+                                                  _accountNameTo =
+                                                      account.name!;
                                                 });
                                               }
                                             },
@@ -370,7 +358,7 @@ class DebtFormScreenState extends State<DebtFormScreen> {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      _getAccountName(_accountIdTo),
+                                      _accountNameTo,
                                       overflow: TextOverflow.ellipsis,
                                       textAlign: TextAlign.end,
                                     ),
@@ -424,6 +412,9 @@ class DebtFormScreenState extends State<DebtFormScreen> {
                                                   setState(() {
                                                     _categoryId =
                                                         _categoryList[index].id;
+                                                    _categoryName =
+                                                        _categoryList[index]
+                                                            .name!;
                                                   });
                                                 },
                                               );
@@ -444,7 +435,7 @@ class DebtFormScreenState extends State<DebtFormScreen> {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      _getCategoryName(),
+                                      _categoryName ?? 'เลือก',
                                       overflow: TextOverflow.ellipsis,
                                       textAlign: TextAlign.end,
                                     ),

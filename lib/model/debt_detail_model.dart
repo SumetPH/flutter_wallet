@@ -4,6 +4,7 @@ class DebtDetailModel {
   String? note;
   int? transactionTypeId;
   int? categoryId;
+  String? categoryName;
   String? date;
   String? time;
   int? accountIdFrom;
@@ -11,18 +12,20 @@ class DebtDetailModel {
   int? accountIdTo;
   String? accountNameTo;
 
-  DebtDetailModel(
-      {this.id,
-      this.amount,
-      this.note,
-      this.transactionTypeId,
-      this.categoryId,
-      this.date,
-      this.time,
-      this.accountIdFrom,
-      this.accountNameFrom,
-      this.accountIdTo,
-      this.accountNameTo});
+  DebtDetailModel({
+    this.id,
+    this.amount,
+    this.note,
+    this.transactionTypeId,
+    this.categoryId,
+    this.categoryName,
+    this.date,
+    this.time,
+    this.accountIdFrom,
+    this.accountNameFrom,
+    this.accountIdTo,
+    this.accountNameTo,
+  });
 
   DebtDetailModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -30,6 +33,7 @@ class DebtDetailModel {
     note = json['note'];
     transactionTypeId = json['transaction_type_id'];
     categoryId = json['category_id'];
+    categoryName = json['category_name'];
     date = json['date'];
     time = json['time'];
     accountIdFrom = json['account_id_from'];
@@ -45,6 +49,7 @@ class DebtDetailModel {
     data['note'] = note;
     data['transaction_type_id'] = transactionTypeId;
     data['category_id'] = categoryId;
+    data['category_name'] = categoryName;
     data['date'] = date;
     data['time'] = time;
     data['account_id_from'] = accountIdFrom;

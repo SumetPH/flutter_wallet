@@ -4,6 +4,7 @@ class TransactionDetailModel {
   String? note;
   int? transactionTypeId;
   int? categoryId;
+  String? categoryName;
   String? date;
   String? time;
   int? accountId;
@@ -15,6 +16,7 @@ class TransactionDetailModel {
     this.note,
     this.transactionTypeId,
     this.categoryId,
+    this.categoryName,
     this.date,
     this.time,
     this.accountId,
@@ -27,6 +29,7 @@ class TransactionDetailModel {
     note = json['note'];
     transactionTypeId = json['transaction_type_id'];
     categoryId = json['category_id'];
+    categoryName = json['category_name'];
     date = json['date'];
     time = json['time'];
     accountId = json['account_id'];
@@ -40,6 +43,7 @@ class TransactionDetailModel {
     data['note'] = note;
     data['transaction_type_id'] = transactionTypeId;
     data['category_id'] = categoryId;
+    data['category_name'] = categoryName;
     data['date'] = date;
     data['time'] = time;
     data['account_id'] = accountId;

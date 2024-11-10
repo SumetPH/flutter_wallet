@@ -1,26 +1,68 @@
 class AccountModel {
   int? id;
   String? name;
-  String? amount;
-  int? accountTypeId;
-  String? accountTypeName;
-  String? balance;
+  String? createdAt;
+  String? updatedAt;
+  String? total;
+  List<AccountList>? accountList;
 
   AccountModel({
     this.id,
     this.name,
-    this.amount,
-    this.accountTypeId,
-    this.accountTypeName,
-    this.balance,
+    this.createdAt,
+    this.updatedAt,
+    this.total,
+    this.accountList,
   });
 
   AccountModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
+    total = json['total'];
+    if (json['accountList'] != null) {
+      accountList = <AccountList>[];
+      json['accountList'].forEach((v) {
+        accountList!.add(AccountList.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['name'] = name;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    data['total'] = total;
+    if (accountList != null) {
+      data['accountList'] = accountList!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class AccountList {
+  int? id;
+  String? name;
+  String? amount;
+  int? accountTypeId;
+  String? balance;
+
+  AccountList({
+    this.id,
+    this.name,
+    this.amount,
+    this.accountTypeId,
+    this.balance,
+  });
+
+  AccountList.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
     amount = json['amount'];
     accountTypeId = json['account_type_id'];
-    accountTypeName = json['account_type_name'];
     balance = json['balance'];
   }
 
@@ -30,7 +72,6 @@ class AccountModel {
     data['name'] = name;
     data['amount'] = amount;
     data['account_type_id'] = accountTypeId;
-    data['account_type_name'] = accountTypeName;
     data['balance'] = balance;
     return data;
   }

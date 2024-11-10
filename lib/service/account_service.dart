@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_wallet/model/account_detail_model.dart';
 import 'package:flutter_wallet/model/account_model.dart';
 import 'package:http/http.dart' as http;
 
@@ -32,7 +33,7 @@ class AccountService {
     }
   }
 
-  Future<AccountModel> getAccountDetail({required int accountId}) async {
+  Future<AccountDetailModel> getAccountDetail({required int accountId}) async {
     try {
       final res = await http.get(
         Uri.parse('$apiUrl/account/account-detail?accountId=$accountId'),
@@ -40,7 +41,7 @@ class AccountService {
 
       if (res.statusCode == 200) {
         final account =
-            AccountModel.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
+            AccountDetailModel.fromJson(jsonDecode(utf8.decode(res.bodyBytes)));
         return account;
       } else {
         throw Exception(res.body);
