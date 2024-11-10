@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_wallet/screen/budget/budget_form.dart';
-import 'package:flutter_wallet/screen/budget/budget_reorder.dart';
-import 'package:flutter_wallet/screen/transaction/transaction_list.dart';
+import 'package:flutter_wallet/screen/transaction/transaction_list_screen.dart';
 import 'package:flutter_wallet/service/budget_service.dart';
 import 'package:flutter_wallet/utils/number_utils.dart';
+import 'package:jiffy/jiffy.dart';
 
 class BudgetListScreen extends StatefulWidget {
   const BudgetListScreen({super.key});
@@ -34,101 +34,31 @@ class _BudgetListScreenState extends State<BudgetListScreen> {
     }
   }
 
+  String _getDurationDate({required int startDate}) {
+    final now = Jiffy.now();
+    if (now.date >= startDate) {
+      final start = Jiffy.parseFromList([now.year, now.month, startDate])
+          .format(pattern: 'dd/MM/yy');
+      final end = Jiffy.parseFromList([now.year, now.month, startDate])
+          .add(months: 1)
+          .subtract(days: 1)
+          .format(pattern: 'dd/MM/yy');
+      return '$start - $end';
+    } else {
+      final start = Jiffy.parseFromList([now.year, now.month, startDate])
+          .subtract(months: 1)
+          .format(pattern: 'dd/MM/yy');
+      final end = Jiffy.parseFromList([now.year, now.month, startDate])
+          .subtract(days: 1)
+          .format(pattern: 'dd/MM/yy');
+      return '$start - $end';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {
-                Scaffold.of(context).openDrawer();
-              },
-              child: const Padding(
-                padding: EdgeInsets.all(12.0),
-                child: Icon(Icons.menu),
-              ),
-            ),
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {
-                showModalBottomSheet(
-                  context: context,
-                  builder: (context) => Column(
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: Center(
-                          child: Text(
-                            'เมนู',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                      ListTile(
-                        onTap: () async {
-                          Navigator.pop(context);
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) {
-                                return const BudgetFormScreen(
-                                  mode: BudgetFormMode.create,
-                                );
-                              },
-                            ),
-                          );
-                          // refresh list
-                          setState(() {});
-                        },
-                        title: const Center(
-                          child: Text(
-                            "เพิ่มงบประมาณ",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const Divider(height: 1.0),
-                      ListTile(
-                        onTap: () async {
-                          Navigator.pop(context);
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) {
-                                return const BudgetReorder();
-                              },
-                            ),
-                          );
-                          // refresh list
-                          setState(() {});
-                        },
-                        title: const Center(
-                          child: Text(
-                            "จัดเรียงงบประมาณ",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-              child: const Padding(
-                padding: EdgeInsets.all(12.0),
-                child: Icon(Icons.more_vert),
-              ),
-            ),
-          ],
-        ),
         Expanded(
           child: RefreshIndicator(
             onRefresh: () {
@@ -160,9 +90,11 @@ class _BudgetListScreenState extends State<BudgetListScreen> {
                                   MaterialPageRoute(
                                     builder: (context) {
                                       return TransactionListScreen(
-                                        showBackButton: true,
-                                        categoryId: snapshot
-                                            .data![index].category
+                                        showAppBar: true,
+                                        title: _getDurationDate(
+                                          startDate: data.startDate!,
+                                        ),
+                                        categoryId: data.category
                                             ?.map((el) => el.categoryId!)
                                             .toList(),
                                       );

@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_wallet/screen/category/category_form.dart';
-import 'package:flutter_wallet/screen/category/category_reorder.dart';
-import 'package:flutter_wallet/screen/transaction/transaction_list.dart';
+import 'package:flutter_wallet/screen/transaction/transaction_list_screen.dart';
 import 'package:flutter_wallet/service/category_service.dart';
 import 'package:flutter_wallet/utils/number_utils.dart';
 
 class CategoryListScreen extends StatefulWidget {
-  const CategoryListScreen({super.key});
+  final Function(int index)? changeTab;
+
+  const CategoryListScreen({
+    super.key,
+    this.changeTab,
+  });
 
   @override
   State<CategoryListScreen> createState() => _CategoryListScreenState();
@@ -53,6 +57,10 @@ class _CategoryListScreenState extends State<CategoryListScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: _tabs.length, vsync: this);
+
+    _tabController.addListener(() {
+      widget.changeTab!(_tabController.index);
+    });
   }
 
   @override
@@ -65,101 +73,6 @@ class _CategoryListScreenState extends State<CategoryListScreen>
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {
-                Scaffold.of(context).openDrawer();
-              },
-              child: const Padding(
-                padding: EdgeInsets.all(12.0),
-                child: Icon(Icons.menu),
-              ),
-            ),
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {
-                showModalBottomSheet(
-                  context: context,
-                  builder: (context) => Column(
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: Center(
-                          child: Text(
-                            'เมนู',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                      ListTile(
-                        onTap: () async {
-                          Navigator.pop(context);
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) {
-                                return const CategoryFormScreen(
-                                  mode: CategoryFormMode.create,
-                                );
-                              },
-                            ),
-                          );
-                          // refresh list
-                          setState(() {});
-                        },
-                        title: const Center(
-                          child: Text(
-                            "เพิ่มหมวดหมู่",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const Divider(height: 1.0),
-                      ListTile(
-                        onTap: () async {
-                          Navigator.pop(context);
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) {
-                                return CategoryReorder(
-                                  categoryTypeId:
-                                      _tabsData[_tabController.index]
-                                          ['categoryTypeId'],
-                                );
-                              },
-                            ),
-                          );
-                          // refresh list
-                          setState(() {});
-                        },
-                        title: const Center(
-                          child: Text(
-                            "จัดเรียงหมวดหมู่",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-              child: const Padding(
-                padding: EdgeInsets.all(12.0),
-                child: Icon(Icons.more_vert),
-              ),
-            ),
-          ],
-        ),
         TabBar(
           controller: _tabController,
           tabs: _tabs,
@@ -189,6 +102,7 @@ class _CategoryListScreenState extends State<CategoryListScreen>
                       return ListView.separated(
                         itemCount: snapshot.data!.length,
                         itemBuilder: (context, index) {
+                          final category = snapshot.data![index];
                           return GestureDetector(
                             behavior: HitTestBehavior.opaque,
                             onTap: () async {
@@ -197,8 +111,9 @@ class _CategoryListScreenState extends State<CategoryListScreen>
                                 MaterialPageRoute(
                                   builder: (context) {
                                     return TransactionListScreen(
-                                      categoryId: [snapshot.data![index].id!],
-                                      showBackButton: true,
+                                      categoryId: [category.id!],
+                                      showAppBar: true,
+                                      title: category.name,
                                     );
                                   },
                                 ),
@@ -230,8 +145,7 @@ class _CategoryListScreenState extends State<CategoryListScreen>
                                           MaterialPageRoute(builder: (context) {
                                             return CategoryFormScreen(
                                               mode: CategoryFormMode.edit,
-                                              categoryId:
-                                                  snapshot.data![index].id,
+                                              categoryId: category.id,
                                             );
                                           }),
                                         );
@@ -256,15 +170,14 @@ class _CategoryListScreenState extends State<CategoryListScreen>
                                             return AlertDialog(
                                               title: const Text('ลบบัญชี'),
                                               content: Text(
-                                                'คุณต้องการลบหมวดหมู่ ${snapshot.data![index].name}',
+                                                'คุณต้องการลบหมวดหมู่ ${category.name}',
                                               ),
                                               actions: [
                                                 TextButton(
                                                   child: const Text('ตกลง'),
                                                   onPressed: () async {
                                                     await _deleteCategory(
-                                                      categoryId: snapshot
-                                                          .data![index].id!,
+                                                      categoryId: category.id!,
                                                       context: context,
                                                     );
                                                     Navigator.of(context).pop();
@@ -302,12 +215,11 @@ class _CategoryListScreenState extends State<CategoryListScreen>
                                 children: [
                                   CircleAvatar(
                                     backgroundColor:
-                                        snapshot.data![index].categoryTypeId ==
-                                                1
+                                        category.categoryTypeId == 1
                                             ? Colors.red[600]
                                             : Colors.green[600],
                                     child: Icon(
-                                      snapshot.data![index].categoryTypeId == 1
+                                      category.categoryTypeId == 1
                                           ? Icons.arrow_downward
                                           : Icons.arrow_upward,
                                       color: Colors.white,
@@ -322,22 +234,21 @@ class _CategoryListScreenState extends State<CategoryListScreen>
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            snapshot.data![index].name!,
+                                            category.name!,
                                             style: const TextStyle(
                                               fontSize: 16.0,
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
                                           Text(
-                                            '${NumberUtils.formatNumber(double.parse(snapshot.data![index].amount!))} บาท',
+                                            '${NumberUtils.formatNumber(double.parse(category.amount!))} บาท',
                                             style: TextStyle(
                                               fontSize: 18.0,
                                               fontWeight: FontWeight.bold,
-                                              color: snapshot.data![index]
-                                                          .categoryTypeId ==
-                                                      1
-                                                  ? Colors.red[600]
-                                                  : Colors.green[600],
+                                              color:
+                                                  category.categoryTypeId == 1
+                                                      ? Colors.red[600]
+                                                      : Colors.green[600],
                                             ),
                                           ),
                                         ],

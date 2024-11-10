@@ -5,20 +5,23 @@ import 'package:flutter_wallet/screen/transaction/transfer_form.dart';
 import 'package:flutter_wallet/service/debt_service.dart';
 import 'package:flutter_wallet/service/transaction_service.dart';
 import 'package:flutter_wallet/service/transfer_service.dart';
+import 'package:flutter_wallet/widget/menu.dart';
 import 'package:flutter_wallet/widget/transaction_list.dart';
 
 class TransactionListScreen extends StatefulWidget {
   // property
   final int? accountId;
   final List<int>? categoryId;
-  final bool? showBackButton;
+  final bool? showAppBar;
+  final String? title;
 
   // constructor
   const TransactionListScreen({
     super.key,
     this.accountId,
     this.categoryId,
-    this.showBackButton,
+    this.showAppBar,
+    this.title,
   });
 
   @override
@@ -96,128 +99,28 @@ class TransactionListScreenState extends State<TransactionListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: widget.showAppBar != null
+          ? AppBar(
+              title: Text(
+                widget.title ?? '',
+                style: const TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.more_vert),
+                  onPressed: () {
+                    transactionMenu(context: context, setState: setState);
+                  },
+                )
+              ],
+            )
+          : null,
       body: SafeArea(
         child: Column(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () {
-                    if (widget.showBackButton == null) {
-                      Scaffold.of(context).openDrawer();
-                    } else {
-                      Navigator.pop(context);
-                    }
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: widget.showBackButton == null
-                        ? const Icon(Icons.menu)
-                        : const Icon(Icons.chevron_left),
-                  ),
-                ),
-                GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      builder: (context) => Column(
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: Center(
-                              child: Text(
-                                'เมนู',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                          ListTile(
-                            onTap: () async {
-                              Navigator.pop(context);
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) {
-                                  return const TransactionFormScreen(
-                                    mode: TransactionFormMode.create,
-                                  );
-                                }),
-                              );
-                              // refresh list
-                              setState(() {});
-                            },
-                            title: const Center(
-                              child: Text(
-                                "เพิ่มรายการ",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const Divider(height: 1.0),
-                          ListTile(
-                            onTap: () async {
-                              Navigator.pop(context);
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) {
-                                  return const TransferFormScreen(
-                                    mode: TransferFormMode.create,
-                                  );
-                                }),
-                              );
-                              // refresh list
-                              setState(() {});
-                            },
-                            title: const Center(
-                              child: Text(
-                                "โอน",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const Divider(height: 1.0),
-                          ListTile(
-                            onTap: () async {
-                              Navigator.pop(context);
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) {
-                                  return const DebtFormScreen(
-                                    mode: DebtFormMode.create,
-                                  );
-                                }),
-                              );
-                              // refresh list
-                              setState(() {});
-                            },
-                            title: const Center(
-                              child: Text(
-                                "ชำระหนี้",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    );
-                  },
-                  child: const Padding(
-                    padding: EdgeInsets.all(12.0),
-                    child: Icon(Icons.more_vert),
-                  ),
-                ),
-              ],
-            ),
             Expanded(
               child: RefreshIndicator(
                 onRefresh: () {

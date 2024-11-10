@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_wallet/model/account_model.dart';
-import 'package:flutter_wallet/screen/account/account_reorder.dart';
-import 'package:flutter_wallet/screen/transaction/transaction_list.dart';
+import 'package:flutter_wallet/screen/transaction/transaction_list_screen.dart';
 import 'package:flutter_wallet/service/account_service.dart';
 import 'package:flutter_wallet/screen/account/account_form.dart';
 import 'package:flutter_wallet/widget/account_list_widget.dart';
 
 class AccountListScreen extends StatefulWidget {
-  const AccountListScreen({super.key});
+  final Function(Widget)? menu;
+
+  const AccountListScreen({
+    super.key,
+    this.menu,
+  });
 
   @override
   State<AccountListScreen> createState() => _AccountListScreenState();
@@ -48,93 +52,6 @@ class _AccountListScreenState extends State<AccountListScreen> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {
-                Scaffold.of(context).openDrawer();
-              },
-              child: const Padding(
-                padding: EdgeInsets.all(12.0),
-                child: Icon(Icons.menu),
-              ),
-            ),
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {
-                showModalBottomSheet(
-                  context: context,
-                  builder: (context) => Column(
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: Center(
-                          child: Text(
-                            'เมนู',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                      ListTile(
-                        onTap: () async {
-                          Navigator.pop(context);
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const AccountFormScreen(
-                                mode: AccountFormMode.create,
-                              ),
-                            ),
-                          );
-                          // refresh list
-                          setState(() {});
-                        },
-                        title: const Center(
-                          child: Text(
-                            "เพิ่มบัญชี",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const Divider(height: 1.0),
-                      ListTile(
-                        onTap: () async {
-                          Navigator.pop(context);
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const AccountReorder(),
-                            ),
-                          );
-                          // refresh list
-                          setState(() {});
-                        },
-                        title: const Center(
-                          child: Text(
-                            "จัดเรียงบัญชี",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-              child: const Padding(
-                padding: EdgeInsets.all(12.0),
-                child: Icon(Icons.more_vert),
-              ),
-            ),
-          ],
-        ),
         Expanded(
           child: RefreshIndicator(
             onRefresh: () {
@@ -163,7 +80,8 @@ class _AccountListScreenState extends State<AccountListScreen> {
                                 builder: (context) {
                                   return TransactionListScreen(
                                     accountId: account.id,
-                                    showBackButton: true,
+                                    showAppBar: true,
+                                    title: account.name,
                                   );
                                 },
                               ),
