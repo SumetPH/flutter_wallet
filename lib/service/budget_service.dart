@@ -6,12 +6,12 @@ import 'package:flutter_wallet/model/budget_model.dart';
 import 'package:http/http.dart' as http;
 
 class BudgetService {
-  final api = dotenv.env['API_URL'];
+  final apiUrl = dotenv.env['API_URL'];
 
   Future<List<BudgetModel>> getBudgetList() async {
     try {
       final res = await http.get(
-        Uri.parse('$api/budget/budget-list'),
+        Uri.parse('$apiUrl/budget/budget-list'),
       );
 
       if (res.statusCode == 200) {
@@ -30,7 +30,7 @@ class BudgetService {
   Future<BudgetDetailModel> getBudgetDetail({required int budgetId}) async {
     try {
       final res = await http.get(
-        Uri.parse('$api/budget/budget-detail?budgetId=$budgetId'),
+        Uri.parse('$apiUrl/budget/budget-detail?budgetId=$budgetId'),
       );
 
       if (res.statusCode == 200) {
@@ -54,7 +54,7 @@ class BudgetService {
   }) async {
     try {
       final res = await http.post(
-        Uri.parse('$api/budget/budget-create'),
+        Uri.parse('$apiUrl/budget/budget-create'),
         body: jsonEncode({
           'name': name,
           'amount': amount,
@@ -83,7 +83,7 @@ class BudgetService {
   }) async {
     try {
       final res = await http.put(
-        Uri.parse('$api/budget/budget-update'),
+        Uri.parse('$apiUrl/budget/budget-update'),
         body: jsonEncode({
           'budgetId': budgetId,
           'name': name,
@@ -109,7 +109,26 @@ class BudgetService {
   }) async {
     try {
       final res = await http
-          .delete(Uri.parse('$api/budget/budget-delete?budgetId=$budgetId'));
+          .delete(Uri.parse('$apiUrl/budget/budget-delete?budgetId=$budgetId'));
+
+      if (res.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception(res.body);
+      }
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  Future<bool> orderBudget({required List<Map<String, dynamic>> list}) async {
+    try {
+      final res = await http.put(
+          Uri.parse(
+            '$apiUrl/budget/budget-order',
+          ),
+          body: jsonEncode({'list': list}));
 
       if (res.statusCode == 200) {
         return true;

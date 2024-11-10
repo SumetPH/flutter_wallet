@@ -121,4 +121,23 @@ class AccountService {
       return false;
     }
   }
+
+  Future<bool> orderAccount({required List<Map<String, dynamic>> list}) async {
+    try {
+      final res = await http.put(
+          Uri.parse(
+            '$apiUrl/account/account-order',
+          ),
+          body: jsonEncode({'list': list}));
+
+      if (res.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception(res.body);
+      }
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
 }

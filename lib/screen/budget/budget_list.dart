@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_wallet/screen/budget/budget_form.dart';
+import 'package:flutter_wallet/screen/budget/budget_reorder.dart';
 import 'package:flutter_wallet/screen/transaction/transaction_list.dart';
 import 'package:flutter_wallet/service/budget_service.dart';
 import 'package:flutter_wallet/utils/number_utils.dart';
@@ -87,6 +88,30 @@ class _BudgetListScreenState extends State<BudgetListScreen> {
                         title: const Center(
                           child: Text(
                             "เพิ่มงบประมาณ",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const Divider(height: 1.0),
+                      ListTile(
+                        onTap: () async {
+                          Navigator.pop(context);
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return const BudgetReorder();
+                              },
+                            ),
+                          );
+                          // refresh list
+                          setState(() {});
+                        },
+                        title: const Center(
+                          child: Text(
+                            "จัดเรียงงบประมาณ",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                             ),

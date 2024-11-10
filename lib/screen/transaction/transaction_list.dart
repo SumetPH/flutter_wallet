@@ -358,6 +358,7 @@ class TransactionListScreenState extends State<TransactionListScreen> {
                                                       context: context,
                                                     );
                                                   }
+                                                  Navigator.pop(context);
                                                 },
                                               ),
                                               TextButton(
