@@ -49,6 +49,7 @@ class AccountList {
   String? amount;
   int? accountTypeId;
   String? balance;
+  String? iconPath;
 
   AccountList({
     this.id,
@@ -56,6 +57,7 @@ class AccountList {
     this.amount,
     this.accountTypeId,
     this.balance,
+    this.iconPath,
   });
 
   AccountList.fromJson(Map<String, dynamic> json) {
@@ -64,6 +66,7 @@ class AccountList {
     amount = json['amount'];
     accountTypeId = json['account_type_id'];
     balance = json['balance'];
+    iconPath = json['icon_path'];
   }
 
   Map<String, dynamic> toJson() {
@@ -73,6 +76,7 @@ class AccountList {
     data['amount'] = amount;
     data['account_type_id'] = accountTypeId;
     data['balance'] = balance;
+    data['icon_path'] = iconPath;
     return data;
   }
 }

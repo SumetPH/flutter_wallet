@@ -56,15 +56,20 @@ class AccountService {
     required String name,
     required double amount,
     required int accountTypeId,
+    String? iconPath,
   }) async {
     try {
+      final body = {
+        'name': name,
+        'amount': amount,
+        'accountTypeId': accountTypeId,
+      };
+      if (iconPath != null) {
+        body['iconPath'] = iconPath;
+      }
       final res = await http.post(
         Uri.parse('$apiUrl/account/account-create'),
-        body: jsonEncode({
-          'name': name,
-          'amount': amount,
-          'accountTypeId': accountTypeId,
-        }),
+        body: jsonEncode(body),
       );
 
       if (res.statusCode == 200) {
@@ -83,16 +88,21 @@ class AccountService {
     required String name,
     required double amount,
     required int accountTypeId,
+    String? iconPath,
   }) async {
     try {
+      final body = {
+        'accountId': accountId,
+        'name': name,
+        'amount': amount,
+        'accountTypeId': accountTypeId,
+      };
+      if (iconPath != null) {
+        body['iconPath'] = iconPath;
+      }
       final res = await http.put(
         Uri.parse('$apiUrl/account/account-update'),
-        body: jsonEncode({
-          'accountId': accountId,
-          'name': name,
-          'amount': amount,
-          'accountTypeId': accountTypeId,
-        }),
+        body: jsonEncode(body),
       );
 
       if (res.statusCode == 200) {

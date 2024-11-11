@@ -54,9 +54,6 @@ class TransactionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double maxWidthText = screenWidth * 0.15;
-
     return ListView.builder(
       itemCount: transactionListGroup.length,
       itemBuilder: (ctx, index) {
@@ -64,9 +61,7 @@ class TransactionList extends StatelessWidget {
         return Column(
           children: [
             Container(
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.grey[200]
-                  : Colors.grey[900],
+              color: Theme.of(context).colorScheme.surfaceContainer,
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   vertical: 8.0,
@@ -132,12 +127,9 @@ class TransactionList extends StatelessWidget {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      const SizedBox(width: 6.0),
+                                      const SizedBox(width: 8.0),
                                       if (transaction.transactionTypeId == 1)
-                                        Container(
-                                          constraints: BoxConstraints(
-                                            maxWidth: maxWidthText,
-                                          ),
+                                        Expanded(
                                           child: Text(
                                             transaction.expenseAccountName ??
                                                 "",
@@ -148,10 +140,7 @@ class TransactionList extends StatelessWidget {
                                           ),
                                         ),
                                       if (transaction.transactionTypeId == 2)
-                                        Container(
-                                          constraints: BoxConstraints(
-                                            maxWidth: maxWidthText,
-                                          ),
+                                        Expanded(
                                           child: Text(
                                             transaction.incomeAccountName ?? "",
                                             style: const TextStyle(
@@ -160,18 +149,11 @@ class TransactionList extends StatelessWidget {
                                             ),
                                           ),
                                         ),
-                                      const SizedBox(width: 6.0),
-                                      Container(
-                                        constraints: BoxConstraints(
-                                          maxWidth: maxWidthText,
-                                        ),
-                                        child: Text(
-                                          transaction.categoryName ?? "",
-                                          style: const TextStyle(
-                                              fontSize: 14.0,
-                                              overflow: TextOverflow.ellipsis),
-                                        ),
-                                      ),
+                                      const SizedBox(width: 8.0),
+                                      Text(
+                                        transaction.time ?? "",
+                                        style: const TextStyle(fontSize: 14.0),
+                                      )
                                     ],
                                   ),
                                 // transfer
@@ -185,42 +167,62 @@ class TransactionList extends StatelessWidget {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      const SizedBox(width: 6.0),
-                                      Container(
-                                        constraints: BoxConstraints(
-                                          maxWidth: maxWidthText,
-                                        ),
-                                        child: Text(
-                                          transaction.transferAccountNameFrom ??
-                                              "",
-                                          style: const TextStyle(
-                                            fontSize: 14.0,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
+                                      const SizedBox(width: 8.0),
+                                      Expanded(
+                                        child: LayoutBuilder(
+                                            builder: (ctx, constraint) {
+                                          return Row(
+                                            children: [
+                                              ConstrainedBox(
+                                                constraints: BoxConstraints(
+                                                  maxWidth:
+                                                      constraint.maxWidth * 0.4,
+                                                ),
+                                                child: Text(
+                                                  transaction
+                                                          .transferAccountNameFrom ??
+                                                      "",
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: const TextStyle(
+                                                    fontSize: 14.0,
+                                                  ),
+                                                ),
+                                              ),
+                                              const Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal: 4.0,
+                                                ),
+                                                child: Icon(
+                                                  Icons.arrow_right_alt,
+                                                  size: 14.0,
+                                                ),
+                                              ),
+                                              ConstrainedBox(
+                                                constraints: BoxConstraints(
+                                                  maxWidth:
+                                                      constraint.maxWidth * 0.4,
+                                                ),
+                                                child: Text(
+                                                  transaction
+                                                          .transferAccountNameTo ??
+                                                      "",
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: const TextStyle(
+                                                    fontSize: 14.0,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        }),
                                       ),
-                                      const Padding(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 2.0,
-                                        ),
-                                        child: Icon(
-                                          Icons.arrow_right_alt,
-                                          size: 16.0,
-                                        ),
-                                      ),
-                                      Container(
-                                        constraints: BoxConstraints(
-                                          maxWidth: maxWidthText,
-                                        ),
-                                        child: Text(
-                                          transaction.transferAccountNameTo ??
-                                              "",
-                                          style: const TextStyle(
-                                            fontSize: 14.0,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                      ),
+                                      const SizedBox(width: 8.0),
+                                      Text(
+                                        transaction.time ?? "",
+                                        style: const TextStyle(fontSize: 14.0),
+                                      )
                                     ],
                                   ),
                                 // debt
@@ -234,77 +236,94 @@ class TransactionList extends StatelessWidget {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      const SizedBox(width: 6.0),
-                                      Container(
-                                        constraints: BoxConstraints(
-                                          maxWidth: maxWidthText,
-                                        ),
-                                        child: Text(
-                                          transaction.debtAccountNameFrom ?? "",
-                                          style: const TextStyle(
-                                            fontSize: 14.0,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                      ),
-                                      const Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 2.0),
-                                        child: Icon(
-                                          Icons.arrow_right_alt,
-                                          size: 16.0,
-                                        ),
-                                      ),
-                                      Container(
-                                        constraints: BoxConstraints(
-                                          maxWidth: maxWidthText,
-                                        ),
-                                        child: Text(
-                                          transaction.debtAccountNameTo ?? "",
-                                          style: const TextStyle(
-                                            fontSize: 14.0,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
+                                      const SizedBox(width: 8.0),
+                                      Expanded(
+                                        child: LayoutBuilder(
+                                            builder: (ctx, constraint) {
+                                          return Row(
+                                            children: [
+                                              ConstrainedBox(
+                                                constraints: BoxConstraints(
+                                                  maxWidth:
+                                                      constraint.maxWidth * 0.4,
+                                                ),
+                                                child: Text(
+                                                  transaction
+                                                          .debtAccountNameFrom ??
+                                                      "",
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: const TextStyle(
+                                                    fontSize: 14.0,
+                                                  ),
+                                                ),
+                                              ),
+                                              const Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal: 4.0,
+                                                ),
+                                                child: Icon(
+                                                  Icons.arrow_right_alt,
+                                                  size: 14.0,
+                                                ),
+                                              ),
+                                              ConstrainedBox(
+                                                constraints: BoxConstraints(
+                                                  maxWidth:
+                                                      constraint.maxWidth * 0.4,
+                                                ),
+                                                child: Text(
+                                                  transaction
+                                                          .debtAccountNameTo ??
+                                                      "",
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: const TextStyle(
+                                                    fontSize: 14.0,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        }),
                                       ),
                                       const SizedBox(width: 8.0),
-                                      Container(
-                                        constraints: BoxConstraints(
-                                          maxWidth: maxWidthText,
-                                        ),
-                                        child: Text(
-                                          transaction.categoryName ?? "",
-                                          style: const TextStyle(
-                                            fontSize: 14.0,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                      ),
+                                      Text(
+                                        transaction.time ?? "",
+                                        style: const TextStyle(fontSize: 14.0),
+                                      )
                                     ],
                                   ),
-                                Text(
-                                  '${NumberUtils.formatNumber(double.parse(transaction.amount!))} บาท',
-                                  style: TextStyle(
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.bold,
-                                    color: _colorAmount(
-                                      context: context,
-                                      transactionTypeId:
-                                          transaction.transactionTypeId!,
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      '${NumberUtils.formatNumber(double.parse(transaction.amount!))} บาท',
+                                      style: TextStyle(
+                                        fontSize: 18.0,
+                                        fontWeight: FontWeight.bold,
+                                        color: _colorAmount(
+                                          context: context,
+                                          transactionTypeId:
+                                              transaction.transactionTypeId!,
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ),
+                                    const SizedBox(width: 8.0),
+                                    Expanded(
+                                      child: Text(
+                                        transaction.categoryName ?? '',
+                                        style: const TextStyle(
+                                          fontSize: 14.0,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        textAlign: TextAlign.end,
+                                      ),
+                                    ),
+                                  ],
+                                )
                               ],
                             ),
-                          ),
-                        ),
-                        Text(
-                          transaction.time ?? "",
-                          style: TextStyle(
-                            color:
-                                Theme.of(context).brightness == Brightness.light
-                                    ? Colors.grey[700]
-                                    : Colors.grey[300],
                           ),
                         ),
                       ],

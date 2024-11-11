@@ -25,9 +25,7 @@ class AccountListWidget extends StatelessWidget {
         return Column(
           children: [
             Container(
-              color: Theme.of(context).brightness == Brightness.light
-                  ? Colors.grey[200]
-                  : Colors.grey[900],
+              color: Theme.of(context).colorScheme.surfaceContainer,
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   vertical: 8.0,
@@ -74,17 +72,17 @@ class AccountListWidget extends StatelessWidget {
                   },
                   child: Container(
                     color: account.id == disabledAccountId
-                        ? Theme.of(context).brightness == Brightness.light
-                            ? Colors.grey[300]
-                            : Colors.grey[800]
+                        ? Theme.of(context).colorScheme.surfaceContainerHighest
                         : null,
                     child: Padding(
                       padding: const EdgeInsets.all(12.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const CircleAvatar(
-                            child: Icon(Icons.wallet),
+                          CircleAvatar(
+                            child: account.iconPath == null
+                                ? const Icon(Icons.wallet)
+                                : Image.asset(account.iconPath!),
                           ),
                           Expanded(
                             child: Padding(

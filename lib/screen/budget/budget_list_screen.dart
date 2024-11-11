@@ -56,6 +56,26 @@ class _BudgetListScreenState extends State<BudgetListScreen> {
     }
   }
 
+  double _calculateProgressIndicatorValue({
+    required double amount,
+    required double balance,
+  }) {
+    if (amount == 0) {
+      return 0;
+    }
+    return ((balance * 100) / amount) / 100;
+  }
+
+  Color? _colorAmount({
+    required double amount,
+    required double balance,
+  }) {
+    if ((amount - balance) < 0) {
+      return Colors.red;
+    }
+    return Colors.green;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -232,78 +252,102 @@ class _BudgetListScreenState extends State<BudgetListScreen> {
                                         const CircleAvatar(
                                           child: Icon(Icons.category),
                                         ),
-                                        SizedBox(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.45,
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 12.0),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  snapshot.data![index].name!,
-                                                  style: const TextStyle(
-                                                    fontSize: 16.0,
-                                                    fontWeight: FontWeight.bold,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  '${NumberUtils.formatNumber(double.parse(data.amount!))} บาท',
-                                                  style: const TextStyle(
-                                                    fontSize: 18.0,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
                                         Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
+                                          child: Row(
                                             children: [
-                                              Text(
-                                                '${NumberUtils.formatNumber(double.parse(data.balance!))} บาท',
-                                                style: TextStyle(
-                                                  fontSize: 15.0,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.red[600],
+                                              Expanded(
+                                                flex: 7,
+                                                child: Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 12.0),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        snapshot
+                                                            .data![index].name!,
+                                                        style: const TextStyle(
+                                                          fontSize: 16.0,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        '${NumberUtils.formatNumber(double.parse(data.amount!))} บาท',
+                                                        style: const TextStyle(
+                                                          fontSize: 18.0,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
-                                              SizedBox(
-                                                width: double.infinity,
-                                                child: LinearProgressIndicator(
-                                                  value: double.parse(
-                                                          data.balance!) *
-                                                      100 /
-                                                      double.parse(
-                                                          data.amount!) /
-                                                      100,
-                                                  backgroundColor: Colors.green,
-                                                  minHeight: 8.0,
-                                                  borderRadius:
-                                                      const BorderRadius.all(
-                                                    Radius.circular(4.0),
-                                                  ),
-                                                  valueColor:
-                                                      const AlwaysStoppedAnimation(
-                                                    Colors.red,
-                                                  ),
-                                                ),
-                                              ),
-                                              Text(
-                                                '${NumberUtils.formatNumber(double.parse(data.amount!) - double.parse(data.balance!))} บาท',
-                                                style: TextStyle(
-                                                  fontSize: 15.0,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.green[600],
+                                              Expanded(
+                                                flex: 5,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.end,
+                                                  children: [
+                                                    Text(
+                                                      '${NumberUtils.formatNumber(double.parse(data.balance!))} บาท',
+                                                      style: TextStyle(
+                                                        fontSize: 15.0,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.red[600],
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width: double.infinity,
+                                                      child:
+                                                          LinearProgressIndicator(
+                                                        value:
+                                                            _calculateProgressIndicatorValue(
+                                                          amount: double.parse(
+                                                            data.amount!,
+                                                          ),
+                                                          balance: double.parse(
+                                                            data.balance!,
+                                                          ),
+                                                        ),
+                                                        backgroundColor:
+                                                            Colors.green,
+                                                        minHeight: 8.0,
+                                                        borderRadius:
+                                                            const BorderRadius
+                                                                .all(
+                                                          Radius.circular(4.0),
+                                                        ),
+                                                        valueColor:
+                                                            const AlwaysStoppedAnimation(
+                                                          Colors.red,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      '${NumberUtils.formatNumber(double.parse(data.amount!) - double.parse(data.balance!))} บาท',
+                                                      style: TextStyle(
+                                                        fontSize: 15.0,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: _colorAmount(
+                                                          amount: double.parse(
+                                                            data.amount!,
+                                                          ),
+                                                          balance: double.parse(
+                                                            data.balance!,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
                                             ],

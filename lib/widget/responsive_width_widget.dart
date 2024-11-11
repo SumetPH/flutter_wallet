@@ -12,8 +12,8 @@ class ResponsiveWidth extends StatelessWidget {
   Widget build(BuildContext context) {
     return kIsWeb
         ? Container(
-            decoration: const BoxDecoration(
-              color: Colors.black,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surfaceContainer,
             ),
             child: Center(
               child: ClipRRect(

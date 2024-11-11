@@ -3,6 +3,7 @@ import 'package:flutter_wallet/service/account_service.dart';
 import 'package:flutter_wallet/service/account_type_service.dart';
 import 'package:flutter_wallet/model/account_type_model.dart';
 import 'package:flutter_wallet/utils/currency_input_formatter.dart';
+import 'package:flutter_wallet/utils/icon_utils.dart';
 import 'package:flutter_wallet/widget/responsive_width_widget.dart';
 
 enum AccountFormMode { create, edit }
@@ -30,6 +31,7 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
   int? _accountTypeId;
+  String? _iconPath;
   bool _isLoading = true;
 
   // method
@@ -48,6 +50,7 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
         _nameController.text = accountDetail.name ?? '';
         _amountController.text = accountDetail.amount.toString();
         _accountTypeId = accountDetail.accountTypeId;
+        _iconPath = accountDetail.iconPath;
       });
     } catch (e) {
       print(e);
@@ -61,6 +64,49 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
           .name!;
     } catch (e) {
       return 'เลือก';
+    }
+  }
+
+  Future _createOrUpdateAccount() async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+
+      bool res = false;
+      if (widget.mode == AccountFormMode.create) {
+        res = await _accountService.createAccount(
+          name: _nameController.text,
+          amount: double.parse(_amountController.text),
+          accountTypeId: _accountTypeId!,
+          iconPath: _iconPath,
+        );
+      } else {
+        res = await _accountService.updateAccount(
+          accountId: widget.accountId!,
+          name: _nameController.text,
+          amount: double.parse(_amountController.text),
+          accountTypeId: _accountTypeId!,
+          iconPath: _iconPath,
+        );
+      }
+
+      if (res) {
+        Navigator.pop(context);
+      } else {
+        throw Exception('ทำรายการไม่สำเร็จ');
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'ทำรายการไม่สำเร็จ',
+          ),
+        ),
+      );
     }
   }
 
@@ -104,68 +150,7 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                     ),
                   );
                 } else {
-                  if (widget.mode == AccountFormMode.create) {
-                    try {
-                      setState(() {
-                        _isLoading = true;
-                      });
-                      final created = await _accountService.createAccount(
-                        name: _nameController.text,
-                        amount: double.parse(_amountController.text),
-                        accountTypeId: _accountTypeId!,
-                      );
-                      if (created) {
-                        setState(() {
-                          _isLoading = false;
-                        });
-                        Navigator.pop(context);
-                      } else {
-                        throw Exception('Failed to create account');
-                      }
-                    } catch (e) {
-                      setState(() {
-                        _isLoading = false;
-                      });
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง',
-                          ),
-                        ),
-                      );
-                    }
-                  } else {
-                    try {
-                      setState(() {
-                        _isLoading = true;
-                      });
-                      final created = await _accountService.updateAccount(
-                        accountId: widget.accountId!,
-                        name: _nameController.text,
-                        amount: double.parse(_amountController.text),
-                        accountTypeId: _accountTypeId!,
-                      );
-                      if (created) {
-                        setState(() {
-                          _isLoading = false;
-                        });
-                        Navigator.pop(context);
-                      } else {
-                        throw Exception('Failed to create account');
-                      }
-                    } catch (e) {
-                      setState(() {
-                        _isLoading = false;
-                      });
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง',
-                          ),
-                        ),
-                      );
-                    }
-                  }
+                  await _createOrUpdateAccount();
                 }
               },
             )
@@ -284,6 +269,83 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   Text(_getAccountTypeName()),
+                                  const Icon(Icons.chevron_right),
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    const Divider(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                      child: Row(
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 14.0),
+                            child: Text('ไอคอน'),
+                          ),
+                          const SizedBox(width: 20.0),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () async {
+                                showModalBottomSheet(
+                                  context: context,
+                                  builder: (context) {
+                                    return Column(
+                                      children: [
+                                        const Padding(
+                                          padding: EdgeInsets.all(16.0),
+                                          child: Text(
+                                            'เลือกไอคอน',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 16.0,
+                                            ),
+                                            child: GridView.count(
+                                              crossAxisCount: 6,
+                                              mainAxisSpacing: 16.0,
+                                              crossAxisSpacing: 16.0,
+                                              children:
+                                                  iconPathList.map((iconPath) {
+                                                return GestureDetector(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      _iconPath = iconPath;
+                                                    });
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: CircleAvatar(
+                                                    child:
+                                                        Image.asset(iconPath),
+                                                  ),
+                                                );
+                                              }).toList(),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  _iconPath == null
+                                      ? const Text('เลือก')
+                                      : CircleAvatar(
+                                          child: Image.asset(
+                                            _iconPath!,
+                                          ),
+                                        ),
                                   const Icon(Icons.chevron_right),
                                 ],
                               ),

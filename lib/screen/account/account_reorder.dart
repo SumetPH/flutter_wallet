@@ -131,10 +131,9 @@ class _AccountReorderState extends State<AccountReorder> {
                           return Column(
                             children: [
                               Container(
-                                color: Theme.of(context).brightness ==
-                                        Brightness.light
-                                    ? Colors.grey[200]
-                                    : Colors.grey[900],
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainer,
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
                                     vertical: 8.0,

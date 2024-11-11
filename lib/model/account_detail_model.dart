@@ -6,6 +6,7 @@ class AccountDetailModel {
   String? createdAt;
   String? updatedAt;
   int? order;
+  String? iconPath;
 
   AccountDetailModel({
     this.id,
@@ -15,6 +16,7 @@ class AccountDetailModel {
     this.createdAt,
     this.updatedAt,
     this.order,
+    this.iconPath,
   });
 
   AccountDetailModel.fromJson(Map<String, dynamic> json) {
@@ -25,6 +27,7 @@ class AccountDetailModel {
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     order = json['order'];
+    iconPath = json['icon_path'];
   }
 
   Map<String, dynamic> toJson() {
@@ -36,6 +39,7 @@ class AccountDetailModel {
     data['created_at'] = createdAt;
     data['updated_at'] = updatedAt;
     data['order'] = order;
+    data['icon_path'] = iconPath;
     return data;
   }
 }

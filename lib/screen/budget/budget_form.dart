@@ -254,35 +254,21 @@ class BudgetFormScreenState extends State<BudgetFormScreen> {
                                                     final id =
                                                         _categoryList[index]
                                                             .id!;
-                                                    return ListTile(
-                                                        onTap: () {
-                                                          setState(() {
-                                                            _selectCategory(
-                                                                categoryId: id);
-                                                          });
-                                                        },
-                                                        title: Row(
-                                                          children: [
-                                                            Checkbox(
-                                                                value: _categoryId
-                                                                    .contains(
-                                                                        id),
-                                                                onChanged:
-                                                                    (value) {
-                                                                  setState(() {
-                                                                    setState(
-                                                                        () {
-                                                                      _selectCategory(
-                                                                          categoryId:
-                                                                              id);
-                                                                    });
-                                                                  });
-                                                                }),
-                                                            Text(_categoryList[
-                                                                    index]
-                                                                .name!)
-                                                          ],
-                                                        ));
+                                                    return CheckboxListTile(
+                                                      title: Text(
+                                                        _categoryList[index]
+                                                            .name!,
+                                                      ),
+                                                      value: _categoryId
+                                                          .contains(id),
+                                                      onChanged: (value) {
+                                                        setState(() {
+                                                          _selectCategory(
+                                                            categoryId: id,
+                                                          );
+                                                        });
+                                                      },
+                                                    );
                                                   },
                                                   separatorBuilder:
                                                       (context, index) {
@@ -304,7 +290,11 @@ class BudgetFormScreenState extends State<BudgetFormScreen> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
-                                    Text('เลือก ${_categoryId.length}'),
+                                    _categoryId.isEmpty
+                                        ? const Text('เลือก')
+                                        : Text(
+                                            '${_categoryId.length} หมวดหมู่',
+                                          ),
                                     const Icon(Icons.chevron_right),
                                   ],
                                 ),
