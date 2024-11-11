@@ -116,7 +116,7 @@ class TransactionList extends StatelessWidget {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      const SizedBox(width: 8.0),
+                                      const SizedBox(width: 6.0),
                                       if (transaction.transactionTypeId == 1)
                                         Container(
                                           constraints: BoxConstraints(
@@ -126,7 +126,7 @@ class TransactionList extends StatelessWidget {
                                             transaction.expenseAccountName ??
                                                 "",
                                             style: const TextStyle(
-                                              fontSize: 16.0,
+                                              fontSize: 14.0,
                                               overflow: TextOverflow.ellipsis,
                                             ),
                                           ),
@@ -139,12 +139,12 @@ class TransactionList extends StatelessWidget {
                                           child: Text(
                                             transaction.incomeAccountName ?? "",
                                             style: const TextStyle(
-                                              fontSize: 16.0,
+                                              fontSize: 14.0,
                                               overflow: TextOverflow.ellipsis,
                                             ),
                                           ),
                                         ),
-                                      const SizedBox(width: 8.0),
+                                      const SizedBox(width: 6.0),
                                       Container(
                                         constraints: BoxConstraints(
                                           maxWidth: maxWidthText,
@@ -152,7 +152,7 @@ class TransactionList extends StatelessWidget {
                                         child: Text(
                                           transaction.categoryName ?? "",
                                           style: const TextStyle(
-                                              fontSize: 16.0,
+                                              fontSize: 14.0,
                                               overflow: TextOverflow.ellipsis),
                                         ),
                                       ),
@@ -169,7 +169,7 @@ class TransactionList extends StatelessWidget {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      const SizedBox(width: 8.0),
+                                      const SizedBox(width: 6.0),
                                       Container(
                                         constraints: BoxConstraints(
                                           maxWidth: maxWidthText,
@@ -178,15 +178,19 @@ class TransactionList extends StatelessWidget {
                                           transaction.transferAccountNameFrom ??
                                               "",
                                           style: const TextStyle(
-                                            fontSize: 16.0,
+                                            fontSize: 14.0,
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
                                       ),
                                       const Padding(
                                         padding: EdgeInsets.symmetric(
-                                            horizontal: 2.0),
-                                        child: Icon(Icons.arrow_right_alt),
+                                          horizontal: 2.0,
+                                        ),
+                                        child: Icon(
+                                          Icons.arrow_right_alt,
+                                          size: 16.0,
+                                        ),
                                       ),
                                       Container(
                                         constraints: BoxConstraints(
@@ -196,7 +200,7 @@ class TransactionList extends StatelessWidget {
                                           transaction.transferAccountNameTo ??
                                               "",
                                           style: const TextStyle(
-                                            fontSize: 16.0,
+                                            fontSize: 14.0,
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
@@ -214,7 +218,7 @@ class TransactionList extends StatelessWidget {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      const SizedBox(width: 8.0),
+                                      const SizedBox(width: 6.0),
                                       Container(
                                         constraints: BoxConstraints(
                                           maxWidth: maxWidthText,
@@ -222,7 +226,7 @@ class TransactionList extends StatelessWidget {
                                         child: Text(
                                           transaction.debtAccountNameFrom ?? "",
                                           style: const TextStyle(
-                                            fontSize: 16.0,
+                                            fontSize: 14.0,
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
@@ -230,7 +234,10 @@ class TransactionList extends StatelessWidget {
                                       const Padding(
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 2.0),
-                                        child: Icon(Icons.arrow_right_alt),
+                                        child: Icon(
+                                          Icons.arrow_right_alt,
+                                          size: 16.0,
+                                        ),
                                       ),
                                       Container(
                                         constraints: BoxConstraints(
@@ -239,7 +246,7 @@ class TransactionList extends StatelessWidget {
                                         child: Text(
                                           transaction.debtAccountNameTo ?? "",
                                           style: const TextStyle(
-                                            fontSize: 16.0,
+                                            fontSize: 14.0,
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
@@ -252,7 +259,7 @@ class TransactionList extends StatelessWidget {
                                         child: Text(
                                           transaction.categoryName ?? "",
                                           style: const TextStyle(
-                                            fontSize: 16.0,
+                                            fontSize: 14.0,
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                         ),

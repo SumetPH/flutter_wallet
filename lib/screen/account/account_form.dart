@@ -3,6 +3,7 @@ import 'package:flutter_wallet/service/account_service.dart';
 import 'package:flutter_wallet/service/account_type_service.dart';
 import 'package:flutter_wallet/model/account_type_model.dart';
 import 'package:flutter_wallet/utils/currency_input_formatter.dart';
+import 'package:flutter_wallet/widget/responsive_width_widget.dart';
 
 enum AccountFormMode { create, edit }
 
@@ -83,225 +84,216 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: const Padding(
-                          padding: EdgeInsets.all(12.0),
-                          child: Icon(Icons.chevron_left),
+    return ResponsiveWidth(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+              '${widget.mode == AccountFormMode.create ? 'เพิ่ม' : 'แก้ไข'}บัญชี'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.check),
+              onPressed: () async {
+                if (_nameController.text.isEmpty ||
+                    _amountController.text.isEmpty ||
+                    _accountTypeId == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('กรุณากรอกข้อมูลให้ครบถ้วน'),
+                    ),
+                  );
+                } else {
+                  if (widget.mode == AccountFormMode.create) {
+                    try {
+                      setState(() {
+                        _isLoading = true;
+                      });
+                      final created = await _accountService.createAccount(
+                        name: _nameController.text,
+                        amount: double.parse(_amountController.text),
+                        accountTypeId: _accountTypeId!,
+                      );
+                      if (created) {
+                        setState(() {
+                          _isLoading = false;
+                        });
+                        Navigator.pop(context);
+                      } else {
+                        throw Exception('Failed to create account');
+                      }
+                    } catch (e) {
+                      setState(() {
+                        _isLoading = false;
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง',
+                          ),
                         ),
-                      ),
-                      GestureDetector(
-                        onTap: () async {
-                          if (_nameController.text.isEmpty ||
-                              _amountController.text.isEmpty ||
-                              _accountTypeId == null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('กรุณากรอกข้อมูลให้ครบถ้วน'),
+                      );
+                    }
+                  } else {
+                    try {
+                      setState(() {
+                        _isLoading = true;
+                      });
+                      final created = await _accountService.updateAccount(
+                        accountId: widget.accountId!,
+                        name: _nameController.text,
+                        amount: double.parse(_amountController.text),
+                        accountTypeId: _accountTypeId!,
+                      );
+                      if (created) {
+                        setState(() {
+                          _isLoading = false;
+                        });
+                        Navigator.pop(context);
+                      } else {
+                        throw Exception('Failed to create account');
+                      }
+                    } catch (e) {
+                      setState(() {
+                        _isLoading = false;
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง',
+                          ),
+                        ),
+                      );
+                    }
+                  }
+                }
+              },
+            )
+          ],
+        ),
+        body: SafeArea(
+          child: _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                      child: Row(
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 14.0),
+                            child: Text('ชื่อบัญชี'),
+                          ),
+                          const SizedBox(width: 20.0),
+                          Expanded(
+                            child: TextField(
+                              controller: _nameController,
+                              textAlign: TextAlign.end,
+                              decoration: const InputDecoration(
+                                border: InputBorder.none,
+                                hintText: 'ระบุ',
                               ),
-                            );
-                          } else {
-                            if (widget.mode == AccountFormMode.create) {
-                              try {
-                                setState(() {
-                                  _isLoading = true;
-                                });
-                                final created =
-                                    await _accountService.createAccount(
-                                  name: _nameController.text,
-                                  amount: double.parse(_amountController.text),
-                                  accountTypeId: _accountTypeId!,
-                                );
-                                if (created) {
-                                  setState(() {
-                                    _isLoading = false;
-                                  });
-                                  Navigator.pop(context);
-                                } else {
-                                  throw Exception('Failed to create account');
-                                }
-                              } catch (e) {
-                                setState(() {
-                                  _isLoading = false;
-                                });
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง',
-                                    ),
-                                  ),
-                                );
-                              }
-                            } else {
-                              try {
-                                setState(() {
-                                  _isLoading = true;
-                                });
-                                final created =
-                                    await _accountService.updateAccount(
-                                  accountId: widget.accountId!,
-                                  name: _nameController.text,
-                                  amount: double.parse(_amountController.text),
-                                  accountTypeId: _accountTypeId!,
-                                );
-                                if (created) {
-                                  setState(() {
-                                    _isLoading = false;
-                                  });
-                                  Navigator.pop(context);
-                                } else {
-                                  throw Exception('Failed to create account');
-                                }
-                              } catch (e) {
-                                setState(() {
-                                  _isLoading = false;
-                                });
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง',
-                                    ),
-                                  ),
-                                );
-                              }
-                            }
-                          }
-                        },
-                        child: const Padding(
-                          padding: EdgeInsets.all(12.0),
-                          child: Icon(Icons.check),
-                        ),
+                            ),
+                          )
+                        ],
                       ),
-                    ],
-                  ),
-                  const Divider(),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: Row(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 14.0),
-                          child: Text('ชื่อบัญชี'),
-                        ),
-                        const SizedBox(width: 20.0),
-                        Expanded(
-                          child: TextField(
-                            controller: _nameController,
-                            textAlign: TextAlign.end,
-                            decoration: const InputDecoration(
-                              border: InputBorder.none,
-                              hintText: 'ระบุ',
-                            ),
-                          ),
-                        )
-                      ],
                     ),
-                  ),
-                  const Divider(),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: Row(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 14.0),
-                          child: Text('ยอดเริ่มต้น'),
-                        ),
-                        const SizedBox(width: 20.0),
-                        Expanded(
-                          child: TextField(
-                            controller: _amountController,
-                            inputFormatters: [CurrencyInputFormatter()],
-                            textAlign: TextAlign.end,
-                            decoration: const InputDecoration(
-                              border: InputBorder.none,
-                              hintText: 'ระบุ',
-                            ),
+                    const Divider(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                      child: Row(
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 14.0),
+                            child: Text('ยอดเริ่มต้น'),
                           ),
-                        )
-                      ],
+                          const SizedBox(width: 20.0),
+                          Expanded(
+                            child: TextField(
+                              controller: _amountController,
+                              inputFormatters: [CurrencyInputFormatter()],
+                              textAlign: TextAlign.end,
+                              decoration: const InputDecoration(
+                                border: InputBorder.none,
+                                hintText: 'ระบุ',
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                  const Divider(),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: Row(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 14.0),
-                          child: Text('ชนิดบัญชี'),
-                        ),
-                        const SizedBox(width: 20.0),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () async {
-                              showModalBottomSheet(
-                                context: context,
-                                builder: (context) => Column(
-                                  children: [
-                                    const Padding(
-                                      padding: EdgeInsets.all(16.0),
-                                      child: Center(
-                                        child: Text(
-                                          'เลือกชนิดบัญชี',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
+                    const Divider(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                      child: Row(
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 14.0),
+                            child: Text('ชนิดบัญชี'),
+                          ),
+                          const SizedBox(width: 20.0),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () async {
+                                showModalBottomSheet(
+                                  context: context,
+                                  builder: (context) => Column(
+                                    children: [
+                                      const Padding(
+                                        padding: EdgeInsets.all(16.0),
+                                        child: Center(
+                                          child: Text(
+                                            'เลือกชนิดบัญชี',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    Expanded(
-                                      child: ListView.separated(
-                                        separatorBuilder: (context, index) {
-                                          return const Divider(height: 1);
-                                        },
-                                        itemCount: _accountTypeList.length,
-                                        itemBuilder: (context, index) {
-                                          return ListTile(
-                                            title: Text(
-                                              _accountTypeList[index].name!,
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
+                                      Expanded(
+                                        child: ListView.separated(
+                                          separatorBuilder: (context, index) {
+                                            return const Divider(height: 1);
+                                          },
+                                          itemCount: _accountTypeList.length,
+                                          itemBuilder: (context, index) {
+                                            return ListTile(
+                                              title: Text(
+                                                _accountTypeList[index].name!,
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
-                                            ),
-                                            onTap: () {
-                                              Navigator.pop(context);
-                                              setState(() {
-                                                _accountTypeId =
-                                                    _accountTypeList[index].id;
-                                              });
-                                            },
-                                          );
-                                        },
+                                              onTap: () {
+                                                Navigator.pop(context);
+                                                setState(() {
+                                                  _accountTypeId =
+                                                      _accountTypeList[index]
+                                                          .id;
+                                                });
+                                              },
+                                            );
+                                          },
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Text(_getAccountTypeName()),
-                                const Icon(Icons.chevron_right),
-                              ],
+                                    ],
+                                  ),
+                                );
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Text(_getAccountTypeName()),
+                                  const Icon(Icons.chevron_right),
+                                ],
+                              ),
                             ),
-                          ),
-                        )
-                      ],
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                  const Divider(),
-                ],
-              ),
+                    const Divider(),
+                  ],
+                ),
+        ),
       ),
     );
   }

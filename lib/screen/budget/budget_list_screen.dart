@@ -203,7 +203,9 @@ class _BudgetListScreenState extends State<BudgetListScreen> {
                                     const CircleAvatar(
                                       child: Icon(Icons.category),
                                     ),
-                                    Expanded(
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.45,
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 12.0),

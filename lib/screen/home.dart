@@ -4,6 +4,7 @@ import 'package:flutter_wallet/screen/budget/budget_list_screen.dart';
 import 'package:flutter_wallet/screen/category/category_list_screen.dart';
 import 'package:flutter_wallet/screen/transaction/transaction_list_screen.dart';
 import 'package:flutter_wallet/widget/menu.dart';
+import 'package:flutter_wallet/widget/responsive_width_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -56,68 +57,70 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: Drawer(
-        child: ListView.separated(
-          itemCount: _screenTitleList.length,
-          itemBuilder: (context, index) {
-            return ListTile(
-              onTap: () => _changeScreen(index),
-              title: Text(_screenTitleList[index]),
-            );
-          },
-          separatorBuilder: (context, index) {
-            return const Divider(height: 1.0);
-          },
-        ),
-      ),
-      appBar: AppBar(
-        title: Text(
-          _screenTitleList[_screenIndex],
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16.0,
+    return ResponsiveWidth(
+      child: Scaffold(
+        drawer: Drawer(
+          child: ListView.separated(
+            itemCount: _screenTitleList.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                onTap: () => _changeScreen(index),
+                title: Text(_screenTitleList[index]),
+              );
+            },
+            separatorBuilder: (context, index) {
+              return const Divider(height: 1.0);
+            },
           ),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.more_vert),
-            onPressed: () {
-              switch (_screenIndex) {
-                case 0:
-                  accountMenu(
-                    context: context,
-                    setState: setState,
-                  );
-                  break;
-                case 1:
-                  transactionMenu(
-                    context: context,
-                    setState: setState,
-                  );
-                  break;
-                case 2:
-                  categoryMenu(
-                    context: context,
-                    setState: setState,
-                    categoryTypeId: _categoryTypeId,
-                  );
-                  break;
-                case 3:
-                  budgetMenu(
-                    context: context,
-                    setState: setState,
-                  );
-                  break;
-                default:
-                  break;
-              }
-            },
-          )
-        ],
-      ),
-      body: SafeArea(
-        child: _screen(),
+        appBar: AppBar(
+          title: Text(
+            _screenTitleList[_screenIndex],
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16.0,
+            ),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.more_vert),
+              onPressed: () {
+                switch (_screenIndex) {
+                  case 0:
+                    accountMenu(
+                      context: context,
+                      setState: setState,
+                    );
+                    break;
+                  case 1:
+                    transactionMenu(
+                      context: context,
+                      setState: setState,
+                    );
+                    break;
+                  case 2:
+                    categoryMenu(
+                      context: context,
+                      setState: setState,
+                      categoryTypeId: _categoryTypeId,
+                    );
+                    break;
+                  case 3:
+                    budgetMenu(
+                      context: context,
+                      setState: setState,
+                    );
+                    break;
+                  default:
+                    break;
+                }
+              },
+            )
+          ],
+        ),
+        body: SafeArea(
+          child: _screen(),
+        ),
       ),
     );
   }

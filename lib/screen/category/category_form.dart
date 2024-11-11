@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_wallet/model/category_type_model.dart';
 import 'package:flutter_wallet/service/category_service.dart';
 import 'package:flutter_wallet/service/category_type_service.dart';
+import 'package:flutter_wallet/widget/responsive_width_widget.dart';
 
 enum CategoryFormMode { create, edit }
 
@@ -122,139 +123,136 @@ class CategoryFormScreenState extends State<CategoryFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        GestureDetector(
-                          onTap: () => Navigator.pop(context),
-                          child: const Padding(
-                            padding: EdgeInsets.all(12.0),
-                            child: Icon(Icons.chevron_left),
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () async {
-                            if (_nameController.text.isEmpty ||
-                                _categoryTypeId == null) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('กรุณากรอกข้อมูลให้ครบถ้วน'),
-                                ),
-                              );
-                            } else {
-                              await _createOrUpdateCategory(context: context);
-                            }
-                          },
-                          child: const Padding(
-                            padding: EdgeInsets.all(12.0),
-                            child: Icon(Icons.check),
-                          ),
-                        ),
-                      ],
+    return ResponsiveWidth(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            '${widget.mode == CategoryFormMode.create ? 'เพิ่ม' : 'แก้ไข'}หมวดหมู่',
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.check),
+              onPressed: () async {
+                if (_nameController.text.isEmpty || _categoryTypeId == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('กรุณากรอกข้อมูลให้ครบถ้วน'),
                     ),
-                    const Divider(),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                      child: Row(
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 14.0),
-                            child: Text('ชื่อ'),
-                          ),
-                          const SizedBox(width: 20.0),
-                          Expanded(
-                            child: TextField(
-                              controller: _nameController,
-                              textAlign: TextAlign.end,
-                              decoration: const InputDecoration(
-                                border: InputBorder.none,
-                                hintText: 'ระบุ',
-                              ),
+                  );
+                } else {
+                  await _createOrUpdateCategory(context: context);
+                }
+              },
+            ),
+          ],
+        ),
+        body: SafeArea(
+          child: _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                        child: Row(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 14.0),
+                              child: Text('ชื่อ'),
                             ),
-                          )
-                        ],
+                            const SizedBox(width: 20.0),
+                            Expanded(
+                              child: TextField(
+                                controller: _nameController,
+                                textAlign: TextAlign.end,
+                                decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: 'ระบุ',
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                    const Divider(),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                      child: Row(
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 14.0),
-                            child: Text('ประเภท'),
-                          ),
-                          const SizedBox(width: 20.0),
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () async {
-                                showModalBottomSheet(
-                                  context: context,
-                                  builder: (context) {
-                                    return Column(
-                                      children: [
-                                        const Padding(
-                                          padding: EdgeInsets.all(16.0),
-                                          child: Center(
-                                            child: Text(
-                                              'เลือกประเภท',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
+                      const Divider(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                        child: Row(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 14.0),
+                              child: Text('ประเภท'),
+                            ),
+                            const SizedBox(width: 20.0),
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () async {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    builder: (context) {
+                                      return Column(
+                                        children: [
+                                          const Padding(
+                                            padding: EdgeInsets.all(16.0),
+                                            child: Center(
+                                              child: Text(
+                                                'เลือกประเภท',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        Expanded(
-                                          child: ListView.separated(
-                                            itemBuilder: (itemContext, index) {
-                                              return ListTile(
-                                                title: Text(
-                                                    _categoryTypeList[index]
-                                                        .name!),
-                                                onTap: () {
-                                                  Navigator.pop(context);
-                                                  setState(() {
-                                                    _categoryTypeId =
-                                                        _categoryTypeList[index]
-                                                            .id;
-                                                  });
-                                                },
-                                              );
-                                            },
-                                            separatorBuilder: (context, index) {
-                                              return const Divider(height: 1.0);
-                                            },
-                                            itemCount: _categoryTypeList.length,
+                                          Expanded(
+                                            child: ListView.separated(
+                                              itemBuilder:
+                                                  (itemContext, index) {
+                                                return ListTile(
+                                                  title: Text(
+                                                      _categoryTypeList[index]
+                                                          .name!),
+                                                  onTap: () {
+                                                    Navigator.pop(context);
+                                                    setState(() {
+                                                      _categoryTypeId =
+                                                          _categoryTypeList[
+                                                                  index]
+                                                              .id;
+                                                    });
+                                                  },
+                                                );
+                                              },
+                                              separatorBuilder:
+                                                  (context, index) {
+                                                return const Divider(
+                                                    height: 1.0);
+                                              },
+                                              itemCount:
+                                                  _categoryTypeList.length,
+                                            ),
                                           ),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              },
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Text(_getCategoryTypeName()),
-                                  const Icon(Icons.chevron_right),
-                                ],
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(_getCategoryTypeName()),
+                                    const Icon(Icons.chevron_right),
+                                  ],
+                                ),
                               ),
-                            ),
-                          )
-                        ],
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                    const Divider(),
-                  ],
+                      const Divider(),
+                    ],
+                  ),
                 ),
-              ),
+        ),
       ),
     );
   }
