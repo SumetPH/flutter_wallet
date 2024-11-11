@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_wallet/model/transaction_model.dart';
 import 'package:flutter_wallet/utils/number_utils.dart';
+import 'package:jiffy/jiffy.dart';
 
 class TransactionList extends StatelessWidget {
   final List<TransactionModel> transactionListGroup;
@@ -43,6 +44,14 @@ class TransactionList extends StatelessWidget {
     }
   }
 
+  String _isCurrentDate({required String? date}) {
+    final now = Jiffy.now().format(pattern: 'yyyy-MM-dd');
+    if (now == date) {
+      return '(วันนี้)';
+    }
+    return '';
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -67,7 +76,7 @@ class TransactionList extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      transactionList.day!,
+                      '${transactionList.day!} ${_isCurrentDate(date: transactionList.day)}',
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ],

@@ -302,9 +302,9 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                                       _getTransactionTypeName(),
                                       style: TextStyle(
                                         color: widget.mode ==
-                                                TransactionFormMode.create
-                                            ? Colors.black
-                                            : Colors.grey,
+                                                TransactionFormMode.edit
+                                            ? Colors.grey
+                                            : null,
                                       ),
                                     ),
                                     const Icon(Icons.chevron_right),

@@ -11,18 +11,18 @@ import 'package:flutter_wallet/widget/transaction_list.dart';
 
 class TransactionListScreen extends StatefulWidget {
   // property
+  final bool hasDrawer;
+  final String title;
   final int? accountId;
   final List<int>? categoryId;
-  final bool? showAppBar;
-  final String? title;
 
   // constructor
   const TransactionListScreen({
     super.key,
+    required this.hasDrawer,
+    required this.title,
     this.accountId,
     this.categoryId,
-    this.showAppBar,
-    this.title,
   });
 
   @override
@@ -101,25 +101,33 @@ class TransactionListScreenState extends State<TransactionListScreen> {
   Widget build(BuildContext context) {
     return ResponsiveWidth(
       child: Scaffold(
-        appBar: widget.showAppBar != null
-            ? AppBar(
-                title: Text(
-                  widget.title ?? '',
-                  style: const TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.more_vert),
-                    onPressed: () {
-                      transactionMenu(context: context, setState: setState);
-                    },
-                  )
-                ],
-              )
-            : null,
+        appBar: AppBar(
+          title: Text(
+            widget.title,
+            style: const TextStyle(
+              fontSize: 16.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          leading: widget.hasDrawer
+              ? IconButton(
+                  icon: const Icon(Icons.menu),
+                  onPressed: () => Scaffold.of(context).openDrawer(),
+                )
+              : null,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.more_vert),
+              onPressed: () async {
+                transactionMenu(
+                    context: context,
+                    afterGoBack: () {
+                      setState(() {});
+                    });
+              },
+            )
+          ],
+        ),
         body: SafeArea(
           child: Column(
             children: [

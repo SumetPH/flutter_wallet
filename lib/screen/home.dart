@@ -3,7 +3,6 @@ import 'package:flutter_wallet/screen/account/account_list_screen.dart';
 import 'package:flutter_wallet/screen/budget/budget_list_screen.dart';
 import 'package:flutter_wallet/screen/category/category_list_screen.dart';
 import 'package:flutter_wallet/screen/transaction/transaction_list_screen.dart';
-import 'package:flutter_wallet/widget/menu.dart';
 import 'package:flutter_wallet/widget/responsive_width_widget.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -15,38 +14,19 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   // state
+  int _screenIndex = 0;
   final List<String> _screenTitleList = [
     "บัญชี",
     "รายการ",
     "หมวดหมู่",
     "งบประมาณ",
   ];
-  int _screenIndex = 0;
-  int _categoryTypeId = 0;
-
-  _screen() {
-    if (_screenIndex == 0) {
-      return const AccountListScreen();
-    } else if (_screenIndex == 1) {
-      return const TransactionListScreen();
-    } else if (_screenIndex == 2) {
-      return CategoryListScreen(
-        changeTab: (index) {
-          setState(() {
-            if (index == 0) {
-              _categoryTypeId = 1;
-            } else {
-              _categoryTypeId = 2;
-            }
-          });
-        },
-      );
-    } else if (_screenIndex == 3) {
-      return const BudgetListScreen();
-    } else {
-      return const Center(child: Text('Screen not found'));
-    }
-  }
+  final List<Widget> _screenWidgetList = [
+    const AccountListScreen(),
+    const TransactionListScreen(title: 'รายการ', hasDrawer: true),
+    const CategoryListScreen(),
+    const BudgetListScreen(),
+  ];
 
   _changeScreen(int index) {
     Navigator.pop(context);
@@ -73,53 +53,8 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
         ),
-        appBar: AppBar(
-          title: Text(
-            _screenTitleList[_screenIndex],
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16.0,
-            ),
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.more_vert),
-              onPressed: () {
-                switch (_screenIndex) {
-                  case 0:
-                    accountMenu(
-                      context: context,
-                      setState: setState,
-                    );
-                    break;
-                  case 1:
-                    transactionMenu(
-                      context: context,
-                      setState: setState,
-                    );
-                    break;
-                  case 2:
-                    categoryMenu(
-                      context: context,
-                      setState: setState,
-                      categoryTypeId: _categoryTypeId,
-                    );
-                    break;
-                  case 3:
-                    budgetMenu(
-                      context: context,
-                      setState: setState,
-                    );
-                    break;
-                  default:
-                    break;
-                }
-              },
-            )
-          ],
-        ),
         body: SafeArea(
-          child: _screen(),
+          child: _screenWidgetList[_screenIndex],
         ),
       ),
     );

@@ -9,7 +9,7 @@ import 'package:flutter_wallet/screen/transaction/debt_form.dart';
 import 'package:flutter_wallet/screen/transaction/transaction_form.dart';
 import 'package:flutter_wallet/screen/transaction/transfer_form.dart';
 
-accountMenu({required BuildContext context, required Function setState}) {
+accountMenu({required BuildContext context, Function? afterGoBack}) {
   return showModalBottomSheet(
     context: context,
     builder: (context) => Column(
@@ -36,8 +36,9 @@ accountMenu({required BuildContext context, required Function setState}) {
                 ),
               ),
             );
-            // refresh list
-            setState(() {});
+            if (afterGoBack != null) {
+              afterGoBack();
+            }
           },
           title: const Center(
             child: Text(
@@ -58,8 +59,9 @@ accountMenu({required BuildContext context, required Function setState}) {
                 builder: (context) => const AccountReorder(),
               ),
             );
-            // refresh list
-            setState(() {});
+            if (afterGoBack != null) {
+              afterGoBack();
+            }
           },
           title: const Center(
             child: Text(
@@ -75,7 +77,10 @@ accountMenu({required BuildContext context, required Function setState}) {
   );
 }
 
-transactionMenu({required BuildContext context, required Function setState}) {
+transactionMenu({
+  required BuildContext context,
+  Function? afterGoBack,
+}) {
   return showModalBottomSheet(
     context: context,
     builder: (context) => Column(
@@ -102,8 +107,9 @@ transactionMenu({required BuildContext context, required Function setState}) {
                 );
               }),
             );
-            // refresh list
-            setState(() {});
+            if (afterGoBack != null) {
+              afterGoBack();
+            }
           },
           title: const Center(
             child: Text(
@@ -126,8 +132,9 @@ transactionMenu({required BuildContext context, required Function setState}) {
                 );
               }),
             );
-            // refresh list
-            setState(() {});
+            if (afterGoBack != null) {
+              afterGoBack();
+            }
           },
           title: const Center(
             child: Text(
@@ -150,8 +157,9 @@ transactionMenu({required BuildContext context, required Function setState}) {
                 );
               }),
             );
-            // refresh list
-            setState(() {});
+            if (afterGoBack != null) {
+              afterGoBack();
+            }
           },
           title: const Center(
             child: Text(
@@ -169,7 +177,7 @@ transactionMenu({required BuildContext context, required Function setState}) {
 
 categoryMenu({
   required BuildContext context,
-  required Function setState,
+  Function? afterGoBack,
   required int categoryTypeId,
 }) {
   return showModalBottomSheet(
@@ -200,8 +208,9 @@ categoryMenu({
                 },
               ),
             );
-            // refresh list
-            setState(() {});
+            if (afterGoBack != null) {
+              afterGoBack();
+            }
           },
           title: const Center(
             child: Text(
@@ -226,8 +235,9 @@ categoryMenu({
                 },
               ),
             );
-            // refresh list
-            setState(() {});
+            if (afterGoBack != null) {
+              afterGoBack();
+            }
           },
           title: const Center(
             child: Text(
@@ -243,7 +253,7 @@ categoryMenu({
   );
 }
 
-budgetMenu({required BuildContext context, required Function setState}) {
+budgetMenu({required BuildContext context, Function? afterGoBack}) {
   return showModalBottomSheet(
     context: context,
     builder: (context) => Column(
@@ -272,8 +282,9 @@ budgetMenu({required BuildContext context, required Function setState}) {
                 },
               ),
             );
-            // refresh list
-            setState(() {});
+            if (afterGoBack != null) {
+              afterGoBack();
+            }
           },
           title: const Center(
             child: Text(
@@ -296,8 +307,9 @@ budgetMenu({required BuildContext context, required Function setState}) {
                 },
               ),
             );
-            // refresh list
-            setState(() {});
+            if (afterGoBack != null) {
+              afterGoBack();
+            }
           },
           title: const Center(
             child: Text(

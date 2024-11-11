@@ -3,6 +3,7 @@ import 'package:flutter_wallet/screen/budget/budget_form.dart';
 import 'package:flutter_wallet/screen/transaction/transaction_list_screen.dart';
 import 'package:flutter_wallet/service/budget_service.dart';
 import 'package:flutter_wallet/utils/number_utils.dart';
+import 'package:flutter_wallet/widget/menu.dart';
 import 'package:jiffy/jiffy.dart';
 
 class BudgetListScreen extends StatefulWidget {
@@ -57,243 +58,277 @@ class _BudgetListScreenState extends State<BudgetListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          child: RefreshIndicator(
-            onRefresh: () {
-              setState(() {});
-              return Future.value();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('งบประมาณ'),
+        leading: IconButton(
+          onPressed: () {
+            Scaffold.of(context).openDrawer();
+          },
+          icon: const Icon(Icons.menu),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.more_vert),
+            onPressed: () async {
+              budgetMenu(
+                context: context,
+                afterGoBack: () {
+                  setState(() {});
+                },
+              );
             },
-            child: FutureBuilder(
-              future: _budgetService.getBudgetList(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Text(snapshot.error.toString()),
-                    ),
-                  );
-                } else if (snapshot.hasData) {
-                  return snapshot.data!.isEmpty
-                      ? const Center(child: Text('ไม่พบข้อมูล'))
-                      : ListView.separated(
-                          itemCount: snapshot.data!.length,
-                          itemBuilder: (context, index) {
-                            final data = snapshot.data![index];
-                            return GestureDetector(
-                              behavior: HitTestBehavior.opaque,
-                              onTap: () async {
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) {
-                                      return TransactionListScreen(
-                                        showAppBar: true,
-                                        title: _getDurationDate(
-                                          startDate: data.startDate!,
-                                        ),
-                                        categoryId: data.category
-                                            ?.map((el) => el.categoryId!)
-                                            .toList(),
-                                      );
-                                    },
-                                  ),
-                                );
-                                // refresh list
-                                setState(() {});
-                              },
-                              onLongPress: () {
-                                showModalBottomSheet(
-                                  context: context,
-                                  builder: (context) => Column(
-                                    children: [
-                                      const Padding(
-                                        padding: EdgeInsets.all(16.0),
-                                        child: Center(
-                                          child: Text(
-                                            'เมนู',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
+          )
+        ],
+      ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: () {
+                  setState(() {});
+                  return Future.value();
+                },
+                child: FutureBuilder(
+                  future: _budgetService.getBudgetList(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Text(snapshot.error.toString()),
+                        ),
+                      );
+                    } else if (snapshot.hasData) {
+                      return snapshot.data!.isEmpty
+                          ? const Center(child: Text('ไม่พบข้อมูล'))
+                          : ListView.separated(
+                              itemCount: snapshot.data!.length,
+                              itemBuilder: (context, index) {
+                                final data = snapshot.data![index];
+                                return GestureDetector(
+                                  behavior: HitTestBehavior.opaque,
+                                  onTap: () async {
+                                    await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) {
+                                          return TransactionListScreen(
+                                            hasDrawer: false,
+                                            title: _getDurationDate(
+                                              startDate: data.startDate!,
                                             ),
-                                          ),
-                                        ),
-                                      ),
-                                      ListTile(
-                                        onTap: () async {
-                                          Navigator.pop(context);
-                                          await Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) {
-                                                return BudgetFormScreen(
-                                                  mode: BudgetFormMode.edit,
-                                                  budgetId: data.id,
-                                                );
-                                              },
-                                            ),
+                                            categoryId: data.category
+                                                ?.map((el) => el.categoryId!)
+                                                .toList(),
                                           );
-                                          // refresh list
-                                          setState(() {});
                                         },
-                                        title: const Center(
-                                          child: Text(
-                                            "แก้ไขงบประมาณ",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
+                                      ),
+                                    );
+                                    // refresh list
+                                    setState(() {});
+                                  },
+                                  onLongPress: () {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      builder: (context) => Column(
+                                        children: [
+                                          const Padding(
+                                            padding: EdgeInsets.all(16.0),
+                                            child: Center(
+                                              child: Text(
+                                                'เมนู',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      ),
-                                      const Divider(height: 1.0),
-                                      ListTile(
-                                        onTap: () async {
-                                          await showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                title: const Text('ลบบัญชี'),
-                                                content: Text(
-                                                  'คุณต้องการลบงบประมาณ ${data.name}',
+                                          ListTile(
+                                            onTap: () async {
+                                              Navigator.pop(context);
+                                              await Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) {
+                                                    return BudgetFormScreen(
+                                                      mode: BudgetFormMode.edit,
+                                                      budgetId: data.id,
+                                                    );
+                                                  },
                                                 ),
-                                                actions: [
-                                                  TextButton(
-                                                    child: const Text('ตกลง'),
-                                                    onPressed: () async {
-                                                      await _deleteBudget(
-                                                        budgetId: data.id!,
-                                                        context: context,
-                                                      );
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                    },
-                                                  ),
-                                                  TextButton(
-                                                    child: const Text('ยกเลิก'),
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                    },
-                                                  ),
-                                                ],
+                                              );
+                                              // refresh list
+                                              setState(() {});
+                                            },
+                                            title: const Center(
+                                              child: Text(
+                                                "แก้ไขงบประมาณ",
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          const Divider(height: 1.0),
+                                          ListTile(
+                                            onTap: () async {
+                                              await showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return AlertDialog(
+                                                    title:
+                                                        const Text('ลบบัญชี'),
+                                                    content: Text(
+                                                      'คุณต้องการลบงบประมาณ ${data.name}',
+                                                    ),
+                                                    actions: [
+                                                      TextButton(
+                                                        child:
+                                                            const Text('ตกลง'),
+                                                        onPressed: () async {
+                                                          await _deleteBudget(
+                                                            budgetId: data.id!,
+                                                            context: context,
+                                                          );
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                      ),
+                                                      TextButton(
+                                                        child: const Text(
+                                                            'ยกเลิก'),
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
                                               );
                                             },
-                                          );
-                                        },
-                                        title: const Center(
-                                          child: Text(
-                                            "ลบงบประมาณ",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(12.0),
-                                child: Row(
-                                  // mainAxisAlignment:
-                                  //     MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const CircleAvatar(
-                                      child: Icon(Icons.category),
-                                    ),
-                                    SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.45,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 12.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              snapshot.data![index].name!,
-                                              style: const TextStyle(
-                                                fontSize: 16.0,
-                                                fontWeight: FontWeight.bold,
-                                                overflow: TextOverflow.ellipsis,
+                                            title: const Center(
+                                              child: Text(
+                                                "ลบงบประมาณ",
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
-                                            ),
-                                            Text(
-                                              '${NumberUtils.formatNumber(double.parse(data.amount!))} บาท',
-                                              style: const TextStyle(
-                                                fontSize: 18.0,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: [
-                                          Text(
-                                            '${NumberUtils.formatNumber(double.parse(data.balance!))} บาท',
-                                            style: TextStyle(
-                                              fontSize: 15.0,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.red[600],
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: double.infinity,
-                                            child: LinearProgressIndicator(
-                                              value: double.parse(
-                                                      data.balance!) *
-                                                  100 /
-                                                  double.parse(data.amount!) /
-                                                  100,
-                                              backgroundColor: Colors.green,
-                                              minHeight: 8.0,
-                                              borderRadius:
-                                                  const BorderRadius.all(
-                                                Radius.circular(4.0),
-                                              ),
-                                              valueColor:
-                                                  const AlwaysStoppedAnimation(
-                                                Colors.red,
-                                              ),
-                                            ),
-                                          ),
-                                          Text(
-                                            '${NumberUtils.formatNumber(double.parse(data.amount!) - double.parse(data.balance!))} บาท',
-                                            style: TextStyle(
-                                              fontSize: 15.0,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.green[600],
                                             ),
                                           ),
                                         ],
                                       ),
+                                    );
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(12.0),
+                                    child: Row(
+                                      // mainAxisAlignment:
+                                      //     MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const CircleAvatar(
+                                          child: Icon(Icons.category),
+                                        ),
+                                        SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.45,
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12.0),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  snapshot.data![index].name!,
+                                                  style: const TextStyle(
+                                                    fontSize: 16.0,
+                                                    fontWeight: FontWeight.bold,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  '${NumberUtils.formatNumber(double.parse(data.amount!))} บาท',
+                                                  style: const TextStyle(
+                                                    fontSize: 18.0,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
+                                            children: [
+                                              Text(
+                                                '${NumberUtils.formatNumber(double.parse(data.balance!))} บาท',
+                                                style: TextStyle(
+                                                  fontSize: 15.0,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.red[600],
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: double.infinity,
+                                                child: LinearProgressIndicator(
+                                                  value: double.parse(
+                                                          data.balance!) *
+                                                      100 /
+                                                      double.parse(
+                                                          data.amount!) /
+                                                      100,
+                                                  backgroundColor: Colors.green,
+                                                  minHeight: 8.0,
+                                                  borderRadius:
+                                                      const BorderRadius.all(
+                                                    Radius.circular(4.0),
+                                                  ),
+                                                  valueColor:
+                                                      const AlwaysStoppedAnimation(
+                                                    Colors.red,
+                                                  ),
+                                                ),
+                                              ),
+                                              Text(
+                                                '${NumberUtils.formatNumber(double.parse(data.amount!) - double.parse(data.balance!))} บาท',
+                                                style: TextStyle(
+                                                  fontSize: 15.0,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.green[600],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const Icon(Icons.chevron_right),
+                                      ],
                                     ),
-                                    const Icon(Icons.chevron_right),
-                                  ],
-                                ),
-                              ),
+                                  ),
+                                );
+                              },
+                              separatorBuilder: (context, index) {
+                                return const Divider(height: 1.0);
+                              },
                             );
-                          },
-                          separatorBuilder: (context, index) {
-                            return const Divider(height: 1.0);
-                          },
-                        );
-                } else {
-                  return const Center(child: CircularProgressIndicator());
-                }
-              },
-            ),
-          ),
-        )
-      ],
+                    } else {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                  },
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }
