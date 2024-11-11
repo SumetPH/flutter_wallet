@@ -1,31 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_wallet/screen/home.dart';
+import 'package:flutter_wallet/screen/provider/theme_provider.dart';
 
 void main() async {
   const flavor = String.fromEnvironment("FLAVOR", defaultValue: "dev");
   await dotenv.load(fileName: ".env.$flavor");
 
   runApp(
-    const MyApp(),
+    const ProviderScope(
+      child: MyApp(),
+    ),
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
       title: 'Flutter Wallet',
       home: const HomeScreen(),
+      themeMode: ref.watch(themeModeProvider) == ThemeModeState.light
+          ? ThemeMode.light
+          : ThemeMode.dark,
       theme: ThemeData(
-        brightness: Brightness.dark,
-        // scaffoldBackgroundColor: Colors.white,
+        brightness: Brightness.light,
         appBarTheme: const AppBarTheme(
-          //   backgroundColor: Color.fromRGBO(80, 140, 155, 1),
-          //   foregroundColor: Colors.white,
+          titleTextStyle: TextStyle(
+            fontSize: 16.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+      ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        appBarTheme: const AppBarTheme(
           titleTextStyle: TextStyle(
             fontSize: 16.0,
             fontWeight: FontWeight.bold,

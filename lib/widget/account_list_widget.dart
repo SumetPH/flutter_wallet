@@ -20,7 +20,7 @@ class AccountListWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: accountList.length,
-      itemBuilder: (context, index) {
+      itemBuilder: (ctx, index) {
         final accountType = accountList[index];
         return Column(
           children: [

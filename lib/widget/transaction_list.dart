@@ -59,7 +59,7 @@ class TransactionList extends StatelessWidget {
 
     return ListView.builder(
       itemCount: transactionListGroup.length,
-      itemBuilder: (context, index) {
+      itemBuilder: (ctx, index) {
         final transactionList = transactionListGroup[index];
         return Column(
           children: [
