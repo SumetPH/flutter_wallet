@@ -28,7 +28,7 @@ class CategoryFormScreenState extends State<CategoryFormScreen> {
   List<CategoryTypeModel> _categoryTypeList = [];
   final TextEditingController _nameController = TextEditingController();
   int? _categoryTypeId;
-  bool _isLoading = false;
+  bool _isLoading = true;
 
   // method
   Future _getCategoryTypeList() async {
@@ -40,25 +40,14 @@ class CategoryFormScreenState extends State<CategoryFormScreen> {
 
   Future _getCategoryDetail({required int categoryId}) async {
     try {
-      setState(() {
-        _isLoading = true;
-      });
-
       final res =
           await _categoryService.getCategoryDetail(categoryId: categoryId);
 
       setState(() {
-        _isLoading = false;
         _nameController.text = res.name ?? '';
         _categoryTypeId = res.categoryTypeId;
       });
-
-      await _getCategoryTypeList();
     } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-
       Navigator.pop(context);
     }
   }
@@ -111,13 +100,21 @@ class CategoryFormScreenState extends State<CategoryFormScreen> {
     }
   }
 
+  _getInitialValue() async {
+    await _getCategoryTypeList();
+    if (widget.mode == CategoryFormMode.edit) {
+      await _getCategoryDetail(categoryId: widget.categoryId!);
+    }
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    if (widget.mode == CategoryFormMode.edit) {
-      _getCategoryDetail(categoryId: widget.categoryId!);
-    } else {
-      _getCategoryTypeList();
+    if (mounted) {
+      _getInitialValue();
     }
   }
 

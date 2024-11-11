@@ -38,7 +38,7 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
   String _accountNameTo = 'เลือก';
   DateTime _date = DateTime.now();
   TimeOfDay _time = TimeOfDay.now();
-  bool _isLoading = false;
+  bool _isLoading = true;
 
   // method
   Future _getAccountList() async {
@@ -50,15 +50,10 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
 
   Future _getTransferDetail({required int transactionId}) async {
     try {
-      setState(() {
-        _isLoading = true;
-      });
-
       final res = await _transferService.getTransferDetail(
           transactionId: transactionId);
 
       setState(() {
-        _isLoading = false;
         _amountController.text = res.amount.toString();
         _accountIdFrom = res.accountIdFrom;
         _accountNameFrom = res.accountNameFrom ?? '';
@@ -69,10 +64,6 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
         _time = TimeUtils.timeOfDayFromString(time: res.time!);
       });
     } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-
       Navigator.pop(context);
     }
   }
@@ -124,15 +115,22 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
     }
   }
 
+  _getInitialValue() async {
+    await _getAccountList();
+    if (widget.mode == TransferFormMode.edit) {
+      await _getTransferDetail(transactionId: widget.transactionId!);
+    }
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
 
     if (mounted) {
-      _getAccountList();
-      if (widget.mode == TransferFormMode.edit) {
-        _getTransferDetail(transactionId: widget.transactionId!);
-      }
+      _getInitialValue();
     }
   }
 

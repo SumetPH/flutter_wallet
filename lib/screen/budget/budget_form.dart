@@ -34,7 +34,7 @@ class BudgetFormScreenState extends State<BudgetFormScreen> {
   final TextEditingController _amountController = TextEditingController();
   int _startDate = 1;
   List<int> _categoryId = [];
-  bool _isLoading = false;
+  bool _isLoading = true;
 
   // method
   Future _getCategoryList() async {
@@ -46,10 +46,6 @@ class BudgetFormScreenState extends State<BudgetFormScreen> {
 
   Future _getBudgetDetail({required int budgetId}) async {
     try {
-      setState(() {
-        _isLoading = true;
-      });
-
       final res = await _budgetService.getBudgetDetail(budgetId: budgetId);
 
       setState(() {
@@ -62,10 +58,6 @@ class BudgetFormScreenState extends State<BudgetFormScreen> {
             : [];
       });
     } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-
       Navigator.pop(context);
     }
   }
@@ -119,16 +111,22 @@ class BudgetFormScreenState extends State<BudgetFormScreen> {
     }
   }
 
+  _getInitialValue() async {
+    await _getCategoryList();
+    if (widget.mode == BudgetFormMode.edit) {
+      await _getBudgetDetail(budgetId: widget.budgetId!);
+    }
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
 
     if (mounted) {
-      _getCategoryList();
-
-      if (widget.mode == BudgetFormMode.edit) {
-        _getBudgetDetail(budgetId: widget.budgetId!);
-      }
+      _getInitialValue();
     }
   }
 

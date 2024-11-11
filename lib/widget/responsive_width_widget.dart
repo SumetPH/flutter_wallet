@@ -11,11 +11,16 @@ class ResponsiveWidth extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return kIsWeb
-        ? Center(
-            child: ClipRRect(
-              child: SizedBox(
-                width: 1200,
-                child: child,
+        ? Container(
+            decoration: const BoxDecoration(
+              color: Colors.black,
+            ),
+            child: Center(
+              child: ClipRRect(
+                child: SizedBox(
+                  width: 1200,
+                  child: child,
+                ),
               ),
             ),
           )

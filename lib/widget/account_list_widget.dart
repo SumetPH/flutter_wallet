@@ -25,7 +25,9 @@ class AccountListWidget extends StatelessWidget {
         return Column(
           children: [
             Container(
-              color: Colors.grey[200],
+              color: Theme.of(context).brightness == Brightness.light
+                  ? Colors.grey[200]
+                  : Colors.grey[900],
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   vertical: 8.0,
@@ -72,7 +74,9 @@ class AccountListWidget extends StatelessWidget {
                   },
                   child: Container(
                     color: account.id == disabledAccountId
-                        ? Colors.grey[300]
+                        ? Theme.of(context).brightness == Brightness.light
+                            ? Colors.grey[300]
+                            : Colors.grey[800]
                         : null,
                     child: Padding(
                       padding: const EdgeInsets.all(12.0),

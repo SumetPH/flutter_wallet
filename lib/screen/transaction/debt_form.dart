@@ -44,7 +44,7 @@ class DebtFormScreenState extends State<DebtFormScreen> {
   String? _categoryName = 'เลือก';
   DateTime _date = DateTime.now();
   TimeOfDay _time = TimeOfDay.now();
-  bool _isLoading = false;
+  bool _isLoading = true;
 
   // method
   Future _getAccountList() async {
@@ -65,16 +65,11 @@ class DebtFormScreenState extends State<DebtFormScreen> {
 
   Future _getDebtDetail({required int transactionId}) async {
     try {
-      setState(() {
-        _isLoading = true;
-      });
-
       final res = await _debtService.getDebtDetail(
         transactionId: transactionId,
       );
 
       setState(() {
-        _isLoading = false;
         _amountController.text = res.amount.toString();
         _accountIdFrom = res.accountIdFrom;
         _accountNameFrom = res.accountNameFrom ?? '';
@@ -87,10 +82,6 @@ class DebtFormScreenState extends State<DebtFormScreen> {
         _categoryName = res.categoryName;
       });
     } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-
       Navigator.pop(context);
     }
   }
@@ -144,15 +135,22 @@ class DebtFormScreenState extends State<DebtFormScreen> {
     }
   }
 
+  _getInitialValue() async {
+    await _getAccountList();
+    await _getCategoryList();
+    if (widget.mode == DebtFormMode.edit) {
+      await _getDebtDetail(transactionId: widget.transactionId!);
+    }
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     if (mounted) {
-      _getAccountList();
-      _getCategoryList();
-      if (widget.mode == DebtFormMode.edit) {
-        _getDebtDetail(transactionId: widget.transactionId!);
-      }
+      _getInitialValue();
     }
   }
 

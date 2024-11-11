@@ -19,19 +19,20 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Wallet',
+      home: const HomeScreen(),
       theme: ThemeData(
-        brightness: Brightness.light,
-        scaffoldBackgroundColor: Colors.white,
+        brightness: Brightness.dark,
+        // scaffoldBackgroundColor: Colors.white,
         appBarTheme: const AppBarTheme(
-          backgroundColor: Color.fromRGBO(80, 140, 155, 1),
-          foregroundColor: Colors.white,
+          //   backgroundColor: Color.fromRGBO(80, 140, 155, 1),
+          //   foregroundColor: Colors.white,
           titleTextStyle: TextStyle(
             fontSize: 16.0,
             fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
         ),
       ),
-      home: HomeScreen(),
     );
   }
 }

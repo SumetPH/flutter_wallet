@@ -30,7 +30,7 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
   int? _accountTypeId;
-  bool _isLoading = false;
+  bool _isLoading = true;
 
   // method
   Future _getAccountTypeList() async {
@@ -42,16 +42,12 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
 
   Future _getAccountDetail() async {
     try {
-      setState(() {
-        _isLoading = true;
-      });
       final accountDetail =
           await _accountService.getAccountDetail(accountId: widget.accountId!);
       setState(() {
         _nameController.text = accountDetail.name ?? '';
         _amountController.text = accountDetail.amount.toString();
         _accountTypeId = accountDetail.accountTypeId;
-        _isLoading = false;
       });
     } catch (e) {
       print(e);
@@ -68,17 +64,23 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
     }
   }
 
+  _getInitialValue() async {
+    await _getAccountTypeList();
+    if (widget.mode == AccountFormMode.edit) {
+      await _getAccountDetail();
+    }
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
   // lifecycle
   @override
   void initState() {
     super.initState();
 
     if (mounted) {
-      _getAccountTypeList();
-
-      if (widget.mode == AccountFormMode.edit) {
-        _getAccountDetail();
-      }
+      _getInitialValue();
     }
   }
 

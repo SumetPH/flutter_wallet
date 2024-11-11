@@ -46,7 +46,7 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
   String _categoryName = 'เลือก';
   DateTime _date = DateTime.now();
   TimeOfDay _time = TimeOfDay.now();
-  bool _isLoading = false;
+  bool _isLoading = true;
 
   // method
   Future _getAccountList() async {
@@ -67,16 +67,11 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
 
   Future _getTransactionDetail({required int transactionId}) async {
     try {
-      setState(() {
-        _isLoading = true;
-      });
-
       final res = await _transactionService.getTransactionDetail(
         transactionId: transactionId,
       );
 
       setState(() {
-        _isLoading = false;
         _amountController.text = res.amount.toString();
         _accountId = res.accountId;
         _accountName = res.accountName ?? '';
@@ -88,10 +83,6 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
         _time = TimeUtils.timeOfDayFromString(time: res.time!);
       });
     } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-
       Navigator.pop(context);
     }
   }
@@ -152,15 +143,22 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
     }
   }
 
+  _getInitialValue() async {
+    await _getAccountList();
+    await _getCategoryList();
+    if (widget.mode == TransactionFormMode.edit) {
+      await _getTransactionDetail(transactionId: widget.transactionId!);
+    }
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     if (mounted) {
-      _getAccountList();
-      _getCategoryList();
-      if (widget.mode == TransactionFormMode.edit) {
-        _getTransactionDetail(transactionId: widget.transactionId!);
-      }
+      _getInitialValue();
     }
   }
 

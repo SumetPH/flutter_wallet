@@ -50,7 +50,9 @@ class TransactionList extends StatelessWidget {
         return Column(
           children: [
             Container(
-              color: Colors.grey[200],
+              color: Theme.of(context).brightness == Brightness.light
+                  ? Colors.grey[200]
+                  : Colors.grey[900],
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   vertical: 8.0,
