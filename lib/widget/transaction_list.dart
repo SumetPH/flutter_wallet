@@ -14,13 +14,18 @@ class TransactionList extends StatelessWidget {
     this.onLongPress,
   });
 
-  Color? _colorAmount(int transactionTypeId) {
+  Color? _colorAmount({
+    required BuildContext context,
+    required int transactionTypeId,
+  }) {
     if (transactionTypeId == 1) {
       return Colors.red[600];
     } else if (transactionTypeId == 2) {
       return Colors.green[600];
     } else {
-      return Colors.black;
+      return Theme.of(context).brightness == Brightness.light
+          ? Colors.black
+          : Colors.white;
     }
   }
 
@@ -274,7 +279,10 @@ class TransactionList extends StatelessWidget {
                                     fontSize: 18.0,
                                     fontWeight: FontWeight.bold,
                                     color: _colorAmount(
-                                        transaction.transactionTypeId!),
+                                      context: context,
+                                      transactionTypeId:
+                                          transaction.transactionTypeId!,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -283,7 +291,12 @@ class TransactionList extends StatelessWidget {
                         ),
                         Text(
                           transaction.time ?? "",
-                          style: TextStyle(color: Colors.grey[700]),
+                          style: TextStyle(
+                            color:
+                                Theme.of(context).brightness == Brightness.light
+                                    ? Colors.grey[700]
+                                    : Colors.grey[300],
+                          ),
                         ),
                       ],
                     ),
