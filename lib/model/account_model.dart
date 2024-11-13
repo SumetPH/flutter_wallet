@@ -50,6 +50,7 @@ class AccountList {
   int? accountTypeId;
   String? balance;
   String? iconPath;
+  int? creditStartDate;
 
   AccountList({
     this.id,
@@ -58,6 +59,7 @@ class AccountList {
     this.accountTypeId,
     this.balance,
     this.iconPath,
+    this.creditStartDate,
   });
 
   AccountList.fromJson(Map<String, dynamic> json) {
@@ -67,6 +69,7 @@ class AccountList {
     accountTypeId = json['account_type_id'];
     balance = json['balance'];
     iconPath = json['icon_path'];
+    creditStartDate = json['credit_start_date'];
   }
 
   Map<String, dynamic> toJson() {
@@ -77,6 +80,7 @@ class AccountList {
     data['account_type_id'] = accountTypeId;
     data['balance'] = balance;
     data['icon_path'] = iconPath;
+    data['credit_start_date'] = creditStartDate;
     return data;
   }
 }

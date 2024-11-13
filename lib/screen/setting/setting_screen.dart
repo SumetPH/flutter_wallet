@@ -21,7 +21,6 @@ class _SettingScreenState extends State<SettingScreen> {
           },
           icon: const Icon(Icons.menu),
         ),
-        actions: [],
       ),
       body: const Center(
         child: SettingList(),

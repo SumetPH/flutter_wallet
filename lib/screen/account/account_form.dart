@@ -43,18 +43,14 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
   }
 
   Future _getAccountDetail() async {
-    try {
-      final accountDetail =
-          await _accountService.getAccountDetail(accountId: widget.accountId!);
-      setState(() {
-        _nameController.text = accountDetail.name ?? '';
-        _amountController.text = accountDetail.amount.toString();
-        _accountTypeId = accountDetail.accountTypeId;
-        _iconPath = accountDetail.iconPath;
-      });
-    } catch (e) {
-      print(e);
-    }
+    final accountDetail =
+        await _accountService.getAccountDetail(accountId: widget.accountId!);
+    setState(() {
+      _nameController.text = accountDetail.name ?? '';
+      _amountController.text = accountDetail.amount.toString();
+      _accountTypeId = accountDetail.accountTypeId;
+      _iconPath = accountDetail.iconPath;
+    });
   }
 
   String _getAccountTypeName() {

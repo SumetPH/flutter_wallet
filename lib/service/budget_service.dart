@@ -22,7 +22,6 @@ class BudgetService {
         throw Exception(res.body);
       }
     } catch (e) {
-      print(e);
       throw Exception(e);
     }
   }
@@ -41,7 +40,6 @@ class BudgetService {
         throw Exception(res.body);
       }
     } catch (e) {
-      print(e);
       throw Exception(e);
     }
   }
@@ -69,7 +67,6 @@ class BudgetService {
         throw Exception(res.body);
       }
     } catch (e) {
-      print(e);
       return false;
     }
   }
@@ -99,7 +96,6 @@ class BudgetService {
         throw Exception(res.body);
       }
     } catch (e) {
-      print(e);
       return false;
     }
   }
@@ -117,7 +113,6 @@ class BudgetService {
         throw Exception(res.body);
       }
     } catch (e) {
-      print(e);
       return false;
     }
   }
@@ -136,7 +131,6 @@ class BudgetService {
         throw Exception(res.body);
       }
     } catch (e) {
-      print(e);
       return false;
     }
   }

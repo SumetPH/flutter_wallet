@@ -16,43 +16,17 @@ class _AccountReorderState extends State<AccountReorder> {
   final _accountService = AccountService();
 
   // state
-  // final List<Map<String, dynamic>> _accountTypeList = [
-  //   {'id': 1, 'name': 'เงินสด', 'list': []},
-  //   {'id': 2, 'name': 'ธนาคาร', 'list': []},
-  //   {'id': 3, 'name': 'บัตรเครดิต', 'list': []},
-  //   {'id': 4, 'name': 'หนี้สิน', 'list': []},
-  // ];
   List<AccountModel> _accountList = [];
   bool _isLoading = true;
 
   // method
   Future _getAccountList() async {
-    try {
-      final res = await _accountService.getAccountList();
-      setState(() {
-        _accountList = res;
-        _isLoading = false;
-      });
-    } catch (e) {
-      print(e);
-    }
+    final res = await _accountService.getAccountList();
+    setState(() {
+      _accountList = res;
+      _isLoading = false;
+    });
   }
-  // Future _getAccountList() async {
-  //   try {
-  //     final res = await _accountService.getAccountList();
-  //     setState(() {
-  //       for (final accountType in _accountTypeList) {
-  //         final list = res
-  //             .where((account) => account.accountTypeId == accountType['id'])
-  //             .toList();
-  //         accountType['list'] = list;
-  //       }
-  //       _isLoading = false;
-  //     });
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  // }
 
   Future _updateOrder({required BuildContext context}) async {
     try {

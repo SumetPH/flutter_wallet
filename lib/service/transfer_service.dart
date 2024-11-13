@@ -25,7 +25,6 @@ class TransferService {
         throw Exception(res.body);
       }
     } catch (e) {
-      print(e);
       throw Exception(e);
     }
   }
@@ -57,7 +56,6 @@ class TransferService {
         throw Exception(res.body);
       }
     } catch (e) {
-      print(e);
       return false;
     }
   }
@@ -91,7 +89,6 @@ class TransferService {
         throw Exception(res.body);
       }
     } catch (e) {
-      print(e);
       return false;
     }
   }
@@ -112,7 +109,6 @@ class TransferService {
         throw Exception(res.body);
       }
     } catch (e) {
-      print(e);
       return false;
     }
   }

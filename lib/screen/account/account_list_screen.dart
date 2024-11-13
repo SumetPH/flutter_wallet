@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_wallet/model/account_model.dart';
+import 'package:flutter_wallet/screen/account/account_credit_screen.dart';
 import 'package:flutter_wallet/screen/transaction/transaction_list_screen.dart';
 import 'package:flutter_wallet/service/account_service.dart';
 import 'package:flutter_wallet/screen/account/account_form.dart';
@@ -37,7 +38,6 @@ class _AccountListScreenState extends State<AccountListScreen> {
         throw Exception('ไม่สามารถลบข้อมูลได้');
       }
     } catch (e) {
-      print(e);
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('ไม่สามารถลบข้อมูลได้'),
       ));
@@ -99,18 +99,33 @@ class _AccountListScreenState extends State<AccountListScreen> {
                           : AccountListWidget(
                               accountList: snapshot.data ?? [],
                               onTab: (account) async {
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) {
-                                      return TransactionListScreen(
-                                        accountId: account.id,
-                                        hasDrawer: false,
-                                        title: account.name!,
-                                      );
-                                    },
-                                  ),
-                                );
+                                if (account.accountTypeId == 3) {
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) {
+                                        return AccountCreditScreen(
+                                          accountId: account.id!,
+                                          creditStartDate:
+                                              account.creditStartDate!,
+                                        );
+                                      },
+                                    ),
+                                  );
+                                } else {
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) {
+                                        return TransactionListScreen(
+                                          accountId: account.id,
+                                          hasDrawer: false,
+                                          title: account.name!,
+                                        );
+                                      },
+                                    ),
+                                  );
+                                }
                                 // refresh list
                                 setState(() {});
                               },

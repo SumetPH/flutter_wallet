@@ -16,10 +16,10 @@ class BudgetDetailModel {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    if (this.budget != null) {
+    if (budget != null) {
       data['budget'] = budget!.toJson();
     }
-    if (this.category != null) {
+    if (category != null) {
       data['category'] = category!.map((v) => v.toJson()).toList();
     }
     return data;

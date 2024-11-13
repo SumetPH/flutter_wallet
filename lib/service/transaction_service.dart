@@ -27,7 +27,6 @@ class TransactionService {
         throw Exception(res.body);
       }
     } catch (e) {
-      print(e);
       throw Exception(e);
     }
   }
@@ -50,7 +49,6 @@ class TransactionService {
         throw Exception(res.body);
       }
     } catch (e) {
-      print(e);
       throw Exception(e);
     }
   }
@@ -84,7 +82,6 @@ class TransactionService {
         throw Exception(res.body);
       }
     } catch (e) {
-      print(e);
       return false;
     }
   }
@@ -118,7 +115,6 @@ class TransactionService {
         throw Exception(res.body);
       }
     } catch (e) {
-      print(e);
       return false;
     }
   }
@@ -139,7 +135,6 @@ class TransactionService {
         throw Exception(res.body);
       }
     } catch (e) {
-      print(e);
       return false;
     }
   }

@@ -23,7 +23,6 @@ class CategoryService {
         throw Exception(res.body);
       }
     } catch (e) {
-      print(e);
       throw Exception(e);
     }
   }
@@ -44,7 +43,6 @@ class CategoryService {
         throw Exception(res.body);
       }
     } catch (e) {
-      print(e);
       throw Exception(e);
     }
   }
@@ -69,7 +67,6 @@ class CategoryService {
         throw Exception(res.body);
       }
     } catch (e) {
-      print(e);
       return false;
     }
   }
@@ -96,7 +93,6 @@ class CategoryService {
         throw Exception(res.body);
       }
     } catch (e) {
-      print(e);
       return false;
     }
   }
@@ -115,7 +111,6 @@ class CategoryService {
         throw Exception(res.body);
       }
     } catch (e) {
-      print(e);
       return false;
     }
   }
@@ -134,7 +129,6 @@ class CategoryService {
         throw Exception(res.body);
       }
     } catch (e) {
-      print(e);
       return false;
     }
   }

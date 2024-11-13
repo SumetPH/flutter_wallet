@@ -22,15 +22,11 @@ class BudgetReorderState extends State<BudgetReorder> {
   bool _isLoading = true;
 
   Future _getBudgetList() async {
-    try {
-      final res = await _budgetService.getBudgetList();
-      setState(() {
-        _budgetList = res;
-        _isLoading = false;
-      });
-    } catch (e) {
-      print(e);
-    }
+    final res = await _budgetService.getBudgetList();
+    setState(() {
+      _budgetList = res;
+      _isLoading = false;
+    });
   }
 
   Future _updateOrder({required BuildContext context}) async {

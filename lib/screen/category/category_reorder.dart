@@ -25,17 +25,13 @@ class _CategoryReorderState extends State<CategoryReorder> {
   bool _isLoading = true;
 
   Future _getCategoryList() async {
-    try {
-      final res = await _categoryService.getCategoryList(
-        categoryTypeId: widget.categoryTypeId,
-      );
-      setState(() {
-        _categoryList = res;
-        _isLoading = false;
-      });
-    } catch (e) {
-      print(e);
-    }
+    final res = await _categoryService.getCategoryList(
+      categoryTypeId: widget.categoryTypeId,
+    );
+    setState(() {
+      _categoryList = res;
+      _isLoading = false;
+    });
   }
 
   Future _updateOrder({required BuildContext context}) async {
@@ -45,12 +41,12 @@ class _CategoryReorderState extends State<CategoryReorder> {
       });
 
       List<Map<String, dynamic>> list = [];
-      _categoryList.forEach((element) {
+      for (var element in _categoryList) {
         list.add({
           'categoryId': element.id,
           'order': _categoryList.indexOf(element),
         });
-      });
+      }
 
       final res = await _categoryService.orderCategory(list: list);
 

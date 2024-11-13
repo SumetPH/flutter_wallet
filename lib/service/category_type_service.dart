@@ -23,7 +23,6 @@ class CategoryTypeService {
         throw Exception(res.body);
       }
     } catch (e) {
-      print(e);
       throw Exception(e);
     }
   }

@@ -24,7 +24,6 @@ class DebtService {
         throw Exception(res.body);
       }
     } catch (e) {
-      print(e);
       throw Exception(e);
     }
   }
@@ -62,7 +61,6 @@ class DebtService {
         throw Exception(res.body);
       }
     } catch (e) {
-      print(e);
       return false;
     }
   }
@@ -101,7 +99,6 @@ class DebtService {
         throw Exception(res.body);
       }
     } catch (e) {
-      print(e);
       return false;
     }
   }
@@ -122,7 +119,6 @@ class DebtService {
         throw Exception(res.body);
       }
     } catch (e) {
-      print(e);
       return false;
     }
   }
