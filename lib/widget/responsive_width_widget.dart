@@ -10,17 +10,17 @@ class ResponsiveWidth extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+
     return kIsWeb
-        ? Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surfaceContainer,
-            ),
-            child: Center(
-              child: ClipRRect(
-                child: SizedBox(
-                  width: 1200,
-                  child: child,
-                ),
+        ? Center(
+            child: SizedBox(
+              width: 1000.0,
+              child: Column(
+                children: [
+                  Expanded(child: child),
+                  if (width < 800) const SizedBox(height: 32.0),
+                ],
               ),
             ),
           )

@@ -11,11 +11,13 @@ class TransactionService {
   Future<List<TransactionModel>> getTransactionList({
     int? accountId,
     List<int?>? categoryId,
+    String? startDate,
+    String? endDate,
   }) async {
     try {
       final res = await http.get(
         Uri.parse(
-          '$apiUrl/transaction/transaction-list?accountId=${accountId ?? ''}&categoryId=${categoryId != null ? categoryId.join(',') : ''}',
+          '$apiUrl/transaction/transaction-list?accountId=${accountId ?? ''}&categoryId=${categoryId != null ? categoryId.join(',') : ''}&startDate=${startDate ?? ''}&endDate=${endDate ?? ''}',
         ),
       );
 

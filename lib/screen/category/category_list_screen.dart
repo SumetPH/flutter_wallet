@@ -4,6 +4,7 @@ import 'package:flutter_wallet/screen/transaction/transaction_list_screen.dart';
 import 'package:flutter_wallet/service/category_service.dart';
 import 'package:flutter_wallet/utils/number_utils.dart';
 import 'package:flutter_wallet/widget/menu.dart';
+import 'package:flutter_wallet/widget/responsive_width_widget.dart';
 
 class CategoryListScreen extends StatefulWidget {
   const CategoryListScreen({
@@ -91,34 +92,47 @@ class _CategoryListScreenState extends State<CategoryListScreen>
         ],
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            TabBar(
-              controller: _tabController,
-              tabs: _tabs,
-            ),
-            Expanded(
-              child: TabBarView(
+        child: ResponsiveWidth(
+          child: Column(
+            children: [
+              TabBar(
                 controller: _tabController,
-                children: _tabsData.map((el) {
-                  return RefreshIndicator(
-                    onRefresh: () {
-                      setState(() {});
-                      return Future.value();
-                    },
-                    child: FutureBuilder(
-                      future: _categoryService.getCategoryList(
-                        categoryTypeId: el['categoryTypeId'],
-                      ),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError) {
-                          return Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: Text(snapshot.error.toString()),
-                            ),
-                          );
-                        } else if (snapshot.hasData) {
+                tabs: _tabs,
+              ),
+              Expanded(
+                child: TabBarView(
+                  controller: _tabController,
+                  children: _tabsData.map((el) {
+                    return RefreshIndicator(
+                      onRefresh: () {
+                        setState(() {});
+                        return Future.value();
+                      },
+                      child: FutureBuilder(
+                        future: _categoryService.getCategoryList(
+                          categoryTypeId: el['categoryTypeId'],
+                        ),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+
+                          if (snapshot.hasError) {
+                            return Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: Text(snapshot.error.toString()),
+                              ),
+                            );
+                          }
+
+                          if (snapshot.data == null || snapshot.data!.isEmpty) {
+                            return const Center(child: Text("ไม่พบข้อมูล"));
+                          }
+
                           return ListView.separated(
                             itemCount: snapshot.data!.length,
                             itemBuilder: (context, index) {
@@ -291,17 +305,14 @@ class _CategoryListScreenState extends State<CategoryListScreen>
                               return const Divider(height: 1.0);
                             },
                           );
-                        } else {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        }
-                      },
-                    ),
-                  );
-                }).toList(),
-              ),
-            )
-          ],
+                        },
+                      ),
+                    );
+                  }).toList(),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

@@ -46,6 +46,7 @@ class TransactionListItem {
   String? debtAccountNameTo;
   String? date;
   String? time;
+  String? note;
 
   TransactionListItem({
     this.id,
@@ -68,6 +69,7 @@ class TransactionListItem {
     this.debtAccountNameTo,
     this.date,
     this.time,
+    this.note,
   });
 
   TransactionListItem.fromJson(Map<String, dynamic> json) {
@@ -91,6 +93,7 @@ class TransactionListItem {
     debtAccountNameTo = json['debt_account_name_to'];
     date = json['date'];
     time = json['time'];
+    note = json['note'];
   }
 
   Map<String, dynamic> toJson() {
@@ -115,6 +118,7 @@ class TransactionListItem {
     data['debt_account_name_to'] = debtAccountNameTo;
     data['date'] = date;
     data['time'] = time;
+    data['note'] = note;
     return data;
   }
 }

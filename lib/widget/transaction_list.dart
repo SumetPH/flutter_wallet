@@ -312,6 +312,15 @@ class TransactionList extends StatelessWidget {
                                     const SizedBox(width: 8.0),
                                     Expanded(
                                       child: Text(
+                                        transaction.note ?? '',
+                                        style: const TextStyle(
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8.0),
+                                    Expanded(
+                                      child: Text(
                                         transaction.categoryName ?? '',
                                         style: const TextStyle(
                                           fontSize: 14.0,

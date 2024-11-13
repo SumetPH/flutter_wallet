@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_wallet/screen/provider/theme_provider.dart';
+import 'package:flutter_wallet/widget/responsive_width_widget.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -23,7 +24,9 @@ class _SettingScreenState extends State<SettingScreen> {
         ),
       ),
       body: const Center(
-        child: SettingList(),
+        child: ResponsiveWidth(
+          child: SettingList(),
+        ),
       ),
     );
   }
