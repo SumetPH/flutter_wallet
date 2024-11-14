@@ -3,7 +3,6 @@ import 'package:flutter_wallet/screen/transaction/transaction_list_screen.dart';
 import 'package:flutter_wallet/service/account_service.dart';
 import 'package:flutter_wallet/utils/number_utils.dart';
 import 'package:flutter_wallet/widget/responsive_width_widget.dart';
-import 'package:jiffy/jiffy.dart';
 
 class AccountCreditScreen extends StatefulWidget {
   final int accountId;
@@ -76,25 +75,20 @@ class _AccountCreditScreenState extends State<AccountCreditScreen> {
                     final accountCredit = snapshot.data![index];
                     return GestureDetector(
                       behavior: HitTestBehavior.opaque,
-                      onTap: () {
-                        Navigator.push(
+                      onTap: () async {
+                        await Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => TransactionListScreen(
                               hasDrawer: false,
                               title: widget.accountName,
                               accountId: widget.accountId,
-                              startDate: Jiffy.parse(
-                                accountCredit.startDate!,
-                                pattern: 'dd/MM/yyyy',
-                              ).format(pattern: 'yyyy-MM-dd'),
-                              endDate: Jiffy.parse(
-                                accountCredit.endDate!,
-                                pattern: 'dd/MM/yyyy',
-                              ).format(pattern: 'yyyy-MM-dd'),
+                              startDate: accountCredit.startDate!,
+                              endDate: accountCredit.endDate!,
                             ),
                           ),
                         );
+                        setState(() {});
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -144,7 +138,7 @@ class _AccountCreditScreenState extends State<AccountCreditScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
                                   Text(
-                                    '${accountCredit.startDate ?? ''} - ${accountCredit.endDate ?? ''}',
+                                    '${accountCredit.startDate ?? ''} ถึง ${accountCredit.endDate ?? ''}',
                                     textAlign: TextAlign.center,
                                   ),
                                   Row(

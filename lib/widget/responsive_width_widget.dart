@@ -19,7 +19,13 @@ class ResponsiveWidth extends StatelessWidget {
               child: Column(
                 children: [
                   Expanded(child: child),
-                  if (width < 800) const SizedBox(height: 32.0),
+                  if (width < 800)
+                    Container(
+                      height: 32.0,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surface,
+                      ),
+                    ),
                 ],
               ),
             ),
