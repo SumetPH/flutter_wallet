@@ -128,6 +128,10 @@ class _BudgetListScreenState extends State<BudgetListScreen> {
                         );
                       }
 
+                      if (snapshot.data == null || snapshot.data!.isEmpty) {
+                        return const Center(child: Text("ไม่พบข้อมูล"));
+                      }
+
                       return ListView.separated(
                         itemCount: snapshot.data!.length,
                         itemBuilder: (context, index) {
