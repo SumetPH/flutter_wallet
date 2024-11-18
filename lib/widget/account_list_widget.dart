@@ -24,33 +24,34 @@ class AccountListWidget extends StatelessWidget {
         final accountType = accountList[index];
         return Column(
           children: [
-            Container(
-              color: Theme.of(context).colorScheme.surfaceContainer,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 8.0,
-                  horizontal: 16.0,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      accountType.name!,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      '${NumberUtils.formatNumber(double.parse(accountType.total!))} บาท',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: double.parse(accountType.total!) >= 0
-                            ? Colors.green[600]
-                            : Colors.red[600],
+            if (accountType.accountList!.isNotEmpty)
+              Container(
+                color: Theme.of(context).colorScheme.surfaceContainer,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8.0,
+                    horizontal: 16.0,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        accountType.name!,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
-                    ),
-                  ],
+                      Text(
+                        '${NumberUtils.formatNumber(double.parse(accountType.total!))} บาท',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: double.parse(accountType.total!) >= 0
+                              ? Colors.green[600]
+                              : Colors.red[600],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
             ListView.separated(
               shrinkWrap: true,
               primary: false,

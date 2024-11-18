@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_wallet/model/category_model.dart';
 import 'package:flutter_wallet/service/budget_service.dart';
 import 'package:flutter_wallet/service/category_service.dart';
+import 'package:flutter_wallet/utils/snackbar_validate_field.dart';
 import 'package:flutter_wallet/widget/responsive_width_widget.dart';
 
 enum BudgetFormMode { create, edit }
@@ -145,11 +146,7 @@ class BudgetFormScreenState extends State<BudgetFormScreen> {
                 if (_nameController.text.isEmpty ||
                     _amountController.text.isEmpty ||
                     _categoryId.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('กรุณากรอกข้อมูลให้ครบถ้วน'),
-                    ),
-                  );
+                  snackBarValidateField(context: context);
                 } else {
                   await _createOrUpdateBudget(context: context);
                 }

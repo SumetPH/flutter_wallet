@@ -5,8 +5,9 @@ class AccountDetailModel {
   int? accountTypeId;
   String? createdAt;
   String? updatedAt;
-  int? order;
+  int? orderIndex;
   String? iconPath;
+  int? creditStartDate;
 
   AccountDetailModel({
     this.id,
@@ -15,8 +16,9 @@ class AccountDetailModel {
     this.accountTypeId,
     this.createdAt,
     this.updatedAt,
-    this.order,
+    this.orderIndex,
     this.iconPath,
+    this.creditStartDate,
   });
 
   AccountDetailModel.fromJson(Map<String, dynamic> json) {
@@ -26,8 +28,9 @@ class AccountDetailModel {
     accountTypeId = json['account_type_id'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
-    order = json['order'];
+    orderIndex = json['order_index'];
     iconPath = json['icon_path'];
+    creditStartDate = json['credit_start_date'];
   }
 
   Map<String, dynamic> toJson() {
@@ -38,8 +41,9 @@ class AccountDetailModel {
     data['account_type_id'] = accountTypeId;
     data['created_at'] = createdAt;
     data['updated_at'] = updatedAt;
-    data['order'] = order;
+    data['order_index'] = orderIndex;
     data['icon_path'] = iconPath;
+    data['credit_start_date'] = creditStartDate;
     return data;
   }
 }

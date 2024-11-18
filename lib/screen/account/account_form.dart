@@ -4,6 +4,7 @@ import 'package:flutter_wallet/service/account_type_service.dart';
 import 'package:flutter_wallet/model/account_type_model.dart';
 import 'package:flutter_wallet/utils/currency_input_formatter.dart';
 import 'package:flutter_wallet/utils/icon_utils.dart';
+import 'package:flutter_wallet/utils/snackbar_validate_field.dart';
 import 'package:flutter_wallet/widget/responsive_width_widget.dart';
 
 enum AccountFormMode { create, edit }
@@ -34,6 +35,9 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
   String? _iconPath;
   bool _isLoading = true;
 
+  final List<int> _dateList = List.generate(31, (index) => (index + 1));
+  int? _creditStartDate;
+
   // method
   Future _getAccountTypeList() async {
     final res = await _accountTypeService.getAccountTypeList();
@@ -50,6 +54,7 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
       _amountController.text = accountDetail.amount.toString();
       _accountTypeId = accountDetail.accountTypeId;
       _iconPath = accountDetail.iconPath;
+      _creditStartDate = accountDetail.creditStartDate;
     });
   }
 
@@ -63,7 +68,9 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
     }
   }
 
-  Future _createOrUpdateAccount() async {
+  Future _createOrUpdateAccount({
+    required BuildContext context,
+  }) async {
     try {
       setState(() {
         _isLoading = true;
@@ -72,11 +79,11 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
       bool res = false;
       if (widget.mode == AccountFormMode.create) {
         res = await _accountService.createAccount(
-          name: _nameController.text,
-          amount: double.parse(_amountController.text),
-          accountTypeId: _accountTypeId!,
-          iconPath: _iconPath,
-        );
+            name: _nameController.text,
+            amount: double.parse(_amountController.text),
+            accountTypeId: _accountTypeId!,
+            iconPath: _iconPath,
+            creditStartDate: _creditStartDate);
       } else {
         res = await _accountService.updateAccount(
           accountId: widget.accountId!,
@@ -84,6 +91,7 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
           amount: double.parse(_amountController.text),
           accountTypeId: _accountTypeId!,
           iconPath: _iconPath,
+          creditStartDate: _creditStartDate,
         );
       }
 
@@ -139,14 +147,11 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
               onPressed: () async {
                 if (_nameController.text.isEmpty ||
                     _amountController.text.isEmpty ||
-                    _accountTypeId == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('กรุณากรอกข้อมูลให้ครบถ้วน'),
-                    ),
-                  );
+                    _accountTypeId == null ||
+                    (_accountTypeId == 3 && _creditStartDate == null)) {
+                  snackBarValidateField(context: context);
                 } else {
-                  await _createOrUpdateAccount();
+                  await _createOrUpdateAccount(context: context);
                 }
               },
             )
@@ -273,6 +278,85 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                         ],
                       ),
                     ),
+                    if (_accountTypeId == 3)
+                      Column(
+                        children: [
+                          const Divider(),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 24.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 14.0),
+                                  child: Text('วันที่เริ่มต้น'),
+                                ),
+                                GestureDetector(
+                                  onTap: () async {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      builder: (context) => Column(
+                                        children: [
+                                          const Padding(
+                                            padding: EdgeInsets.all(16.0),
+                                            child: Center(
+                                              child: Text(
+                                                'เลือกวันที่เริ่มต้น',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: ListView.separated(
+                                              separatorBuilder:
+                                                  (context, index) {
+                                                return const Divider(height: 1);
+                                              },
+                                              itemCount: _dateList.length,
+                                              itemBuilder: (context, index) {
+                                                return ListTile(
+                                                  title: Text(
+                                                    _dateList[index].toString(),
+                                                    style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                  onTap: () {
+                                                    Navigator.pop(context);
+                                                    setState(() {
+                                                      _creditStartDate =
+                                                          _dateList[index];
+                                                    });
+                                                  },
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        _creditStartDate != null
+                                            ? _creditStartDate.toString()
+                                            : 'เลือก',
+                                      ),
+                                      const Icon(Icons.chevron_right),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     const Divider(),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24.0),

@@ -30,6 +30,81 @@ accountMenu({required BuildContext context, Function? afterGoBack}) {
             Navigator.pop(context);
             await Navigator.push(
               context,
+              MaterialPageRoute(builder: (context) {
+                return const TransactionFormScreen(
+                  mode: TransactionFormMode.create,
+                );
+              }),
+            );
+            if (afterGoBack != null) {
+              afterGoBack();
+            }
+          },
+          title: const Center(
+            child: Text(
+              "เพิ่มรายการ",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+        const Divider(height: 1.0),
+        ListTile(
+          onTap: () async {
+            Navigator.pop(context);
+            await Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) {
+                return const TransferFormScreen(
+                  mode: TransferFormMode.create,
+                );
+              }),
+            );
+            if (afterGoBack != null) {
+              afterGoBack();
+            }
+          },
+          title: const Center(
+            child: Text(
+              "โอน",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+        const Divider(height: 1.0),
+        ListTile(
+          onTap: () async {
+            Navigator.pop(context);
+            await Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) {
+                return const DebtFormScreen(
+                  mode: DebtFormMode.create,
+                );
+              }),
+            );
+            if (afterGoBack != null) {
+              afterGoBack();
+            }
+          },
+          title: const Center(
+            child: Text(
+              "ชำระหนี้",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+        const Divider(height: 1.0),
+        ListTile(
+          onTap: () async {
+            Navigator.pop(context);
+            await Navigator.push(
+              context,
               MaterialPageRoute(
                 builder: (context) => const AccountFormScreen(
                   mode: AccountFormMode.create,

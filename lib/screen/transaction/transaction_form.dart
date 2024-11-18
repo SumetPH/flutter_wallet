@@ -5,6 +5,7 @@ import 'package:flutter_wallet/model/account_model.dart';
 import 'package:flutter_wallet/model/category_model.dart';
 import 'package:flutter_wallet/service/account_service.dart';
 import 'package:flutter_wallet/service/transaction_service.dart';
+import 'package:flutter_wallet/utils/snackbar_validate_field.dart';
 import 'package:flutter_wallet/utils/time_utils.dart';
 import 'package:flutter_wallet/widget/account_list_widget.dart';
 import 'package:flutter_wallet/widget/responsive_width_widget.dart';
@@ -177,11 +178,7 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                 if (_amountController.text.isEmpty ||
                     _accountId == null ||
                     _categoryId == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('กรุณากรอกข้อมูลให้ครบถ้วน'),
-                    ),
-                  );
+                  snackBarValidateField(context: context);
                 } else {
                   await _createOrUpdateTransaction(context: context);
                 }

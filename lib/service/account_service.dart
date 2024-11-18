@@ -56,6 +56,7 @@ class AccountService {
     required double amount,
     required int accountTypeId,
     String? iconPath,
+    int? creditStartDate,
   }) async {
     try {
       final body = {
@@ -65,6 +66,9 @@ class AccountService {
       };
       if (iconPath != null) {
         body['iconPath'] = iconPath;
+      }
+      if (creditStartDate != null) {
+        body['creditStartDate'] = creditStartDate;
       }
       final res = await http.post(
         Uri.parse('$apiUrl/account/account-create'),
@@ -87,6 +91,7 @@ class AccountService {
     required double amount,
     required int accountTypeId,
     String? iconPath,
+    int? creditStartDate,
   }) async {
     try {
       final body = {
@@ -97,6 +102,9 @@ class AccountService {
       };
       if (iconPath != null) {
         body['iconPath'] = iconPath;
+      }
+      if (creditStartDate != null) {
+        body['creditStartDate'] = creditStartDate;
       }
       final res = await http.put(
         Uri.parse('$apiUrl/account/account-update'),

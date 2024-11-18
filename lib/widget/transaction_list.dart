@@ -19,9 +19,9 @@ class TransactionList extends StatelessWidget {
     required BuildContext context,
     required int transactionTypeId,
   }) {
-    if (transactionTypeId == 1) {
+    if ([1, 4].contains(transactionTypeId)) {
       return Colors.red[600];
-    } else if (transactionTypeId == 2) {
+    } else if ([2].contains(transactionTypeId)) {
       return Colors.green[600];
     } else {
       return Theme.of(context).brightness == Brightness.light
@@ -52,12 +52,28 @@ class TransactionList extends StatelessWidget {
     return '';
   }
 
+  double _sumIncome({required List<TransactionListItem> list}) {
+    final sum = list
+        .where((e) => [2].contains(e.transactionTypeId))
+        .fold(0.00, (sum, item) => sum + double.parse(item.amount!));
+
+    return sum;
+  }
+
+  double _sumExpense({required List<TransactionListItem> list}) {
+    final sum = list
+        .where((e) => [1, 4].contains(e.transactionTypeId))
+        .fold(0.00, (sum, item) => sum + double.parse(item.amount!));
+
+    return sum;
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: transactionListGroup.length,
       itemBuilder: (ctx, index) {
-        final transactionList = transactionListGroup[index];
+        final transactionGroup = transactionListGroup[index];
         return Column(
           children: [
             Container(
@@ -71,9 +87,33 @@ class TransactionList extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '${transactionList.day!} ${_isCurrentDate(date: transactionList.day)}',
+                      '${transactionGroup.day!} ${_isCurrentDate(date: transactionGroup.day)}',
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
+                    Row(
+                      children: [
+                        if (_sumIncome(
+                                list: transactionGroup.transactionList!) >
+                            0)
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: Text(
+                              '+${NumberUtils.formatNumber(_sumIncome(list: transactionGroup.transactionList!))}',
+                              style: TextStyle(color: Colors.green[600]),
+                            ),
+                          ),
+                        if (_sumExpense(
+                                list: transactionGroup.transactionList!) >
+                            0)
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: Text(
+                              '-${NumberUtils.formatNumber(_sumExpense(list: transactionGroup.transactionList!))}',
+                              style: TextStyle(color: Colors.red[600]),
+                            ),
+                          ),
+                      ],
+                    )
                   ],
                 ),
               ),
@@ -81,10 +121,10 @@ class TransactionList extends StatelessWidget {
             ListView.separated(
               shrinkWrap: true,
               primary: false,
-              itemCount: transactionList.transactionList!.length,
+              itemCount: transactionGroup.transactionList!.length,
               separatorBuilder: (context, i) => const Divider(height: 1.0),
               itemBuilder: (context, i) {
-                final transaction = transactionList.transactionList![i];
+                final transaction = transactionGroup.transactionList![i];
                 return GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTap: () {

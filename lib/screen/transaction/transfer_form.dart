@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_wallet/service/account_service.dart';
 import 'package:flutter_wallet/service/transfer_service.dart';
 import 'package:flutter_wallet/model/account_model.dart';
+import 'package:flutter_wallet/utils/snackbar_validate_field.dart';
 import 'package:flutter_wallet/utils/time_utils.dart';
 import 'package:flutter_wallet/widget/account_list_widget.dart';
 import 'package:flutter_wallet/widget/responsive_width_widget.dart';
@@ -149,11 +150,7 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
                 if (_amountController.text.isEmpty ||
                     _accountIdTo == null ||
                     _accountIdFrom == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('กรุณากรอกข้อมูลให้ครบถ้วน'),
-                    ),
-                  );
+                  snackBarValidateField(context: context);
                 } else {
                   await _createOrUpdateTransfer(context: context);
                 }
