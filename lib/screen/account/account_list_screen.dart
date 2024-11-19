@@ -119,97 +119,92 @@ class _AccountListScreenState extends State<AccountListScreen> {
                       return Column(
                         children: [
                           if (_netAsset != null)
-                            Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 16.0,
-                                    right: 16.0,
-                                    bottom: 4.0,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      const Text(
-                                        "ทรัพย์สิน",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 4.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text(
+                                          "ทรัพย์สิน",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
-                                      ),
-                                      Text(
-                                        '${NumberUtils.formatNumber(
-                                          double.parse(_netAsset!.property),
-                                        )} บาท',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.green[600],
+                                        Text(
+                                          '${NumberUtils.formatNumber(
+                                            double.parse(_netAsset!.property),
+                                          )} บาท',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.green[600],
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 16.0,
-                                    right: 16.0,
-                                    bottom: 4.0,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      const Text(
-                                        "หนี้สิน",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 4.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text(
+                                          "หนี้สิน",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
-                                      ),
-                                      Text(
-                                        '${NumberUtils.formatNumber(
-                                          double.parse(_netAsset!.debt),
-                                        )} บาท',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.red[600],
+                                        Text(
+                                          '${NumberUtils.formatNumber(
+                                            double.parse(_netAsset!.debt),
+                                          )} บาท',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.red[600],
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 16.0,
-                                    right: 16.0,
-                                    bottom: 16.0,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      const Text(
-                                        "รวม",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 4.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text(
+                                          "รวม",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
-                                      ),
-                                      Text(
-                                        '${NumberUtils.formatNumber(
-                                          double.parse(_netAsset!.total),
-                                        )} บาท',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color:
-                                              double.parse(_netAsset!.total) >=
-                                                      0
-                                                  ? Colors.green[600]
-                                                  : Colors.red[600],
+                                        Text(
+                                          '${NumberUtils.formatNumber(
+                                            double.parse(_netAsset!.total),
+                                          )} บาท',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: double.parse(
+                                                        _netAsset!.total) >=
+                                                    0
+                                                ? Colors.green[600]
+                                                : Colors.red[600],
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           Expanded(
                             child: AccountListWidget(

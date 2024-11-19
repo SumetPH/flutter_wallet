@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_wallet/model/net_asset_list_model.dart';
 import 'package:flutter_wallet/service/net_asset_service.dart';
+import 'package:flutter_wallet/widget/responsive_width_widget.dart';
 
 class NetAssetScreen extends StatefulWidget {
   const NetAssetScreen({super.key});
@@ -85,83 +86,85 @@ class _NetAssetScreenState extends State<NetAssetScreen> {
       body: SafeArea(
         child: _isLoading
             ? const Center(child: CircularProgressIndicator())
-            : SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Container(
-                      color: Theme.of(context).colorScheme.surfaceContainer,
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 16.0, vertical: 8.0),
-                        child: Text(
-                          'เลือกทรัพย์สิน',
-                          style: TextStyle(
-                              fontSize: 14.0, fontWeight: FontWeight.bold),
+            : ResponsiveWidth(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Container(
+                        color: Theme.of(context).colorScheme.surfaceContainer,
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 8.0),
+                          child: Text(
+                            'เลือกทรัพย์สิน',
+                            style: TextStyle(
+                                fontSize: 14.0, fontWeight: FontWeight.bold),
+                          ),
                         ),
                       ),
-                    ),
-                    ListView.separated(
-                      shrinkWrap: true,
-                      primary: false,
-                      itemBuilder: (context, index) {
-                        final property = _netAssetList.propertyList![index];
-                        return Column(
-                          children: [
-                            CheckboxListTile(
-                              title: Text(property.accountName!),
-                              value: property.status,
-                              onChanged: (value) {
-                                setState(() {
-                                  property.status = value!;
-                                });
-                              },
-                            ),
-                          ],
-                        );
-                      },
-                      separatorBuilder: (context, index) {
-                        return const Divider(height: 1.0);
-                      },
-                      itemCount: _netAssetList.propertyList!.length,
-                    ),
-                    Container(
-                      color: Theme.of(context).colorScheme.surfaceContainer,
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 16.0, vertical: 8.0),
-                        child: Text(
-                          'เลือกหนี้สิน',
-                          style: TextStyle(
-                              fontSize: 14.0, fontWeight: FontWeight.bold),
+                      ListView.separated(
+                        shrinkWrap: true,
+                        primary: false,
+                        itemBuilder: (context, index) {
+                          final property = _netAssetList.propertyList![index];
+                          return Column(
+                            children: [
+                              CheckboxListTile(
+                                title: Text(property.accountName!),
+                                value: property.status,
+                                onChanged: (value) {
+                                  setState(() {
+                                    property.status = value!;
+                                  });
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                        separatorBuilder: (context, index) {
+                          return const Divider(height: 1.0);
+                        },
+                        itemCount: _netAssetList.propertyList!.length,
+                      ),
+                      Container(
+                        color: Theme.of(context).colorScheme.surfaceContainer,
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 8.0),
+                          child: Text(
+                            'เลือกหนี้สิน',
+                            style: TextStyle(
+                                fontSize: 14.0, fontWeight: FontWeight.bold),
+                          ),
                         ),
                       ),
-                    ),
-                    ListView.separated(
-                      shrinkWrap: true,
-                      primary: false,
-                      itemBuilder: (context, index) {
-                        final debt = _netAssetList.debtList![index];
-                        return Column(
-                          children: [
-                            CheckboxListTile(
-                              title: Text(debt.accountName!),
-                              value: debt.status,
-                              onChanged: (value) {
-                                setState(() {
-                                  debt.status = value!;
-                                });
-                              },
-                            ),
-                          ],
-                        );
-                      },
-                      separatorBuilder: (context, index) {
-                        return const Divider(height: 1.0);
-                      },
-                      itemCount: _netAssetList.debtList!.length,
-                    ),
-                  ],
+                      ListView.separated(
+                        shrinkWrap: true,
+                        primary: false,
+                        itemBuilder: (context, index) {
+                          final debt = _netAssetList.debtList![index];
+                          return Column(
+                            children: [
+                              CheckboxListTile(
+                                title: Text(debt.accountName!),
+                                value: debt.status,
+                                onChanged: (value) {
+                                  setState(() {
+                                    debt.status = value!;
+                                  });
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                        separatorBuilder: (context, index) {
+                          return const Divider(height: 1.0);
+                        },
+                        itemCount: _netAssetList.debtList!.length,
+                      ),
+                    ],
+                  ),
                 ),
               ),
       ),
