@@ -59,11 +59,12 @@ class BudgetFormScreenState extends State<BudgetFormScreen> {
             : [];
       });
     } catch (e) {
+      if (!mounted) return;
       Navigator.pop(context);
     }
   }
 
-  Future _createOrUpdateBudget({required BuildContext context}) async {
+  Future _createOrUpdateBudget() async {
     try {
       setState(() {
         _isLoading = true;
@@ -90,6 +91,7 @@ class BudgetFormScreenState extends State<BudgetFormScreen> {
         setState(() {
           _isLoading = false;
         });
+        if (!mounted) return;
         Navigator.pop(context);
       } else {
         throw Exception('ทํารายการไม่สําเร็จ');
@@ -98,6 +100,7 @@ class BudgetFormScreenState extends State<BudgetFormScreen> {
       setState(() {
         _isLoading = false;
       });
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('ทำรายการไม่สําเร็จ'),
       ));
@@ -148,7 +151,7 @@ class BudgetFormScreenState extends State<BudgetFormScreen> {
                     _categoryId.isEmpty) {
                   snackBarValidateField(context: context);
                 } else {
-                  await _createOrUpdateBudget(context: context);
+                  await _createOrUpdateBudget();
                 }
               },
             ),

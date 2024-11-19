@@ -19,17 +19,18 @@ class _BudgetListScreenState extends State<BudgetListScreen> {
 
   Future _deleteBudget({
     required int budgetId,
-    required BuildContext context,
   }) async {
     try {
       final res = await _budgetService.deleteBudget(budgetId: budgetId);
       if (res) {
+        if (!mounted) return;
         Navigator.pop(context);
         setState(() {});
       } else {
         throw Exception('ไม่สามารถลบข้อมูลได้');
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('ไม่สามารถลบข้อมูลได้'),
       ));
@@ -215,11 +216,12 @@ class _BudgetListScreenState extends State<BudgetListScreen> {
                                                 TextButton(
                                                   child: const Text('ตกลง'),
                                                   onPressed: () async {
+                                                    final navigator =
+                                                        Navigator.of(context);
                                                     await _deleteBudget(
                                                       budgetId: data.id!,
-                                                      context: context,
                                                     );
-                                                    Navigator.of(context).pop();
+                                                    navigator.pop();
                                                   },
                                                 ),
                                                 TextButton(

@@ -83,11 +83,12 @@ class DebtFormScreenState extends State<DebtFormScreen> {
         _categoryName = res.categoryName;
       });
     } catch (e) {
+      if (!mounted) return;
       Navigator.pop(context);
     }
   }
 
-  Future _createOrUpdateDebt({required BuildContext context}) async {
+  Future _createOrUpdateDebt() async {
     try {
       setState(() {
         _isLoading = true;
@@ -122,6 +123,7 @@ class DebtFormScreenState extends State<DebtFormScreen> {
         setState(() {
           _isLoading = false;
         });
+        if (!mounted) return;
         Navigator.pop(context);
       } else {
         throw Exception('ทํารายการไม่สําเร็จ');
@@ -172,7 +174,7 @@ class DebtFormScreenState extends State<DebtFormScreen> {
                     _accountIdFrom == null) {
                   snackBarValidateField(context: context);
                 } else {
-                  await _createOrUpdateDebt(context: context);
+                  await _createOrUpdateDebt();
                 }
               },
             ),

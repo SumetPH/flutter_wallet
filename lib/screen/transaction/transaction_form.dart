@@ -84,11 +84,12 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
         _time = TimeUtils.timeOfDayFromString(time: res.time!);
       });
     } catch (e) {
+      if (!mounted) return;
       Navigator.pop(context);
     }
   }
 
-  Future _createOrUpdateTransaction({required BuildContext context}) async {
+  Future _createOrUpdateTransaction() async {
     try {
       setState(() {
         _isLoading = true;
@@ -120,6 +121,7 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
         setState(() {
           _isLoading = false;
         });
+        if (!mounted) return;
         Navigator.pop(context);
       } else {
         throw Exception('ทํารายการไม่สําเร็จ');
@@ -180,7 +182,7 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
                     _categoryId == null) {
                   snackBarValidateField(context: context);
                 } else {
-                  await _createOrUpdateTransaction(context: context);
+                  await _createOrUpdateTransaction();
                 }
               },
             ),

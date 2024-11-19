@@ -49,11 +49,12 @@ class CategoryFormScreenState extends State<CategoryFormScreen> {
         _categoryTypeId = res.categoryTypeId;
       });
     } catch (e) {
+      if (!mounted) return;
       Navigator.pop(context);
     }
   }
 
-  Future _createOrUpdateCategory({required BuildContext context}) async {
+  Future _createOrUpdateCategory() async {
     try {
       setState(() {
         _isLoading = true;
@@ -76,6 +77,7 @@ class CategoryFormScreenState extends State<CategoryFormScreen> {
         setState(() {
           _isLoading = false;
         });
+        if (!mounted) return;
         Navigator.pop(context);
       } else {
         throw Exception('ทํารายการไม่สําเร็จ');
@@ -134,7 +136,7 @@ class CategoryFormScreenState extends State<CategoryFormScreen> {
                 if (_nameController.text.isEmpty || _categoryTypeId == null) {
                   snackBarValidateField(context: context);
                 } else {
-                  await _createOrUpdateCategory(context: context);
+                  await _createOrUpdateCategory();
                 }
               },
             ),

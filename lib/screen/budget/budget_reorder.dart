@@ -29,7 +29,7 @@ class BudgetReorderState extends State<BudgetReorder> {
     });
   }
 
-  Future _updateOrder({required BuildContext context}) async {
+  Future _updateOrder() async {
     try {
       setState(() {
         _isLoading = true;
@@ -50,6 +50,7 @@ class BudgetReorderState extends State<BudgetReorder> {
       });
 
       if (res) {
+        if (!mounted) return;
         Navigator.pop(context);
       } else {
         throw Exception('ทํารายการไม่สําเร็จ');
@@ -83,7 +84,7 @@ class BudgetReorderState extends State<BudgetReorder> {
             IconButton(
               icon: const Icon(Icons.check),
               onPressed: () async {
-                await _updateOrder(context: context);
+                await _updateOrder();
               },
             ),
           ],

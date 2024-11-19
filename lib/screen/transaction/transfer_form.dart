@@ -65,11 +65,12 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
         _time = TimeUtils.timeOfDayFromString(time: res.time!);
       });
     } catch (e) {
+      if (!mounted) return;
       Navigator.pop(context);
     }
   }
 
-  Future _createOrUpdateTransfer({required BuildContext context}) async {
+  Future _createOrUpdateTransfer() async {
     try {
       setState(() {
         _isLoading = true;
@@ -102,6 +103,7 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
         setState(() {
           _isLoading = false;
         });
+        if (!mounted) return;
         Navigator.pop(context);
       } else {
         throw Exception('ทํารายการไม่สําเร็จ');
@@ -152,7 +154,7 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
                     _accountIdFrom == null) {
                   snackBarValidateField(context: context);
                 } else {
-                  await _createOrUpdateTransfer(context: context);
+                  await _createOrUpdateTransfer();
                 }
               },
             ),

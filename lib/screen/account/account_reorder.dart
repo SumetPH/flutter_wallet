@@ -28,12 +28,13 @@ class _AccountReorderState extends State<AccountReorder> {
     });
   }
 
-  Future _updateOrder({required BuildContext context}) async {
+  Future _updateOrder() async {
     try {
       setState(() {
         _isLoading = true;
       });
 
+      final navigator = Navigator.of(context);
       List<Map<String, dynamic>> list = [];
       int count = 0;
       for (var accountType in _accountList) {
@@ -53,11 +54,12 @@ class _AccountReorderState extends State<AccountReorder> {
       });
 
       if (res) {
-        Navigator.pop(context);
+        navigator.pop();
       } else {
         throw Exception('ทํารายการไม่สําเร็จ');
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('ทํารายการไม่สําเร็จ'),
@@ -86,7 +88,7 @@ class _AccountReorderState extends State<AccountReorder> {
             IconButton(
               icon: const Icon(Icons.check),
               onPressed: () async {
-                await _updateOrder(context: context);
+                await _updateOrder();
               },
             ),
           ],

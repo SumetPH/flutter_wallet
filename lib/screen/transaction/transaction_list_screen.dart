@@ -40,13 +40,13 @@ class TransactionListScreenState extends State<TransactionListScreen> {
 
   Future _deleteTransaction({
     required int transactionId,
-    required BuildContext context,
   }) async {
     try {
       final res = await _transactionService.deleteTransaction(
         transactionId: transactionId,
       );
       if (res) {
+        if (!mounted) return;
         Navigator.pop(context);
         setState(() {});
       } else {
@@ -61,13 +61,13 @@ class TransactionListScreenState extends State<TransactionListScreen> {
 
   Future _deleteTransfer({
     required int transactionId,
-    required BuildContext context,
   }) async {
     try {
       final res = await _transferService.deleteTransfer(
         transactionId: transactionId,
       );
       if (res) {
+        if (!mounted) return;
         Navigator.pop(context);
         setState(() {});
       } else {
@@ -82,13 +82,13 @@ class TransactionListScreenState extends State<TransactionListScreen> {
 
   Future _deleteDebt({
     required int transactionId,
-    required BuildContext context,
   }) async {
     try {
       final res = await _debtService.deleteDebt(
         transactionId: transactionId,
       );
       if (res) {
+        if (!mounted) return;
         Navigator.pop(context);
         setState(() {});
       } else {
@@ -187,12 +187,12 @@ class TransactionListScreenState extends State<TransactionListScreen> {
                                   ListTile(
                                     onTap: () async {
                                       Navigator.pop(context);
+                                      final navigator = Navigator.of(context);
                                       // edit transaction
                                       if ([1, 2].contains(
                                         transaction.transactionTypeId,
                                       )) {
-                                        await Navigator.push(
-                                          context,
+                                        await navigator.push(
                                           MaterialPageRoute(builder: (context) {
                                             return TransactionFormScreen(
                                               mode: TransactionFormMode.edit,
@@ -205,8 +205,7 @@ class TransactionListScreenState extends State<TransactionListScreen> {
                                       if ([3].contains(
                                         transaction.transactionTypeId,
                                       )) {
-                                        await Navigator.push(
-                                          context,
+                                        await navigator.push(
                                           MaterialPageRoute(builder: (context) {
                                             return TransferFormScreen(
                                               mode: TransferFormMode.edit,
@@ -219,8 +218,7 @@ class TransactionListScreenState extends State<TransactionListScreen> {
                                       if ([4].contains(
                                         transaction.transactionTypeId,
                                       )) {
-                                        await Navigator.push(
-                                          context,
+                                        await navigator.push(
                                           MaterialPageRoute(builder: (context) {
                                             return DebtFormScreen(
                                               mode: DebtFormMode.edit,
@@ -256,6 +254,8 @@ class TransactionListScreenState extends State<TransactionListScreen> {
                                               TextButton(
                                                 child: const Text('ตกลง'),
                                                 onPressed: () async {
+                                                  final navigator =
+                                                      Navigator.of(context);
                                                   // delete transaction
                                                   if ([1, 2].contains(
                                                     transaction
@@ -264,7 +264,6 @@ class TransactionListScreenState extends State<TransactionListScreen> {
                                                     await _deleteTransaction(
                                                       transactionId:
                                                           transaction.id!,
-                                                      context: context,
                                                     );
                                                   }
                                                   // delete transfer
@@ -275,7 +274,6 @@ class TransactionListScreenState extends State<TransactionListScreen> {
                                                     await _deleteTransfer(
                                                       transactionId:
                                                           transaction.id!,
-                                                      context: context,
                                                     );
                                                   }
                                                   // delete debt
@@ -286,10 +284,9 @@ class TransactionListScreenState extends State<TransactionListScreen> {
                                                     await _deleteDebt(
                                                       transactionId:
                                                           transaction.id!,
-                                                      context: context,
                                                     );
                                                   }
-                                                  Navigator.pop(context);
+                                                  navigator.pop();
                                                 },
                                               ),
                                               TextButton(

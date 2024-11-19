@@ -68,9 +68,7 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
     }
   }
 
-  Future _createOrUpdateAccount({
-    required BuildContext context,
-  }) async {
+  Future _createOrUpdateAccount() async {
     try {
       setState(() {
         _isLoading = true;
@@ -96,6 +94,7 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
       }
 
       if (res) {
+        if (!mounted) return;
         Navigator.pop(context);
       } else {
         throw Exception('ทำรายการไม่สำเร็จ');
@@ -104,6 +103,7 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
       setState(() {
         _isLoading = false;
       });
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
@@ -151,7 +151,7 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
                     (_accountTypeId == 3 && _creditStartDate == null)) {
                   snackBarValidateField(context: context);
                 } else {
-                  await _createOrUpdateAccount(context: context);
+                  await _createOrUpdateAccount();
                 }
               },
             )

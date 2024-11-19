@@ -35,11 +35,11 @@ class _CategoryListScreenState extends State<CategoryListScreen>
   // method
   Future _deleteCategory({
     required int categoryId,
-    required BuildContext context,
   }) async {
     try {
       final res = await _categoryService.deleteCategory(categoryId: categoryId);
       if (res) {
+        if (!mounted) return;
         Navigator.pop(context);
         setState(() {});
       } else {
@@ -211,13 +211,14 @@ class _CategoryListScreenState extends State<CategoryListScreen>
                                                     TextButton(
                                                       child: const Text('ตกลง'),
                                                       onPressed: () async {
+                                                        final navigator =
+                                                            Navigator.of(
+                                                                context);
                                                         await _deleteCategory(
                                                           categoryId:
                                                               category.id!,
-                                                          context: context,
                                                         );
-                                                        Navigator.of(context)
-                                                            .pop();
+                                                        navigator.pop();
                                                       },
                                                     ),
                                                     TextButton(

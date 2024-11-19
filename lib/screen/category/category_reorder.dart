@@ -34,7 +34,7 @@ class _CategoryReorderState extends State<CategoryReorder> {
     });
   }
 
-  Future _updateOrder({required BuildContext context}) async {
+  Future _updateOrder() async {
     try {
       setState(() {
         _isLoading = true;
@@ -55,6 +55,7 @@ class _CategoryReorderState extends State<CategoryReorder> {
       });
 
       if (res) {
+        if (!mounted) return;
         Navigator.pop(context);
       } else {
         throw Exception('ทํารายการไม่สําเร็จ');
@@ -88,7 +89,7 @@ class _CategoryReorderState extends State<CategoryReorder> {
             IconButton(
               icon: const Icon(Icons.check),
               onPressed: () async {
-                await _updateOrder(context: context);
+                await _updateOrder();
               },
             ),
           ],

@@ -37,14 +37,16 @@ class _AccountListScreenState extends State<AccountListScreen> {
     return accountList;
   }
 
-  Future _deleteAccount(
-      {required int accountId, required BuildContext context}) async {
+  Future _deleteAccount({
+    required int accountId,
+  }) async {
     try {
       final res = await _accountService.deleteAccount(
         accountId: accountId,
       );
 
       if (res) {
+        if (!mounted) return;
         Navigator.pop(context);
         // refresh list
         setState(() {});
@@ -52,6 +54,7 @@ class _AccountListScreenState extends State<AccountListScreen> {
         throw Exception('ไม่สามารถลบข้อมูลได้');
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('ไม่สามารถลบข้อมูลได้'),
       ));
@@ -294,9 +297,11 @@ class _AccountListScreenState extends State<AccountListScreen> {
                                             ),
                                           ),
                                           onTap: () async {
+                                            final navigator =
+                                                Navigator.of(context);
                                             await showDialog(
                                               context: context,
-                                              builder: (BuildContext context) {
+                                              builder: (BuildContext ctx) {
                                                 return AlertDialog(
                                                   title: const Text('ลบบัญชี'),
                                                   content: Text(
@@ -309,7 +314,6 @@ class _AccountListScreenState extends State<AccountListScreen> {
                                                         await _deleteAccount(
                                                           accountId:
                                                               account.id!,
-                                                          context: context,
                                                         );
                                                       },
                                                     ),
@@ -317,15 +321,14 @@ class _AccountListScreenState extends State<AccountListScreen> {
                                                       child:
                                                           const Text('ยกเลิก'),
                                                       onPressed: () {
-                                                        Navigator.of(context)
-                                                            .pop();
+                                                        Navigator.of(ctx).pop();
                                                       },
                                                     ),
                                                   ],
                                                 );
                                               },
                                             );
-                                            Navigator.pop(context);
+                                            navigator.pop();
                                           },
                                         ),
                                       ],
