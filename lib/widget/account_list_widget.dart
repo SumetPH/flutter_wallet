@@ -7,6 +7,8 @@ class AccountListWidget extends StatelessWidget {
   final Function(AccountList account)? onTab;
   final Function(AccountList account)? onLongPress;
   final int? disabledAccountId;
+  final bool? shrinkWrap;
+  final bool? primary;
 
   const AccountListWidget({
     super.key,
@@ -14,11 +16,15 @@ class AccountListWidget extends StatelessWidget {
     this.onTab,
     this.onLongPress,
     this.disabledAccountId,
+    this.shrinkWrap,
+    this.primary,
   });
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      shrinkWrap: shrinkWrap ?? false,
+      primary: primary ?? true,
       itemCount: accountList.length,
       itemBuilder: (ctx, index) {
         final accountType = accountList[index];
