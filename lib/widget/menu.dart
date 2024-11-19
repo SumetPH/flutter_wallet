@@ -5,6 +5,7 @@ import 'package:flutter_wallet/screen/budget/budget_form.dart';
 import 'package:flutter_wallet/screen/budget/budget_reorder.dart';
 import 'package:flutter_wallet/screen/category/category_form.dart';
 import 'package:flutter_wallet/screen/category/category_reorder.dart';
+import 'package:flutter_wallet/screen/net_asset/net_asset_screen.dart';
 import 'package:flutter_wallet/screen/transaction/debt_form.dart';
 import 'package:flutter_wallet/screen/transaction/transaction_form.dart';
 import 'package:flutter_wallet/screen/transaction/transfer_form.dart';
@@ -141,6 +142,29 @@ accountMenu({required BuildContext context, Function? afterGoBack}) {
           title: const Center(
             child: Text(
               "จัดเรียงบัญชี",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+        const Divider(height: 1.0),
+        ListTile(
+          onTap: () async {
+            Navigator.pop(context);
+            await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const NetAssetScreen(),
+              ),
+            );
+            if (afterGoBack != null) {
+              afterGoBack();
+            }
+          },
+          title: const Center(
+            child: Text(
+              "จัดการทรัพย์สินสุทธิ",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
               ),
