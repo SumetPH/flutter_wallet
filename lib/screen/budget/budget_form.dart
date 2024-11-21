@@ -136,28 +136,28 @@ class BudgetFormScreenState extends State<BudgetFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ResponsiveWidth(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            '${widget.mode == BudgetFormMode.create ? 'เพิ่ม' : 'แก้ไข'}งบประมาณ',
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.check),
-              onPressed: () async {
-                if (_nameController.text.isEmpty ||
-                    _amountController.text.isEmpty ||
-                    _categoryId.isEmpty) {
-                  snackBarValidateField(context: context);
-                } else {
-                  await _createOrUpdateBudget();
-                }
-              },
-            ),
-          ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          '${widget.mode == BudgetFormMode.create ? 'เพิ่ม' : 'แก้ไข'}งบประมาณ',
         ),
-        body: SafeArea(
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.check),
+            onPressed: () async {
+              if (_nameController.text.isEmpty ||
+                  _amountController.text.isEmpty ||
+                  _categoryId.isEmpty) {
+                snackBarValidateField(context: context);
+              } else {
+                await _createOrUpdateBudget();
+              }
+            },
+          ),
+        ],
+      ),
+      body: ResponsiveWidth(
+        child: SafeArea(
           child: _isLoading
               ? const Center(child: CircularProgressIndicator())
               : SingleChildScrollView(

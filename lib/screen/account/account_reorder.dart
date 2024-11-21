@@ -78,22 +78,22 @@ class _AccountReorderState extends State<AccountReorder> {
 
   @override
   Widget build(BuildContext context) {
-    return ResponsiveWidth(
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'จัดเรียงบัญชี',
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.check),
-              onPressed: () async {
-                await _updateOrder();
-              },
-            ),
-          ],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'จัดเรียงบัญชี',
         ),
-        body: SafeArea(
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.check),
+            onPressed: () async {
+              await _updateOrder();
+            },
+          ),
+        ],
+      ),
+      body: ResponsiveWidth(
+        child: SafeArea(
           child: _isLoading
               ? const Center(child: CircularProgressIndicator())
               : Column(

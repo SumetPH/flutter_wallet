@@ -164,7 +164,7 @@ accountMenu({required BuildContext context, Function? afterGoBack}) {
           },
           title: const Center(
             child: Text(
-              "จัดการทรัพย์สินสุทธิ",
+              "คำนวณทรัพย์สุทธิ",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
               ),

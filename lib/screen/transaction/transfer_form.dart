@@ -139,28 +139,28 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ResponsiveWidth(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            '${widget.mode == TransferFormMode.create ? 'เพิ่ม' : 'แก้ไข'}การโอน',
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.check),
-              onPressed: () async {
-                if (_amountController.text.isEmpty ||
-                    _accountIdTo == null ||
-                    _accountIdFrom == null) {
-                  snackBarValidateField(context: context);
-                } else {
-                  await _createOrUpdateTransfer();
-                }
-              },
-            ),
-          ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          '${widget.mode == TransferFormMode.create ? 'เพิ่ม' : 'แก้ไข'}การโอน',
         ),
-        body: SafeArea(
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.check),
+            onPressed: () async {
+              if (_amountController.text.isEmpty ||
+                  _accountIdTo == null ||
+                  _accountIdFrom == null) {
+                snackBarValidateField(context: context);
+              } else {
+                await _createOrUpdateTransfer();
+              }
+            },
+          ),
+        ],
+      ),
+      body: ResponsiveWidth(
+        child: SafeArea(
           child: _isLoading
               ? const Center(child: CircularProgressIndicator())
               : SingleChildScrollView(

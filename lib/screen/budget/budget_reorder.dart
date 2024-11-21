@@ -74,22 +74,22 @@ class BudgetReorderState extends State<BudgetReorder> {
 
   @override
   Widget build(BuildContext context) {
-    return ResponsiveWidth(
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'จัดเรียงงบประมาณ',
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.check),
-              onPressed: () async {
-                await _updateOrder();
-              },
-            ),
-          ],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'จัดเรียงงบประมาณ',
         ),
-        body: SafeArea(
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.check),
+            onPressed: () async {
+              await _updateOrder();
+            },
+          ),
+        ],
+      ),
+      body: ResponsiveWidth(
+        child: SafeArea(
           child: _isLoading
               ? const Center(child: CircularProgressIndicator())
               : Column(

@@ -136,28 +136,28 @@ class _AccountFormScreenState extends State<AccountFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ResponsiveWidth(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-              '${widget.mode == AccountFormMode.create ? 'เพิ่ม' : 'แก้ไข'}บัญชี'),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.check),
-              onPressed: () async {
-                if (_nameController.text.isEmpty ||
-                    _amountController.text.isEmpty ||
-                    _accountTypeId == null ||
-                    (_accountTypeId == 3 && _creditStartDate == null)) {
-                  snackBarValidateField(context: context);
-                } else {
-                  await _createOrUpdateAccount();
-                }
-              },
-            )
-          ],
-        ),
-        body: SafeArea(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+            '${widget.mode == AccountFormMode.create ? 'เพิ่ม' : 'แก้ไข'}บัญชี'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.check),
+            onPressed: () async {
+              if (_nameController.text.isEmpty ||
+                  _amountController.text.isEmpty ||
+                  _accountTypeId == null ||
+                  (_accountTypeId == 3 && _creditStartDate == null)) {
+                snackBarValidateField(context: context);
+              } else {
+                await _createOrUpdateAccount();
+              }
+            },
+          )
+        ],
+      ),
+      body: ResponsiveWidth(
+        child: SafeArea(
           child: _isLoading
               ? const Center(child: CircularProgressIndicator())
               : Column(

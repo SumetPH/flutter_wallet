@@ -159,28 +159,28 @@ class DebtFormScreenState extends State<DebtFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ResponsiveWidth(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            '${widget.mode == DebtFormMode.create ? 'เพิ่ม' : 'แก้ไข'}การชำระหนี้',
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.check),
-              onPressed: () async {
-                if (_amountController.text.isEmpty ||
-                    _accountIdTo == null ||
-                    _accountIdFrom == null) {
-                  snackBarValidateField(context: context);
-                } else {
-                  await _createOrUpdateDebt();
-                }
-              },
-            ),
-          ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          '${widget.mode == DebtFormMode.create ? 'เพิ่ม' : 'แก้ไข'}การชำระหนี้',
         ),
-        body: SafeArea(
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.check),
+            onPressed: () async {
+              if (_amountController.text.isEmpty ||
+                  _accountIdTo == null ||
+                  _accountIdFrom == null) {
+                snackBarValidateField(context: context);
+              } else {
+                await _createOrUpdateDebt();
+              }
+            },
+          ),
+        ],
+      ),
+      body: ResponsiveWidth(
+        child: SafeArea(
           child: _isLoading
               ? const Center(child: CircularProgressIndicator())
               : SingleChildScrollView(

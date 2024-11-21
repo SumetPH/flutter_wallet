@@ -123,26 +123,26 @@ class CategoryFormScreenState extends State<CategoryFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ResponsiveWidth(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            '${widget.mode == CategoryFormMode.create ? 'เพิ่ม' : 'แก้ไข'}หมวดหมู่',
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.check),
-              onPressed: () async {
-                if (_nameController.text.isEmpty || _categoryTypeId == null) {
-                  snackBarValidateField(context: context);
-                } else {
-                  await _createOrUpdateCategory();
-                }
-              },
-            ),
-          ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          '${widget.mode == CategoryFormMode.create ? 'เพิ่ม' : 'แก้ไข'}หมวดหมู่',
         ),
-        body: SafeArea(
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.check),
+            onPressed: () async {
+              if (_nameController.text.isEmpty || _categoryTypeId == null) {
+                snackBarValidateField(context: context);
+              } else {
+                await _createOrUpdateCategory();
+              }
+            },
+          ),
+        ],
+      ),
+      body: ResponsiveWidth(
+        child: SafeArea(
           child: _isLoading
               ? const Center(child: CircularProgressIndicator())
               : SingleChildScrollView(

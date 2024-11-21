@@ -38,9 +38,6 @@ class _NetAssetScreenState extends State<NetAssetScreen> {
         data: _netAssetList,
       );
       if (res) {
-        setState(() {
-          _isLoading = false;
-        });
         if (!mounted) return;
         Navigator.pop(context);
       } else {
@@ -73,7 +70,7 @@ class _NetAssetScreenState extends State<NetAssetScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('จัดการทรัพย์สุทธิ'),
+        title: const Text('คำนวณทรัพย์สุทธิ'),
         actions: [
           IconButton(
             icon: const Icon(Icons.check),
@@ -97,7 +94,7 @@ class _NetAssetScreenState extends State<NetAssetScreen> {
                           padding: EdgeInsets.symmetric(
                               horizontal: 16.0, vertical: 8.0),
                           child: Text(
-                            'เลือกทรัพย์สิน',
+                            'เลือกบัญชี ทรัพย์สิน',
                             style: TextStyle(
                                 fontSize: 14.0, fontWeight: FontWeight.bold),
                           ),
@@ -133,7 +130,7 @@ class _NetAssetScreenState extends State<NetAssetScreen> {
                           padding: EdgeInsets.symmetric(
                               horizontal: 16.0, vertical: 8.0),
                           child: Text(
-                            'เลือกหนี้สิน',
+                            'เลือกบัญชี หนี้สิน',
                             style: TextStyle(
                                 fontSize: 14.0, fontWeight: FontWeight.bold),
                           ),

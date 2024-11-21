@@ -167,28 +167,28 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return ResponsiveWidth(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            '${widget.mode == TransactionFormMode.create ? 'เพิ่ม' : 'แก้ไข'}รายการ',
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.check),
-              onPressed: () async {
-                if (_amountController.text.isEmpty ||
-                    _accountId == null ||
-                    _categoryId == null) {
-                  snackBarValidateField(context: context);
-                } else {
-                  await _createOrUpdateTransaction();
-                }
-              },
-            ),
-          ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          '${widget.mode == TransactionFormMode.create ? 'เพิ่ม' : 'แก้ไข'}รายการ',
         ),
-        body: SafeArea(
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.check),
+            onPressed: () async {
+              if (_amountController.text.isEmpty ||
+                  _accountId == null ||
+                  _categoryId == null) {
+                snackBarValidateField(context: context);
+              } else {
+                await _createOrUpdateTransaction();
+              }
+            },
+          ),
+        ],
+      ),
+      body: ResponsiveWidth(
+        child: SafeArea(
           child: _isLoading
               ? const Center(child: CircularProgressIndicator())
               : SingleChildScrollView(

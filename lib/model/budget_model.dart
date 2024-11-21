@@ -6,6 +6,8 @@ class BudgetModel {
   String? createdAt;
   String? updatedAt;
   int? startDate;
+  String? periodStartDate;
+  String? periodEndDate;
   List<Category>? category;
 
   BudgetModel({
@@ -16,6 +18,8 @@ class BudgetModel {
     this.createdAt,
     this.updatedAt,
     this.startDate,
+    this.periodStartDate,
+    this.periodEndDate,
     this.category,
   });
 
@@ -27,6 +31,8 @@ class BudgetModel {
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     startDate = json['start_date'];
+    periodStartDate = json['period_start_date'];
+    periodEndDate = json['period_end_date'];
     if (json['category'] != null) {
       category = <Category>[];
       json['category'].forEach((v) {
@@ -44,6 +50,8 @@ class BudgetModel {
     data['created_at'] = createdAt;
     data['updated_at'] = updatedAt;
     data['start_date'] = startDate;
+    data['period_start_date'] = periodStartDate;
+    data['period_end_date'] = periodEndDate;
     if (category != null) {
       data['category'] = category!.map((v) => v.toJson()).toList();
     }

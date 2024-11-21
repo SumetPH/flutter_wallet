@@ -37,27 +37,6 @@ class _BudgetListScreenState extends State<BudgetListScreen> {
     }
   }
 
-  String _getDurationDate({required int startDate}) {
-    final now = Jiffy.now();
-    if (now.date >= startDate) {
-      final start = Jiffy.parseFromList([now.year, now.month, startDate])
-          .format(pattern: 'dd/MM/yy');
-      final end = Jiffy.parseFromList([now.year, now.month, startDate])
-          .add(months: 1)
-          .subtract(days: 1)
-          .format(pattern: 'dd/MM/yy');
-      return '$start - $end';
-    } else {
-      final start = Jiffy.parseFromList([now.year, now.month, startDate])
-          .subtract(months: 1)
-          .format(pattern: 'dd/MM/yy');
-      final end = Jiffy.parseFromList([now.year, now.month, startDate])
-          .subtract(days: 1)
-          .format(pattern: 'dd/MM/yy');
-      return '$start - $end';
-    }
-  }
-
   double _calculateProgressIndicatorValue({
     required double amount,
     required double balance,
@@ -146,12 +125,13 @@ class _BudgetListScreenState extends State<BudgetListScreen> {
                                   builder: (context) {
                                     return TransactionListScreen(
                                       hasDrawer: false,
-                                      title: _getDurationDate(
-                                        startDate: data.startDate!,
-                                      ),
+                                      title:
+                                          '${data.periodStartDate} ถึง ${data.periodEndDate}',
                                       categoryId: data.category
                                           ?.map((el) => el.categoryId!)
                                           .toList(),
+                                      startDate: data.periodStartDate,
+                                      endDate: data.periodEndDate,
                                     );
                                   },
                                 ),

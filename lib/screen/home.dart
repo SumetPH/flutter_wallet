@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_wallet/screen/account/account_list_screen.dart';
 import 'package:flutter_wallet/screen/budget/budget_list_screen.dart';
 import 'package:flutter_wallet/screen/category/category_list_screen.dart';
+import 'package:flutter_wallet/screen/schedule/schedule_list_screen.dart';
 import 'package:flutter_wallet/screen/setting/setting_screen.dart';
 import 'package:flutter_wallet/screen/transaction/transaction_list_screen.dart';
 
@@ -18,15 +19,17 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<String> _screenTitleList = [
     "บัญชี",
     "รายการ",
-    "หมวดหมู่",
     "งบประมาณ",
+    "รายการประจำ",
+    "หมวดหมู่",
     'ตั้งค่า',
   ];
   final List<Widget> _screenWidgetList = [
     const AccountListScreen(),
     const TransactionListScreen(title: 'รายการ', hasDrawer: true),
-    const CategoryListScreen(),
     const BudgetListScreen(),
+    const ScheduleListScreen(),
+    const CategoryListScreen(),
     const SettingScreen(),
   ];
 
