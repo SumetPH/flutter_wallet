@@ -5,6 +5,7 @@ import 'package:flutter_wallet/service/account_service.dart';
 import 'package:flutter_wallet/service/category_service.dart';
 import 'package:flutter_wallet/service/debt_service.dart';
 import 'package:flutter_wallet/model/account_model.dart';
+import 'package:flutter_wallet/service/schedule_service.dart';
 import 'package:flutter_wallet/utils/snackbar_validate_field.dart';
 import 'package:flutter_wallet/utils/time_utils.dart';
 import 'package:flutter_wallet/widget/account_list_widget.dart';
@@ -14,12 +15,25 @@ enum DebtFormMode { create, edit }
 
 class DebtFormScreen extends StatefulWidget {
   final DebtFormMode mode;
+  final String? amount;
   final int? transactionId;
+
+  final int? scheduleId;
+  final int? accountIdFrom;
+  final String? accountNameFrom;
+  final int? accountIdTo;
+  final String? accountNameTo;
 
   const DebtFormScreen({
     super.key,
     required this.mode,
+    this.amount,
     this.transactionId,
+    this.scheduleId,
+    this.accountIdFrom,
+    this.accountNameFrom,
+    this.accountIdTo,
+    this.accountNameTo,
   });
 
   @override
@@ -30,6 +44,7 @@ class DebtFormScreenState extends State<DebtFormScreen> {
   final _debtService = DebtService();
   final _accountService = AccountService();
   final _categoryService = CategoryService();
+  final _scheduleService = ScheduleService();
 
   // state
   List<AccountModel> _accountList = [];
@@ -94,10 +109,10 @@ class DebtFormScreenState extends State<DebtFormScreen> {
         _isLoading = true;
       });
 
-      bool res = false;
+      int? transactionId;
 
       if (widget.mode == DebtFormMode.create) {
-        res = await _debtService.createDebt(
+        transactionId = await _debtService.createDebt(
           amount: double.parse(_amountController.text),
           note: _noteController.text,
           accountIdFrom: _accountIdFrom!,
@@ -107,7 +122,7 @@ class DebtFormScreenState extends State<DebtFormScreen> {
           categoryId: _categoryId,
         );
       } else {
-        res = await _debtService.updateDebt(
+        transactionId = await _debtService.updateDebt(
           transactionId: widget.transactionId!,
           amount: double.parse(_amountController.text),
           note: _noteController.text,
@@ -119,7 +134,14 @@ class DebtFormScreenState extends State<DebtFormScreen> {
         );
       }
 
-      if (res) {
+      if (widget.scheduleId != null && transactionId != null) {
+        await _scheduleService.scheduleTransactionPaid(
+          scheduleId: widget.scheduleId!,
+          transactionId: transactionId,
+        );
+      }
+
+      if (transactionId != null) {
         setState(() {
           _isLoading = false;
         });
@@ -143,6 +165,14 @@ class DebtFormScreenState extends State<DebtFormScreen> {
     await _getCategoryList();
     if (widget.mode == DebtFormMode.edit) {
       await _getDebtDetail(transactionId: widget.transactionId!);
+    } else {
+      setState(() {
+        _amountController.text = widget.amount ?? '';
+        _accountIdFrom = widget.accountIdFrom;
+        _accountNameFrom = widget.accountNameFrom ?? 'เลือก';
+        _accountIdTo = widget.accountIdTo;
+        _accountNameTo = widget.accountNameTo ?? 'เลือก';
+      });
     }
     setState(() {
       _isLoading = false;

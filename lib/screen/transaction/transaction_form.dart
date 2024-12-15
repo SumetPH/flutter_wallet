@@ -4,6 +4,7 @@ import 'package:flutter_wallet/service/category_service.dart';
 import 'package:flutter_wallet/model/account_model.dart';
 import 'package:flutter_wallet/model/category_model.dart';
 import 'package:flutter_wallet/service/account_service.dart';
+import 'package:flutter_wallet/service/schedule_service.dart';
 import 'package:flutter_wallet/service/transaction_service.dart';
 import 'package:flutter_wallet/utils/snackbar_validate_field.dart';
 import 'package:flutter_wallet/utils/time_utils.dart';
@@ -16,10 +17,21 @@ class TransactionFormScreen extends StatefulWidget {
   final TransactionFormMode mode;
   final int? transactionId;
 
+  final int? scheduleId;
+  final int? transactionTypeId;
+  final String? amount;
+  final int? accountId;
+  final String? accountName;
+
   const TransactionFormScreen({
     super.key,
     required this.mode,
     this.transactionId,
+    this.scheduleId,
+    this.transactionTypeId,
+    this.amount,
+    this.accountId,
+    this.accountName,
   });
 
   @override
@@ -30,6 +42,7 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
   final _transactionService = TransactionService();
   final _accountService = AccountService();
   final _categoryService = CategoryService();
+  final _scheduleService = ScheduleService();
 
   // state
   List<AccountModel> _accountList = [];
@@ -94,9 +107,11 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
       setState(() {
         _isLoading = true;
       });
-      bool res = false;
+
+      int? transactionId;
+
       if (widget.mode == TransactionFormMode.create) {
-        res = await _transactionService.creteTransaction(
+        transactionId = await _transactionService.creteTransaction(
           amount: double.parse(_amountController.text),
           accountId: _accountId!,
           categoryId: _categoryId!,
@@ -106,7 +121,7 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
           time: TimeUtils.timeOfDayToString(time: _time),
         );
       } else {
-        res = await _transactionService.updateTransaction(
+        transactionId = await _transactionService.updateTransaction(
           transactionId: widget.transactionId!,
           amount: double.parse(_amountController.text),
           accountId: _accountId!,
@@ -117,7 +132,14 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
         );
       }
 
-      if (res) {
+      if (widget.scheduleId != null && transactionId != null) {
+        await _scheduleService.scheduleTransactionPaid(
+          scheduleId: widget.scheduleId!,
+          transactionId: transactionId,
+        );
+      }
+
+      if (transactionId != null) {
         setState(() {
           _isLoading = false;
         });
@@ -151,6 +173,13 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
     await _getCategoryList();
     if (widget.mode == TransactionFormMode.edit) {
       await _getTransactionDetail(transactionId: widget.transactionId!);
+    } else {
+      setState(() {
+        _amountController.text = widget.amount ?? '';
+        _transactionTypeId = widget.transactionTypeId ?? 1;
+        _accountId = widget.accountId;
+        _accountName = widget.accountName ?? 'เลือก';
+      });
     }
     setState(() {
       _isLoading = false;

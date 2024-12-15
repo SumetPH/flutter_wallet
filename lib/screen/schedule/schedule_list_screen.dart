@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_wallet/model/schedule_list_model.dart';
 import 'package:flutter_wallet/screen/schedule/schedule_form.dart';
+import 'package:flutter_wallet/screen/schedule/schedule_transaction_list_screen.dart';
 import 'package:flutter_wallet/service/schedule_service.dart';
 import 'package:flutter_wallet/widget/responsive_width_widget.dart';
 
@@ -70,13 +71,24 @@ class _ScheduleListScreenState extends State<ScheduleListScreen> {
                 itemBuilder: (context, index) {
                   final schedule = scheduleList[index];
                   return GestureDetector(
-                    onTap: () {},
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ScheduleTransactionListScreen(
+                            title: schedule.name,
+                            scheduleId: schedule.id,
+                          ),
+                        ),
+                      );
+                    },
                     child: Padding(
                       padding: const EdgeInsets.all(12.0),
                       child: Row(
                         children: [
                           Expanded(
-                            flex: 4,
+                            flex: 3,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -96,29 +108,31 @@ class _ScheduleListScreenState extends State<ScheduleListScreen> {
                             ),
                           ),
                           Expanded(
-                            flex: 2,
+                            flex: 1,
                             child: Container(
                               padding: const EdgeInsets.all(6.0),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(6.0),
-                                color: schedule.status == 'padding'
+                                color: schedule.status == 'pending'
                                     ? Colors.red[600]
                                     : Colors.grey.shade800,
                               ),
                               child: Column(
                                 children: [
                                   Text(
-                                    schedule.status == 'padding'
+                                    schedule.status == 'pending'
                                         ? 'จ่าย'
                                         : 'เสร็จสิ้น',
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
+                                      color: Colors.white,
                                     ),
                                   ),
                                   Text(
                                     schedule.amount.toString(),
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
+                                      color: Colors.white,
                                     ),
                                   ),
                                 ],

@@ -55,7 +55,7 @@ class TransactionService {
     }
   }
 
-  Future<bool> creteTransaction({
+  Future<int?> creteTransaction({
     required double amount,
     required int accountId,
     required int categoryId,
@@ -79,16 +79,17 @@ class TransactionService {
       );
 
       if (res.statusCode == 200) {
-        return true;
+        final data = jsonDecode(utf8.decode(res.bodyBytes));
+        return data['createTransaction']['id'];
       } else {
         throw Exception(res.body);
       }
     } catch (e) {
-      return false;
+      return null;
     }
   }
 
-  Future<bool> updateTransaction({
+  Future<int?> updateTransaction({
     required int transactionId,
     required double amount,
     required int accountId,
@@ -112,12 +113,13 @@ class TransactionService {
       );
 
       if (res.statusCode == 200) {
-        return true;
+        final data = jsonDecode(utf8.decode(res.bodyBytes));
+        return data['id'];
       } else {
         throw Exception(res.body);
       }
     } catch (e) {
-      return false;
+      return null;
     }
   }
 

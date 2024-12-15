@@ -28,7 +28,7 @@ class DebtService {
     }
   }
 
-  Future<bool> createDebt({
+  Future<int?> createDebt({
     required double amount,
     required int accountIdFrom,
     required int accountIdTo,
@@ -56,16 +56,17 @@ class DebtService {
       );
 
       if (res.statusCode == 200) {
-        return true;
+        final data = jsonDecode(utf8.decode(res.bodyBytes));
+        return data['createTransaction']['id'];
       } else {
         throw Exception(res.body);
       }
     } catch (e) {
-      return false;
+      return null;
     }
   }
 
-  Future<bool> updateDebt({
+  Future<int?> updateDebt({
     required int transactionId,
     required double amount,
     required String date,
@@ -94,12 +95,13 @@ class DebtService {
       );
 
       if (res.statusCode == 200) {
-        return true;
+        final data = jsonDecode(utf8.decode(res.bodyBytes));
+        return data['id'];
       } else {
         throw Exception(res.body);
       }
     } catch (e) {
-      return false;
+      return null;
     }
   }
 

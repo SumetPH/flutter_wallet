@@ -20,6 +20,16 @@ class AccountListWidget extends StatelessWidget {
     this.primary,
   });
 
+  _balanceColor({required double balance}) {
+    if (balance == 0) {
+      return Colors.grey[600];
+    } else if (balance < 0) {
+      return Colors.green[600];
+    } else {
+      return Colors.red[600];
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
@@ -111,9 +121,9 @@ class AccountListWidget extends StatelessWidget {
                                     style: TextStyle(
                                       fontSize: 18.0,
                                       fontWeight: FontWeight.bold,
-                                      color: double.parse(account.balance!) >= 0
-                                          ? Colors.green[600]
-                                          : Colors.red[600],
+                                      color: _balanceColor(
+                                        balance: double.parse(account.balance!),
+                                      ),
                                     ),
                                   ),
                                 ],
