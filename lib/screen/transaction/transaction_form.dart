@@ -87,8 +87,6 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
 
       setState(() {
         _amountController.text = res.amount.toString();
-        _accountId = res.accountId;
-        _accountName = res.accountName ?? '';
         _categoryId = res.categoryId;
         _categoryName = res.categoryName ?? '';
         _noteController.text = res.note ?? '';
@@ -113,7 +111,7 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
       if (widget.mode == TransactionFormMode.create) {
         transactionId = await _transactionService.creteTransaction(
           amount: double.parse(_amountController.text),
-          accountId: _accountId!,
+          accountIdFrom: _accountId!,
           categoryId: _categoryId!,
           note: _noteController.text,
           transactionTypeId: _transactionTypeId,
@@ -124,7 +122,7 @@ class TransactionFormScreenState extends State<TransactionFormScreen> {
         transactionId = await _transactionService.updateTransaction(
           transactionId: widget.transactionId!,
           amount: double.parse(_amountController.text),
-          accountId: _accountId!,
+          accountIdFrom: _accountId!,
           categoryId: _categoryId!,
           note: _noteController.text,
           date: TimeUtils.dateString(dateTime: _date),

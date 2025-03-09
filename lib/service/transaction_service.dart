@@ -57,9 +57,10 @@ class TransactionService {
 
   Future<int?> creteTransaction({
     required double amount,
-    required int accountId,
-    required int categoryId,
     required int transactionTypeId,
+    int? categoryId,
+    required int accountIdFrom,
+    int? accountIdTo,
     required String date,
     required String time,
     String? note,
@@ -69,9 +70,10 @@ class TransactionService {
         Uri.parse('$apiUrl/transaction/transaction-create'),
         body: jsonEncode({
           'amount': amount,
-          'accountId': accountId,
-          'categoryId': categoryId,
           'transactionTypeId': transactionTypeId,
+          'categoryId': categoryId,
+          'accountIdFrom': accountIdFrom,
+          'accountIdTo': accountIdTo,
           'date': date,
           'time': time,
           'note': note,
@@ -92,8 +94,9 @@ class TransactionService {
   Future<int?> updateTransaction({
     required int transactionId,
     required double amount,
-    required int accountId,
-    required int categoryId,
+    int? categoryId,
+    required int accountIdFrom,
+    int? accountIdTo,
     required String date,
     required String time,
     String? note,
@@ -104,7 +107,8 @@ class TransactionService {
         body: jsonEncode({
           'transactionId': transactionId,
           'amount': amount,
-          'accountId': accountId,
+          'accountIdFrom': accountIdFrom,
+          'accountIdTo': accountIdTo,
           'categoryId': categoryId,
           'date': date,
           'time': time,

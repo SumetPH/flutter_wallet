@@ -55,7 +55,7 @@ class TransactionList extends StatelessWidget {
   double _sumIncome({required List<TransactionListItem> list}) {
     final sum = list
         .where((e) => [2].contains(e.transactionTypeId))
-        .fold(0.00, (sum, item) => sum + double.parse(item.amount!));
+        .fold(0.00, (sum, item) => sum + item.amount!);
 
     return sum;
   }
@@ -63,7 +63,7 @@ class TransactionList extends StatelessWidget {
   double _sumExpense({required List<TransactionListItem> list}) {
     final sum = list
         .where((e) => [1, 4].contains(e.transactionTypeId))
-        .fold(0.00, (sum, item) => sum + double.parse(item.amount!));
+        .fold(0.00, (sum, item) => sum + item.amount!);
 
     return sum;
   }
@@ -171,8 +171,7 @@ class TransactionList extends StatelessWidget {
                                       if (transaction.transactionTypeId == 1)
                                         Expanded(
                                           child: Text(
-                                            transaction.expenseAccountName ??
-                                                "",
+                                            transaction.accountIdFromName ?? "",
                                             style: const TextStyle(
                                               fontSize: 14.0,
                                               overflow: TextOverflow.ellipsis,
@@ -182,7 +181,7 @@ class TransactionList extends StatelessWidget {
                                       if (transaction.transactionTypeId == 2)
                                         Expanded(
                                           child: Text(
-                                            transaction.incomeAccountName ?? "",
+                                            transaction.accountIdToName ?? "",
                                             style: const TextStyle(
                                               fontSize: 14.0,
                                               overflow: TextOverflow.ellipsis,
@@ -220,7 +219,7 @@ class TransactionList extends StatelessWidget {
                                                 ),
                                                 child: Text(
                                                   transaction
-                                                          .transferAccountNameFrom ??
+                                                          .accountIdFromName ??
                                                       "",
                                                   overflow:
                                                       TextOverflow.ellipsis,
@@ -244,8 +243,7 @@ class TransactionList extends StatelessWidget {
                                                       constraint.maxWidth * 0.4,
                                                 ),
                                                 child: Text(
-                                                  transaction
-                                                          .transferAccountNameTo ??
+                                                  transaction.accountIdToName ??
                                                       "",
                                                   overflow:
                                                       TextOverflow.ellipsis,
@@ -289,7 +287,7 @@ class TransactionList extends StatelessWidget {
                                                 ),
                                                 child: Text(
                                                   transaction
-                                                          .debtAccountNameFrom ??
+                                                          .accountIdFromName ??
                                                       "",
                                                   overflow:
                                                       TextOverflow.ellipsis,
@@ -313,8 +311,7 @@ class TransactionList extends StatelessWidget {
                                                       constraint.maxWidth * 0.4,
                                                 ),
                                                 child: Text(
-                                                  transaction
-                                                          .debtAccountNameTo ??
+                                                  transaction.accountIdToName ??
                                                       "",
                                                   overflow:
                                                       TextOverflow.ellipsis,
@@ -338,7 +335,7 @@ class TransactionList extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     Text(
-                                      '${NumberUtils.formatNumber(double.parse(transaction.amount!))} บาท',
+                                      '${NumberUtils.formatNumber(transaction.amount!)} บาท',
                                       style: TextStyle(
                                         fontSize: 18.0,
                                         fontWeight: FontWeight.bold,

@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_wallet/screen/transaction/debt_form.dart';
 import 'package:flutter_wallet/screen/transaction/transaction_form.dart';
 import 'package:flutter_wallet/screen/transaction/transfer_form.dart';
-import 'package:flutter_wallet/service/debt_service.dart';
 import 'package:flutter_wallet/service/transaction_service.dart';
-import 'package:flutter_wallet/service/transfer_service.dart';
 import 'package:flutter_wallet/widget/menu.dart';
 import 'package:flutter_wallet/widget/responsive_width_widget.dart';
 import 'package:flutter_wallet/widget/transaction_list.dart';
@@ -35,56 +33,12 @@ class TransactionListScreen extends StatefulWidget {
 
 class TransactionListScreenState extends State<TransactionListScreen> {
   final _transactionService = TransactionService();
-  final _transferService = TransferService();
-  final _debtService = DebtService();
 
   Future _deleteTransaction({
     required int transactionId,
   }) async {
     try {
       final res = await _transactionService.deleteTransaction(
-        transactionId: transactionId,
-      );
-      if (res) {
-        if (!mounted) return;
-        Navigator.pop(context);
-        setState(() {});
-      } else {
-        throw Exception('ไม่สามารถลบข้อมูลได้');
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('ไม่สามารถลบข้อมูลได้'),
-      ));
-    }
-  }
-
-  Future _deleteTransfer({
-    required int transactionId,
-  }) async {
-    try {
-      final res = await _transferService.deleteTransfer(
-        transactionId: transactionId,
-      );
-      if (res) {
-        if (!mounted) return;
-        Navigator.pop(context);
-        setState(() {});
-      } else {
-        throw Exception('ไม่สามารถลบข้อมูลได้');
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('ไม่สามารถลบข้อมูลได้'),
-      ));
-    }
-  }
-
-  Future _deleteDebt({
-    required int transactionId,
-  }) async {
-    try {
-      final res = await _debtService.deleteDebt(
         transactionId: transactionId,
       );
       if (res) {
@@ -271,7 +225,7 @@ class TransactionListScreenState extends State<TransactionListScreen> {
                                                     transaction
                                                         .transactionTypeId,
                                                   )) {
-                                                    await _deleteTransfer(
+                                                    await _deleteTransaction(
                                                       transactionId:
                                                           transaction.id!,
                                                     );
@@ -281,7 +235,7 @@ class TransactionListScreenState extends State<TransactionListScreen> {
                                                     transaction
                                                         .transactionTypeId,
                                                   )) {
-                                                    await _deleteDebt(
+                                                    await _deleteTransaction(
                                                       transactionId:
                                                           transaction.id!,
                                                     );

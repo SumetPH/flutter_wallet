@@ -5,7 +5,7 @@ import 'package:flutter_wallet/screen/account/account_credit_screen.dart';
 import 'package:flutter_wallet/screen/transaction/transaction_list_screen.dart';
 import 'package:flutter_wallet/service/account_service.dart';
 import 'package:flutter_wallet/screen/account/account_form.dart';
-import 'package:flutter_wallet/service/net_asset_service.dart';
+// import 'package:flutter_wallet/service/net_asset_service.dart';
 import 'package:flutter_wallet/utils/number_utils.dart';
 import 'package:flutter_wallet/widget/account_list_widget.dart';
 import 'package:flutter_wallet/widget/menu.dart';
@@ -25,14 +25,14 @@ class AccountListScreen extends StatefulWidget {
 
 class _AccountListScreenState extends State<AccountListScreen> {
   final _accountService = AccountService();
-  final _netAssetService = NetAssetService();
+  // final _netAssetService = NetAssetService();
 
   // state
   NetAssetModel? _netAsset;
 
   // method
   Future<List<AccountModel>> _getData() async {
-    _netAsset = await _netAssetService.getNetAsset();
+    // _netAsset = await _netAssetService.getNetAsset();
     final accountList = await _accountService.getAccountList();
     return accountList;
   }
@@ -117,6 +117,7 @@ class _AccountListScreenState extends State<AccountListScreen> {
                       }
 
                       return SingleChildScrollView(
+                        key: const PageStorageKey('accountList'),
                         child: Column(
                           children: [
                             if (_netAsset != null)
@@ -208,8 +209,6 @@ class _AccountListScreenState extends State<AccountListScreen> {
                                 ),
                               ),
                             AccountListWidget(
-                              shrinkWrap: true,
-                              primary: false,
                               accountList: snapshot.data ?? [],
                               onTab: (account) async {
                                 if (account.accountTypeId == 3) {

@@ -27,98 +27,85 @@ class TransactionModel {
 
 class TransactionListItem {
   int? id;
-  String? amount;
+  double? amount;
+  String? note;
+  String? updatedAt;
+  String? createdAt;
   int? transactionTypeId;
   String? transactionTypeName;
   int? categoryId;
   String? categoryName;
-  int? expenseAccountId;
-  String? expenseAccountName;
-  int? incomeAccountId;
-  String? incomeAccountName;
-  int? transferAccountIdFrom;
-  String? transferAccountNameFrom;
-  int? transferAccountIdTo;
-  String? transferAccountNameTo;
-  int? debtAccountIdFrom;
-  String? debtAccountNameFrom;
-  int? debtAccountIdTo;
-  String? debtAccountNameTo;
+  int? categoryTypeId;
+  String? categoryTypeName;
+  int? accountIdFrom;
+  String? accountIdFromName;
+  int? accountIdTo;
+  String? accountIdToName;
   String? date;
   String? time;
-  String? note;
 
   TransactionListItem({
     this.id,
     this.amount,
+    this.note,
+    this.updatedAt,
+    this.createdAt,
     this.transactionTypeId,
     this.transactionTypeName,
     this.categoryId,
     this.categoryName,
-    this.expenseAccountId,
-    this.expenseAccountName,
-    this.incomeAccountId,
-    this.incomeAccountName,
-    this.transferAccountIdFrom,
-    this.transferAccountNameFrom,
-    this.transferAccountIdTo,
-    this.transferAccountNameTo,
-    this.debtAccountIdFrom,
-    this.debtAccountNameFrom,
-    this.debtAccountIdTo,
-    this.debtAccountNameTo,
+    this.categoryTypeId,
+    this.categoryTypeName,
+    this.accountIdFrom,
+    this.accountIdFromName,
+    this.accountIdTo,
+    this.accountIdToName,
     this.date,
     this.time,
-    this.note,
   });
 
   TransactionListItem.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    amount = json['amount'];
+    // amount = json['amount'];
+    amount = (json['amount'] is int)
+        ? (json['amount'] as int).toDouble()
+        : json['amount'];
+    note = json['note'];
+    updatedAt = json['updated_at'];
+    createdAt = json['created_at'];
     transactionTypeId = json['transaction_type_id'];
     transactionTypeName = json['transaction_type_name'];
     categoryId = json['category_id'];
     categoryName = json['category_name'];
-    expenseAccountId = json['expense_account_id'];
-    expenseAccountName = json['expense_account_name'];
-    incomeAccountId = json['income_account_id'];
-    incomeAccountName = json['income_account_name'];
-    transferAccountIdFrom = json['transfer_account_id_from'];
-    transferAccountNameFrom = json['transfer_account_name_from'];
-    transferAccountIdTo = json['transfer_account_id_to'];
-    transferAccountNameTo = json['transfer_account_name_to'];
-    debtAccountIdFrom = json['debt_account_id_from'];
-    debtAccountNameFrom = json['debt_account_name_from'];
-    debtAccountIdTo = json['debt_account_id_to'];
-    debtAccountNameTo = json['debt_account_name_to'];
+    categoryTypeId = json['category_type_id'];
+    categoryTypeName = json['category_type_name'];
+    accountIdFrom = json['account_id_from'];
+    accountIdFromName = json['account_id_from_name'];
+    accountIdTo = json['account_id_to'];
+    accountIdToName = json['account_id_to_name'];
     date = json['date'];
     time = json['time'];
-    note = json['note'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['amount'] = amount;
+    data['note'] = note;
+    data['updated_at'] = updatedAt;
+    data['created_at'] = createdAt;
     data['transaction_type_id'] = transactionTypeId;
     data['transaction_type_name'] = transactionTypeName;
     data['category_id'] = categoryId;
     data['category_name'] = categoryName;
-    data['expense_account_id'] = expenseAccountId;
-    data['expense_account_name'] = expenseAccountName;
-    data['income_account_id'] = incomeAccountId;
-    data['income_account_name'] = incomeAccountName;
-    data['transfer_account_id_from'] = transferAccountIdFrom;
-    data['transfer_account_name_from'] = transferAccountNameFrom;
-    data['transfer_account_id_to'] = transferAccountIdTo;
-    data['transfer_account_name_to'] = transferAccountNameTo;
-    data['debt_account_id_from'] = debtAccountIdFrom;
-    data['debt_account_name_from'] = debtAccountNameFrom;
-    data['debt_account_id_to'] = debtAccountIdTo;
-    data['debt_account_name_to'] = debtAccountNameTo;
+    data['category_type_id'] = categoryTypeId;
+    data['category_type_name'] = categoryTypeName;
+    data['account_id_from'] = accountIdFrom;
+    data['account_id_from_name'] = accountIdFromName;
+    data['account_id_to'] = accountIdTo;
+    data['account_id_to_name'] = accountIdToName;
     data['date'] = date;
     data['time'] = time;
-    data['note'] = note;
     return data;
   }
 }

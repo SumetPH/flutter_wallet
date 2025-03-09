@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_wallet/screen/home.dart';
@@ -21,6 +22,13 @@ class MyApp extends ConsumerWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isDarkMode = ref.watch(themeModeProvider) == ThemeModeState.dark;
+
+    // กำหนดสีของ Status Bar ตามธีม
+    SystemChrome.setSystemUIOverlayStyle(
+      isDarkMode ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
+    );
+
     return MaterialApp(
       title: 'Flutter Wallet',
       home: const HomeScreen(),

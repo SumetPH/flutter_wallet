@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_wallet/service/account_service.dart';
+import 'package:flutter_wallet/service/transaction_service.dart';
 import 'package:flutter_wallet/service/transfer_service.dart';
 import 'package:flutter_wallet/model/account_model.dart';
 import 'package:flutter_wallet/utils/snackbar_validate_field.dart';
@@ -25,8 +26,9 @@ class TransferFormScreen extends StatefulWidget {
 }
 
 class _TransferFormScreenState extends State<TransferFormScreen> {
-  final _transferService = TransferService();
+  // final _transferService = TransferService();
   final _accountService = AccountService();
+  final _transactionService = TransactionService();
 
   // state
   List<AccountModel> _accountList = [];
@@ -51,15 +53,16 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
 
   Future _getTransferDetail({required int transactionId}) async {
     try {
-      final res = await _transferService.getTransferDetail(
-          transactionId: transactionId);
+      final res = await _transactionService.getTransactionDetail(
+        transactionId: transactionId,
+      );
 
       setState(() {
         _amountController.text = res.amount.toString();
         _accountIdFrom = res.accountIdFrom;
-        _accountNameFrom = res.accountNameFrom ?? '';
+        _accountNameFrom = res.accountIdFromName ?? '';
         _accountIdTo = res.accountIdTo;
-        _accountNameTo = res.accountNameTo ?? '';
+        _accountNameTo = res.accountIdToName ?? '';
         _noteController.text = res.note ?? '';
         _date = DateTime.parse(res.date!);
         _time = TimeUtils.timeOfDayFromString(time: res.time!);
@@ -76,11 +79,10 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
         _isLoading = true;
       });
 
-      bool res = false;
-
       if (widget.mode == TransferFormMode.create) {
-        res = await _transferService.createTransfer(
+        await _transactionService.creteTransaction(
           amount: double.parse(_amountController.text),
+          transactionTypeId: 3,
           note: _noteController.text,
           accountIdFrom: _accountIdFrom!,
           accountIdTo: _accountIdTo!,
@@ -88,7 +90,7 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
           time: TimeUtils.timeOfDayToString(time: _time),
         );
       } else {
-        res = await _transferService.updateTransfer(
+        await _transactionService.updateTransaction(
           transactionId: widget.transactionId!,
           amount: double.parse(_amountController.text),
           note: _noteController.text,
@@ -99,15 +101,12 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
         );
       }
 
-      if (res) {
-        setState(() {
-          _isLoading = false;
-        });
-        if (!mounted) return;
-        Navigator.pop(context);
-      } else {
-        throw Exception('ทํารายการไม่สําเร็จ');
-      }
+      setState(() {
+        _isLoading = false;
+      });
+
+      if (!mounted) return;
+      Navigator.pop(context);
     } catch (e) {
       setState(() {
         _isLoading = false;

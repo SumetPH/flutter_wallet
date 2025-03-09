@@ -6,6 +6,7 @@ import 'package:flutter_wallet/service/category_service.dart';
 import 'package:flutter_wallet/service/debt_service.dart';
 import 'package:flutter_wallet/model/account_model.dart';
 import 'package:flutter_wallet/service/schedule_service.dart';
+import 'package:flutter_wallet/service/transaction_service.dart';
 import 'package:flutter_wallet/utils/snackbar_validate_field.dart';
 import 'package:flutter_wallet/utils/time_utils.dart';
 import 'package:flutter_wallet/widget/account_list_widget.dart';
@@ -41,7 +42,8 @@ class DebtFormScreen extends StatefulWidget {
 }
 
 class DebtFormScreenState extends State<DebtFormScreen> {
-  final _debtService = DebtService();
+  // final _debtService = DebtService();
+  final _transactionService = TransactionService();
   final _accountService = AccountService();
   final _categoryService = CategoryService();
   final _scheduleService = ScheduleService();
@@ -81,16 +83,16 @@ class DebtFormScreenState extends State<DebtFormScreen> {
 
   Future _getDebtDetail({required int transactionId}) async {
     try {
-      final res = await _debtService.getDebtDetail(
+      final res = await _transactionService.getTransactionDetail(
         transactionId: transactionId,
       );
 
       setState(() {
         _amountController.text = res.amount.toString();
         _accountIdFrom = res.accountIdFrom;
-        _accountNameFrom = res.accountNameFrom ?? '';
+        _accountNameFrom = res.accountIdFromName ?? '';
         _accountIdTo = res.accountIdTo;
-        _accountNameTo = res.accountNameTo ?? '';
+        _accountNameTo = res.accountIdToName ?? '';
         _noteController.text = res.note ?? '';
         _date = DateTime.parse(res.date!);
         _time = TimeUtils.timeOfDayFromString(time: res.time!);
@@ -109,11 +111,10 @@ class DebtFormScreenState extends State<DebtFormScreen> {
         _isLoading = true;
       });
 
-      int? transactionId;
-
       if (widget.mode == DebtFormMode.create) {
-        transactionId = await _debtService.createDebt(
+        await _transactionService.creteTransaction(
           amount: double.parse(_amountController.text),
+          transactionTypeId: 4,
           note: _noteController.text,
           accountIdFrom: _accountIdFrom!,
           accountIdTo: _accountIdTo!,
@@ -122,7 +123,7 @@ class DebtFormScreenState extends State<DebtFormScreen> {
           categoryId: _categoryId,
         );
       } else {
-        transactionId = await _debtService.updateDebt(
+        await _transactionService.updateTransaction(
           transactionId: widget.transactionId!,
           amount: double.parse(_amountController.text),
           note: _noteController.text,
@@ -134,22 +135,12 @@ class DebtFormScreenState extends State<DebtFormScreen> {
         );
       }
 
-      if (widget.scheduleId != null && transactionId != null) {
-        await _scheduleService.scheduleTransactionPaid(
-          scheduleId: widget.scheduleId!,
-          transactionId: transactionId,
-        );
-      }
+      setState(() {
+        _isLoading = false;
+      });
 
-      if (transactionId != null) {
-        setState(() {
-          _isLoading = false;
-        });
-        if (!mounted) return;
-        Navigator.pop(context);
-      } else {
-        throw Exception('ทํารายการไม่สําเร็จ');
-      }
+      if (!mounted) return;
+      Navigator.pop(context);
     } catch (e) {
       setState(() {
         _isLoading = false;

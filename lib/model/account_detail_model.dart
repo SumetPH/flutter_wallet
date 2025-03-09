@@ -8,6 +8,7 @@ class AccountDetailModel {
   int? orderIndex;
   String? iconPath;
   int? creditStartDate;
+  bool? isHidden;
 
   AccountDetailModel({
     this.id,
@@ -19,6 +20,7 @@ class AccountDetailModel {
     this.orderIndex,
     this.iconPath,
     this.creditStartDate,
+    this.isHidden,
   });
 
   AccountDetailModel.fromJson(Map<String, dynamic> json) {
@@ -31,6 +33,7 @@ class AccountDetailModel {
     orderIndex = json['order_index'];
     iconPath = json['icon_path'];
     creditStartDate = json['credit_start_date'];
+    isHidden = json['is_hidden'];
   }
 
   Map<String, dynamic> toJson() {
@@ -44,6 +47,7 @@ class AccountDetailModel {
     data['order_index'] = orderIndex;
     data['icon_path'] = iconPath;
     data['credit_start_date'] = creditStartDate;
+    data['is_hidden'] = isHidden;
     return data;
   }
 }

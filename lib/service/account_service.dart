@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_wallet/model/account_credit_model.dart';
 import 'package:flutter_wallet/model/account_detail_model.dart';
@@ -99,13 +100,9 @@ class AccountService {
         'name': name,
         'amount': amount,
         'accountTypeId': accountTypeId,
+        'iconPath': iconPath,
+        'creditStartDate': creditStartDate,
       };
-      if (iconPath != null) {
-        body['iconPath'] = iconPath;
-      }
-      if (creditStartDate != null) {
-        body['creditStartDate'] = creditStartDate;
-      }
       final res = await http.put(
         Uri.parse('$apiUrl/account/account-update'),
         body: jsonEncode(body),

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_wallet/model/net_asset_list_model.dart';
 import 'package:flutter_wallet/model/net_asset_model.dart';
@@ -43,6 +44,7 @@ class NetAssetService {
         Uri.parse('$apiUrl/net-asset/net-asset-update'),
         body: jsonEncode(data),
       );
+      debugPrint(jsonEncode(data));
       if (res.statusCode != 200) throw Exception(res.body);
       return true;
     } catch (e) {
